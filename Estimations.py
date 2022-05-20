@@ -8,7 +8,12 @@ class Aircraft(WingAndPowerSizing):
     def __init__(self, c_p, t_c,
                  lamda,E,surface_controlv, surface_controlh,
                  ult_factor, m_landingdes, length_mlg, length_nlg, MTOW):
+        super().__init__(MTOW)
+
         ####### CG Positions ############
+        self.n_pmad = None
+        self.n_fc = None
+        self.n_ee = None
         self.delta_t_func = None
         self.delta_T = None
         self.T_air = None
@@ -24,7 +29,6 @@ class Aircraft(WingAndPowerSizing):
         self.m_electric_engine = None
         self.pmad_power = None
         self.engine_power = None
-        super().__init__(MTOW)
         self.x_wing_cg = 0
         self.x_cg = 0
         self.x_fuselage_cg = 0
@@ -72,8 +76,8 @@ class Aircraft(WingAndPowerSizing):
         self.CLh_alpha = 0
         self.CLw_alpha = 0
         self.Mach = self.V/340
-        self.W_S = 1961
-        self.W_P = 0.044
+        self.W_S = self.find_DP()[0]
+        self.W_P = self.find_DP()[1]
 
         ########## Geometrical parameters #############
         self.length_fus = [13]
@@ -143,7 +147,7 @@ class Aircraft(WingAndPowerSizing):
 
         ###### Fuselage mass ######
 
-        self.m_fuselage.append(12.7*(self.length_fus*self.diameter_fus)**(1.2982)*
+        self.m_fuselage.append(12.7*(self.length_fus * self.diameter_fus)**(1.2982)*
                           (1-(-0.008*(self.length_fus[-1]/self.diameter_fus)**(2)+
                               0.1664*(self.length_fus[-1]/self.diameter_fus)-0.8501))*
                           max(self.height_fus,self.width_fus)/self.diameter_fus)
@@ -167,7 +171,7 @@ class Aircraft(WingAndPowerSizing):
 
         ###### Powertrain mass ######
         # All power values in --> kW <--
-        self.shaft_power = 1200 # BITCONNEEEEECT!!!
+        self.shaft_power = self.w_mtow / self.W_P # CONNECT!!!  #convert to kg
         self.engine_power = self.shaft_power / self.n_ee
         self.m_electric_engine = self.engine_power / 5 # engine power: [kW]
         self.pmad_power = self.engine_power / self.n_pmad
@@ -177,9 +181,9 @@ class Aircraft(WingAndPowerSizing):
         self.waste_heat_power = (1 / self.n_fc - 1) * self.fc_power
 
         self.delta_t_func = 0.0038 * (self.T_air / self.delta_T) ** 2 + 0.0352 * (self.T_air / self.delta_T) + 0.1817
+        self.delta_t_func = None
         self.m_cooling = (0.194 * self.waste_heat_power + 1.39) * self.delta_t_func
-        self.compressor_power =
-        self.m_comp =
+        self.m_comp = None
 
         self.w_installedEngine = 1.2 * (self.m_electric_engine + self.m_fuel_cell + self.m_pmad + self.m_cooling + self.m_comp)
         # Reference Formula from Raymer:
@@ -190,8 +194,8 @@ class Aircraft(WingAndPowerSizing):
 
         ###### Landing Gear Group mass#####
 
-        self.m_mlg = 0.095 * (self.ult_factor * self.m_landingdes) ** 0.768 * (self.length_mlg / 12) ** 0.409
-        self.m_nlg = 0.125 * (self.ult_factor * self.m_landingdes) ** 0.566 * (self.length_nlg / 12) ** 0.845
+        self.m_mlg = 0.095 * (self.ult_factor * self.w_mtow) ** 0.768 * (self.length_mlg / 12) ** 0.409
+        self.m_nlg = 0.125 * (self.ult_factor * self.w_mtow) ** 0.566 * (self.length_nlg / 12) ** 0.845
 
         ###### Fuel System mass #######
 
@@ -233,13 +237,14 @@ class Aircraft(WingAndPowerSizing):
         self.w_mtow = self.w_oew +self.w_paylaod +self.w_fuel
 
     def oew(self):
-
         oew = (self.m_fuselage + self.m_h + self.m_v + self.m_wing[-1] + self.w_furnishing +
          self.w_icing + self.w_electrical + self.w_avionics + self.w_fuelsystem
          + self.w_flightcontrols + self.w_installedEngine + self.w_hydraulics)
-
         return oew
 
+    def mtow(self):
+        mtow = self.oew() +self.w_fuel +self.w_paylaod
+        return mtow
 
     def mainsizing(self):
         self.fuel_volume = self.w_fuel / 71
@@ -249,10 +254,13 @@ class Aircraft(WingAndPowerSizing):
         self.change =  (self.length_fus[-1]/self.length_fus[-2])*self.subsystem_weightage['fuselage']+(1-self.subsystem_weightage['fuselage'])
         self.m_fuselage.append(self.change*self.m_fuselage[-1])
         self.m_wing.append(self.m_wing[-1]*self.change)
+        self.surface_wing = self.surface_wing *self.change
         if (self.oew()-self.w_oew)/self.w_oew >= 0.07:
             self.change = self.oew()/self.w_oew
             self.w_oew = self.oew()
             self.w_fuel = self.w_fuel*self.change
+            self.w_mtow = self.mtow()
+            self.surface_wing = self.w_mtow/self.W_S
             self.mainsizing()
 
         pass

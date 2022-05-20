@@ -152,6 +152,7 @@ class WingAndPowerSizing    :
         self.W_P = self.cruise(self.W_S)
         self.S = self.MTOW / self.W_S
         self.P = self.MTOW / self.W_P
+        return self.W_S , self.W_P
 
     def print_ac_params(self):
         self.find_DP()
