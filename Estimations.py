@@ -31,11 +31,18 @@ class Aircraft(WingAndPowerSizing):
         self.engine_power = None
         self.x_wing_cg = 0
         self.x_cg = 0
+        
+        ### Wing group ###
+        self.x_wing_cg = 0
+        self.x_engine_cg = 0
+        self.x_battery = 0
+
+        ### Fuselage group ###
         self.x_fuselage_cg = 0
         self.x_fuel_cg = 0
         self.x_emponnage_cg= 0
         self.x_landingGear_cg = 0
-        self.x_engine_cg = 0
+        self.x_nlg_cg = 0
         self.x_payload_cg = 0
         self.x_crew_cg = 0
 
@@ -59,6 +66,7 @@ class Aircraft(WingAndPowerSizing):
         self.w_furnishing = 0
         self.m_landingdes = m_landingdes
         self.w_avionics = 1000
+        self.w_battery = 0
 
         ########## Payload Masses ###########
         self.w_fuel = 0
@@ -133,7 +141,6 @@ class Aircraft(WingAndPowerSizing):
             self.w_fuel = fuel_coeff* (1+self.f_res)*self.w_mtow*40/120
             self.w_oew = self.w_mtow - self.w_fuel-self.w_paylaod
         self.surface_wing = self.w_oew/self.W_S
-
 
 
 
