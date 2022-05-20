@@ -242,7 +242,7 @@ class Aircraft:
             pass
 
     def landinggearsizing(self):
-
+        print()
 
         pass
 
