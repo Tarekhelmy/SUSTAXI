@@ -243,6 +243,7 @@ class Aircraft:
 
     def landinggearsizing(self):
         print()
+        print()
 
         pass
 
