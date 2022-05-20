@@ -5,9 +5,8 @@ from Wing_Power_Loading import WingAndPowerSizing
 
 
 class Aircraft(WingAndPowerSizing):
-    def __init__(self, L_D_cruise, L_D_loiter, c_p, length_fus, height_fus, width_fus, diameter_fus, surface_wing, t_c,
-                 lamda, w_mtow, w_oew, R, E, V, AR, sweep_angle, surface_controlv, surface_controlh,
-                 sweep_angle_horizontal, sweep_angle_vertical, taper_ratio, taper_ratioh, taper_ratiov, w_payload,
+    def __init__(self, c_p, t_c,
+                 lamda,E,surface_controlv, surface_controlh,
                  ult_factor, m_landingdes, length_mlg, length_nlg, MTOW):
         ####### CG Positions ############
         super().__init__(MTOW)
@@ -44,7 +43,7 @@ class Aircraft(WingAndPowerSizing):
 
         ########## Payload Masses ###########
         self.w_fuel = 0
-        self.w_paylaod = w_payload
+        self.w_paylaod = 800
 
         ######### Performance ###########
         self.L_D_cruise = self.CL_CD_cruise
@@ -52,7 +51,7 @@ class Aircraft(WingAndPowerSizing):
         self.c_p = c_p
         self.R = 1500
         self.E = E
-        self.V = 500*1000/36000
+        self.V = 500*1000/3600
         self.efficiency = 0.85
         self.CL_alpha = 0
         self.CLh_alpha = 0
@@ -60,8 +59,6 @@ class Aircraft(WingAndPowerSizing):
         self.Mach = self.V/340
         self.W_S = 1961
         self.W_P = 0.044
-
-
 
         ########## Geometrical parameters #############
         self.length_fus = [13]
@@ -73,18 +70,17 @@ class Aircraft(WingAndPowerSizing):
         self.surface_controlh = surface_controlh
         self.t_c = t_c
         self.lamda = lamda
-        self.w_mtow = w_mtow
-        self.w_oew = w_oew
+        self.w_mtow = 0
+        self.w_oew = 0
         self.fractions = 0.992 * 0.996 * 0.996 * 0.990 * 0.992 * 0.992
-        self.AR=AR
-        self.sweep_angle = sweep_angle
-        self.sweep_angle_horizontal = sweep_angle_horizontal
-        self.sweep_angle_vertical = sweep_angle_vertical
+        self.AR= 10
+        self.sweep_angle = 30*np.pi / 180
+        self.sweep_angle_horizontal = 30*np.pi / 180
+        self.sweep_angle_vertical = 30*np.pi / 180
         self.q = 0.5*1.225*self.V**2
-        self.taper_ratio = taper_ratio
-        self.taper_ratioh = taper_ratioh
-        self.taper_ratiov = taper_ratiov
-
+        self.taper_ratio = 0.3
+        self.taper_ratioh = 1
+        self.taper_ratiov = 0.8
 
         ####### Class 1 Statistical Data ############
         self.MTOWstat = np.multiply([14330, 16424, 46500, 22900, 25700, 12500, 15245, 11300, 12500, 8200, 9850, 14500, 36000, 8500, 45000, 34720, 5732, 7054, 28660, 44000, 41000, 21165, 26000, 9000],1)
@@ -103,9 +99,6 @@ class Aircraft(WingAndPowerSizing):
         self.fuel_volume = 0
         self.change = 0
 
-
-
-
     def class1(self):
         cruise_fraction = np.exp(self.R/self.efficiency/(9.81*self.c_p)*self.L_D_cruise)
         f1 = 1/cruise_fraction
@@ -120,6 +113,8 @@ class Aircraft(WingAndPowerSizing):
             self.w_mtow = (self.w_paylaod + self.b + self.w_crew) / (1 - self.a - fuel_coeff * (1 - self.f_res)*40/120)
             self.w_fuel = fuel_coeff* (1+self.f_res)*self.w_mtow*40/120
             self.w_oew = self.w_mtow - self.w_fuel-self.w_paylaod
+        self.surface_wing = self.w_oew/self.W_S
+
 
 
 
@@ -230,6 +225,7 @@ class Aircraft(WingAndPowerSizing):
             self.w_oew = self.oew()
             self.w_fuel = self.w_fuel*self.change
             self.mainsizing()
+
         pass
 
     def classiter(self):
