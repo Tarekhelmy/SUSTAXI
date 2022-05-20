@@ -1,17 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import linregress
+from Wing_Power_Loading import WingAndPowerSizing
 
 
-
-class Aircraft:
-    def __init__(self,L_D_cruise,L_D_loiter,c_p,
-                 length_fus,height_fus,width_fus,diameter_fus,surface_wing
-                 ,t_c,lamda,w_mtow,w_oew,R,E,V,AR,
-                 sweep_angle,surface_controlv,surface_controlh,sweep_angle_horizontal,sweep_angle_vertical,
-                 taper_ratio,taper_ratioh,taper_ratiov,w_payload,ult_factor,m_landingdes,length_mlg,length_nlg):
-
+class Aircraft(WingAndPowerSizing):
+    def __init__(self, L_D_cruise, L_D_loiter, c_p, length_fus, height_fus, width_fus, diameter_fus, surface_wing, t_c,
+                 lamda, w_mtow, w_oew, R, E, V, AR, sweep_angle, surface_controlv, surface_controlh,
+                 sweep_angle_horizontal, sweep_angle_vertical, taper_ratio, taper_ratioh, taper_ratiov, w_payload,
+                 ult_factor, m_landingdes, length_mlg, length_nlg, MTOW):
         ####### CG Positions ############
+        super().__init__(MTOW)
         self.x_wing_cg = 0
         self.x_cg = 0
         self.x_fuselage_cg = 0
@@ -48,25 +47,28 @@ class Aircraft:
         self.w_paylaod = w_payload
 
         ######### Performance ###########
-        self.L_D_cruise = L_D_cruise
-        self.L_D_loiter = L_D_loiter
+        self.L_D_cruise = self.CL_CD_cruise
+        self.L_D_loiter = self.CL_CD_cruise
         self.c_p = c_p
-        self.R = R
+        self.R = 1500
         self.E = E
-        self.V = V
+        self.V = 500*1000/36000
         self.efficiency = 0.85
         self.CL_alpha = 0
         self.CLh_alpha = 0
         self.CLw_alpha = 0
         self.Mach = self.V/340
+        self.W_S = 1961
+        self.W_P = 0.044
+
 
 
         ########## Geometrical parameters #############
-        self.length_fus = [length_fus]
-        self.height_fus = height_fus
-        self.width_fus = width_fus
-        self.diameter_fus = diameter_fus
-        self.surface_wing = [surface_wing]
+        self.length_fus = [13]
+        self.height_fus = 1.73
+        self.width_fus = 1.9
+        self.diameter_fus = 1.9
+        self.surface_wing = self.w_oew/self.W_S
         self.surface_controlv = surface_controlv
         self.surface_controlh = surface_controlh
         self.t_c = t_c
@@ -100,8 +102,7 @@ class Aircraft:
         self.shaft_power = 0
         self.fuel_volume = 0
         self.change = 0
-        self.W_S = 0
-        self.W_P = 0
+
 
 
 
@@ -120,7 +121,6 @@ class Aircraft:
             self.w_fuel = fuel_coeff* (1+self.f_res)*self.w_mtow*40/120
             self.w_oew = self.w_mtow - self.w_fuel-self.w_paylaod
 
-        pass
 
 
     def class2(self):
@@ -209,9 +209,11 @@ class Aircraft:
         self.w_mtow = self.w_oew +self.w_paylaod +self.w_fuel
 
     def oew(self):
+
         oew = (self.m_fuselage + self.m_h + self.m_v + self.m_wing[-1] + self.w_furnishing +
          self.w_icing + self.w_electrical + self.w_avionics + self.w_fuelsystem
          + self.w_flightcontrols + self.w_installedEngine + self.w_hydraulics)
+
         return oew
 
 
@@ -219,7 +221,7 @@ class Aircraft:
         self.fuel_volume = self.w_fuel / 71
         self.length_fus.append(self.length_fus[-1] + self.fuel_volume/((self.diameter_fus-0.2)**2 * np.pi/4))
         self.x_fuselage_cg = self.length_fus[-1]/2
-        self.x_fuel_cg=self.length_fus[-1] - 0.5*self.fuel_volume/((self.diameter_fus-0.2)**2 * np.pi/4)
+        self.x_fuel_cg=self.length_fus[-1] - 0.5*self.fuel_volume/((self.diameter_fus-0.14)**2 * np.pi/4)
         self.change =  (self.length_fus[-1]/self.length_fus[-2])*self.subsystem_weightage['fuselage']+(1-self.subsystem_weightage['fuselage'])
         self.m_fuselage.append(self.change*self.m_fuselage[-1])
         self.m_wing.append(self.m_wing[-1]*self.change)
@@ -242,12 +244,9 @@ class Aircraft:
             pass
 
     def landinggearsizing(self):
-        print()
-        print()
 
         pass
 
     def emponnagesizing(self):
-
 
         pass
