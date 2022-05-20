@@ -9,6 +9,12 @@ class Aircraft(WingAndPowerSizing):
                  lamda,E,surface_controlv, surface_controlh,
                  ult_factor, m_landingdes, length_mlg, length_nlg, MTOW):
         ####### CG Positions ############
+        self.m_fuel_cell = None
+        self.fc_power = None
+        self.m_pmad = None
+        self.m_electric_engine = None
+        self.pmad_power = None
+        self.engine_power = None
         super().__init__(MTOW)
         self.x_wing_cg = 0
         self.x_cg = 0
@@ -35,7 +41,7 @@ class Aircraft(WingAndPowerSizing):
         self.w_hydraulics = 0
         self.w_electrical = 0
         self.w_icing = 0
-        self.w_engine = 0
+        self.w_powertrain = 0
         self.w_fuelsystem = 0
         self.w_furnishing = 0
         self.m_landingdes = m_landingdes
@@ -150,14 +156,26 @@ class Aircraft(WingAndPowerSizing):
                    (100*self.t_c/(np.cos(self.sweep_angle_vertical)))**(-0.49)*\
                    (self.AR/(np.cos(self.sweep_angle_vertical)**2))**(0.357)*(self.taper_ratiov)**0.039
 
-        ###### Engine mass ######
+        ###### Powertrain mass ######
+        # All power values in --> kW <--
+        self.shaft_power = 1200 # CONNECT!!!
+        self.engine_power = self.shaft_power / self.n_ee
+        self.m_electric_engine = self.engine_power / 5 # engine power: [kW]
+        self.pmad_power = self.engine_power / self.n_pmad
+        self.m_pmad = self.pmad_power / 10
+        self.fc_power = self.pmad_power / self.n_fc
+        self.m_fuel_cell = self.fc_power / 2
+        self.waste_heat_power =
+        self.delta_t_func =
+        self.m_cooling = (0.194 * self.waste_heat_power + 1.39) * self.delta_t_func
+        self.m_comp = sadfasdf
 
-        self.w_engine = 0   #insert costum formula here
+        self.w_installedEngine = 1.2 * (self.m_electric_engine + self.m_fuel_cell + self.m_pmad + self.m_cooling + self.m_comp)
         # Reference Formula from Raymer:
 
         ###### Installed Engine mass#######
 
-        self.w_installedEngine = 2.575 * 2* self.w_engine**0.922
+        #self.w_installedEngine = 2.575 * 2* self.w_engine**0.922 REDUNDANT
 
         ###### Landing Gear Group mass#####
 
