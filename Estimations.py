@@ -9,6 +9,15 @@ class Aircraft(WingAndPowerSizing):
                  lamda,E,surface_controlv, surface_controlh,
                  ult_factor, m_landingdes, length_mlg, length_nlg, MTOW):
         ####### CG Positions ############
+        self.delta_t_func = None
+        self.delta_T = None
+        self.T_air = None
+        self.waste_heat_power = None
+        self.m_comp = None
+        self.m_cooling = None
+        self.n_fc = None
+        self.n_pmad = None
+        self.n_ee = None
         self.m_fuel_cell = None
         self.fc_power = None
         self.m_pmad = None
@@ -158,17 +167,19 @@ class Aircraft(WingAndPowerSizing):
 
         ###### Powertrain mass ######
         # All power values in --> kW <--
-        self.shaft_power = 1200 # CONNECT!!!
+        self.shaft_power = 1200 # BITCONNEEEEECT!!!
         self.engine_power = self.shaft_power / self.n_ee
         self.m_electric_engine = self.engine_power / 5 # engine power: [kW]
         self.pmad_power = self.engine_power / self.n_pmad
         self.m_pmad = self.pmad_power / 10
         self.fc_power = self.pmad_power / self.n_fc
         self.m_fuel_cell = self.fc_power / 2
-        self.waste_heat_power =
-        self.delta_t_func =
+        self.waste_heat_power = (1 / self.n_fc - 1) * self.fc_power
+
+        self.delta_t_func = 0.0038 * (self.T_air / self.delta_T) ** 2 + 0.0352 * (self.T_air / self.delta_T) + 0.1817
         self.m_cooling = (0.194 * self.waste_heat_power + 1.39) * self.delta_t_func
-        self.m_comp = sadfasdf
+        self.compressor_power =
+        self.m_comp =
 
         self.w_installedEngine = 1.2 * (self.m_electric_engine + self.m_fuel_cell + self.m_pmad + self.m_cooling + self.m_comp)
         # Reference Formula from Raymer:
