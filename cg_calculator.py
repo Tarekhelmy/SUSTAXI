@@ -6,7 +6,6 @@ aircraft = Aircraft()
 weights, fus_cg_locations, wing_cg_locations, mac = aircraft.cg_lists()
 
 class CenterOfGravity:
-
     def __init__(self, weights, fus_cg_locations, wing_cg_locations, mac):
         self.weights = weights
         self.fus_cg_locations = fus_cg_locations
@@ -60,6 +59,7 @@ class CenterOfGravity:
         cg_OEWf = (self.massfractions["oew"] * self.locations["oew"] + self.massfractions["fuel"] * self.locations["fuel"]) / (self.massfractions["fuel"] + self.massfractions["oew"])
 
         if plot:
+
             plt.figure(1)
             plt.grid()
 
