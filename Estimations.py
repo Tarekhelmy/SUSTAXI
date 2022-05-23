@@ -31,6 +31,7 @@ class Aircraft(WingAndPowerSizing):
         self.engine_power = None
         self.x_wing_cg = 0
         self.x_cg = 0
+        print()
         
         ### Wing group ###
         self.x_wing_cg = 0
