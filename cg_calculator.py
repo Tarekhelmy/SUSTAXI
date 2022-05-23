@@ -1,5 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from Estimations import Aircraft
+
+aircraft = Aircraft()
+weights, fus_cg_locations, wing_cg_locations, mac = aircraft.cg_lists()
 
 class CenterOfGravity:
 
@@ -43,7 +47,7 @@ class CenterOfGravity:
         self.locations["lemac"] = x_lemac
         self.locations["oew"] = x_oew
         self.locations["payload"] = self.fus_cg_locations["payload"]
-        self.locations["fuel"] = self.fus_cg_locations["x_fuel_cg"]
+        self.locations["fuel"] = self.fus_cg_locations["fuel"]
 
 
     def cgandplot(self, plot=False):

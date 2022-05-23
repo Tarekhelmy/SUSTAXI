@@ -105,9 +105,11 @@ class Aircraft(WingAndPowerSizing):
         self.sweep_angle_horizontal = 30*np.pi / 180
         self.sweep_angle_vertical = 30*np.pi / 180
         self.q = 0.5*1.225*self.V**2
+        self.root_chord = 0
         self.taper_ratio = 0.3
         self.taper_ratioh = 1
         self.taper_ratiov = 0.8
+        self.mac = self.root_chord * 2 / 3 * (1 + self.taper_ratio + self.taper_ratio ** 2) / (1 + self.taper_ratio)
 
         ####### Class 1 Statistical Data ############
         self.MTOWstat = np.multiply([14330, 16424, 46500, 22900, 25700, 12500, 15245, 11300, 12500, 8200, 9850, 14500, 36000, 8500, 45000, 34720, 5732, 7054, 28660, 44000, 41000, 21165, 26000, 9000],1)
@@ -283,6 +285,13 @@ class Aircraft(WingAndPowerSizing):
         else:
             pass
 
+    def cg_lists(self):
+        weights = {"fuselage": self.m_fuselage[-1], "empennage": self.m_h + self.m_v, "mlg": self.m_mlg, "nlg": self.m_nlg, "crew": self.w_crew, "wing": self.m_wing[-1], "battery": self.w_battery, "engine": self.w_installedEngine, "fuelsystem": self.w_fuelsystem, "mtow": self.w_mtow, "oew": self.w_oew, "payload": self.w_payload, "fuel": self.w_fuel}
+        fuselage_cg = {"fuselage": self.x_fuselage_cg, "empennage": self.x_emponnage_cg, "mlg": self.x_landingGear_cg, "nlg": self.x_nlg_cg, "crew": self.x_fuselage_cg, "fuelsystem": self.x_fuel_cg, "payload": self.x_payload_cg, "fuel": self.x_fuel_cg}
+        wing_cg = {"wing": self.x_wing_cg, "battery": self.x_battery, "engine": self.x_engine_cg}
+        mac = self.mac
+        return weights, fuselage_cg, wing_cg, mac
+        
     def landinggearsizing(self):
 
         pass
