@@ -5,8 +5,17 @@ from Wing_Power_Loading import WingAndPowerSizing
 import math
 
 class Aircraft(WingAndPowerSizing):
+
+
+
     def __init__(self, MTOW):
         super().__init__(MTOW)
+        kg_to_pounds = 2.20462
+        meters_to_feet = 3.28084
+        watts_to_horsepower = 0.00134102
+
+        ##### Conversion factors ########
+
 
         #### powertrain parameters ####
         self.n_pmad = None
@@ -73,7 +82,7 @@ class Aircraft(WingAndPowerSizing):
 
         ########## Payload Masses ###########
         self.w_fuel = 0
-        self.w_paylaod = 800*2.208
+        self.w_paylaod = 800*kg_to_pounds
 
         ######### Performance ###########
         self.L_D_cruise = self.CL_CD_cruise
@@ -116,6 +125,7 @@ class Aircraft(WingAndPowerSizing):
         self.taper_ratioh = 1
         self.taper_ratiov = 0.8
         self.mac = self.root_chord * 2 / 3 * (1 + self.taper_ratio + self.taper_ratio ** 2) / (1 + self.taper_ratio)
+
 
         ####### Class 1 Statistical Data ############
         self.MTOWstat = np.multiply([14330, 16424, 46500, 22900, 25700, 12500, 15245, 11300, 12500, 8200, 9850, 14500, 36000, 8500, 45000, 34720, 5732, 7054, 28660, 44000, 41000, 21165, 26000, 9000],1)
@@ -167,7 +177,7 @@ class Aircraft(WingAndPowerSizing):
 
 
     def class2(self):
-        self.w_design = self.w_oew
+        self.w_design = self.w_oew -self.w_crew
         Ht_Hv = 1
         ###### Link for mass estimations used #######
 
@@ -178,7 +188,10 @@ class Aircraft(WingAndPowerSizing):
 
 
         self.pressurised_volume = self.diameter_fus**2*np.pi*self.length_fus[-1]/4
-        self.m_fuselage.append(0.3280 *1.12*1.12*(self.w_design*self.limit_load*self.limit_factor)**0.117*self.lh**(-0.51)*(self.CL_CD_cruise)**(-0.072)*self.q**0.241+11.9+(self.pressurised_volume*8)**0.271)
+        self.m_fuselage.append(0.052*(self.length_fus[-1]*self.diameter_fus*np.pi)**1.086*(self.w_design*self.limit_load*self.limit_factor)**0.117*self.lh**(-0.051)*(self.CL_CD_cruise)**(-0.072)*self.q**0.241+11.9+(self.pressurised_volume*8)**0.271)
+
+
+
 
         ###### Main Wing mass ######
 
@@ -219,9 +232,11 @@ class Aircraft(WingAndPowerSizing):
         # self.w_installedEngine = 1.2 * (self.m_electric_engine + self.m_fuel_cell + self.m_pmad + self.m_cooling + self.m_comp)
         # Reference Formula from Raymer:
 
+        self.w_engine = self.w_mtow / self.w_p / self.specific_power_engine
+
         ###### Installed Engine mass#######
 
-        #self.w_installedEngine = 2.575 * 2* self.w_engine**0.922 REDUNDANT
+        self.w_installedEngine = 2.575 * 2 * self.w_engine**0.922
 
         ###### Landing Gear Group mass#####
 
@@ -239,7 +254,7 @@ class Aircraft(WingAndPowerSizing):
 
         ###### hydraulics mass ######
 
-        self.w_hydraulics = 0.001*self.w_design # checked
+        self.w_hydraulics = 0.001 * self.w_design # checked
 
         ###### Electrical system mass ######
 
@@ -266,7 +281,7 @@ class Aircraft(WingAndPowerSizing):
                      + self.w_flightcontrols + self.w_installedEngine + self.w_hydraulics) # checked
 
         ###### updating MTOW ########
-        self.w_mtow = self.w_oew +self.w_paylaod + self.w_fuel # checked
+        self.w_mtow = self.w_oew +self.w_paylaod + self.w_fuel # ch
 
         self.iter += 1
 
@@ -320,13 +335,34 @@ class Aircraft(WingAndPowerSizing):
         print('Wing Area = ', self.surface_wing/(3.28**2), 'm^2')
 
         # plot all the masses
+        # self.printing()
         mass_vec = np.array([self.m_fuselage[-1], self.m_h, self.m_v, self.m_wing[-1], self.w_furnishing, self.w_icing,
-                    self.w_electrical, self.w_avionics, self.w_fuelsystem, self.w_flightcontrols, self.w_installedEngine, self.w_hydraulics])
+            self.w_electrical, self.w_avionics, self.w_fuelsystem, self.w_flightcontrols, self.w_installedEngine, self.w_hydraulics])
+        self.component_matrix.append(mass_vec)
 
         if np.abs(OEW2 - OEW1)/OEW2 >= 0.01:
             if self.iter <= 500:
                 self.classiter()
 
+
+
+    def printing(self):
+        kg_to_pounds = 2.20462
+        meters_to_feet = 3.28084
+        watts_to_horsepower = 0.00134102
+        print('-------')
+        print('fuse length ',self.length_fus[-1] * 0.3048)
+        print('fuse mass ',self.m_fuselage[-1]/kg_to_pounds)
+        print('fuse diam',self.diameter_fus * 0.3048)
+        print('design weight',self.w_design / kg_to_pounds )
+        print('lh',self.lh * 0.3048)
+        print('cl/cd cruise',self.CL_CD_cruise)
+        print('dyn pressure',self.q / (kg_to_pounds * meters_to_feet))
+        print('pressurized volume',self.pressurised_volume * 0.3048 ** 3)
+        print('--------')
+
+        print('OEW Mainsizing = ', self.w_oew*0.45 , 'kg')
+        print('Wing Area = ', self.surface_wing/(3.28**2), 'm^2')
 
     def plot_mass_progression(self):
         labels = ['fuselage', 'horizontal stab', 'vertical stab', 'wing', 'furnishing', ' de-icing', ' electronics', 'avionics', ' fuelsystem', ' flightcontrols',  'engine', ' hydraulics']
@@ -361,4 +397,6 @@ class Aircraft(WingAndPowerSizing):
 
 aircraft = Aircraft(3000)
 aircraft.classiter()
+aircraft.mainsizing()
+aircraft.printing()
 aircraft.plot_mass_progression()
