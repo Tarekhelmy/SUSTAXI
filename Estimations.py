@@ -34,7 +34,7 @@ class Aircraft(WingAndPowerSizing):
         self.m_electric_engine = None
         self.pmad_power = None
         self.engine_power = None
-        self.electric
+        # self.electric
 
         # CG Positions
         self.x_wing_cg = 0
@@ -435,6 +435,10 @@ class Aircraft(WingAndPowerSizing):
             # lol = input("something : ")
 
     def cg_lists(self):
+        
+        self.classiter()
+        self.mainsizing()
+
         weights = {"fuselage": self.m_fuselage[-1], "empennage": self.m_h + self.m_v, "mlg": self.m_mlg, "nlg": self.m_nlg, "crew": self.w_crew, "wing": self.m_wing[-1], "battery": self.w_battery, "engine": self.w_installedEngine, "fuelsystem": self.w_fuelsystem, "mtow": self.w_mtow, "oew": self.w_oew, "payload": self.w_payload, "fuel": self.w_fuel}
         fuselage_cg = {"fuselage": self.x_fuselage_cg, "empennage": self.x_empennage_cg, "mlg": self.x_landingGear_cg, "nlg": self.x_nlg_cg, "crew": self.x_fuselage_cg, "fuelsystem": self.x_fuel_cg, "payload": self.x_payload_cg, "fuel": self.x_fuel_cg}
         wing_cg = {"wing": self.x_wing_cg, "battery": self.x_battery, "engine": self.x_engine_cg}
