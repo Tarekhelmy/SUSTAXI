@@ -55,7 +55,7 @@ class VNDiagram(WingAndPowerSizing):
         n_neg_C = 1 - delta_n_C
         n_neg_D = 1 - delta_n_D
 
-        VB = Vstall * np.sqrt(n_peak_C)
+        VB = Vstall * np.sqrt(n_peak_C) * 1.1 if Vstall * np.sqrt(n_peak_C) < VA else VA * 1.1
         #From CS-23
 
         delta_n_B = self.density * VB * self.CLcurve * uB / (2 * self.W_S)
