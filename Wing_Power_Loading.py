@@ -76,7 +76,6 @@ class WingAndPowerSizing    :
         self.CL_CD_L = self.CLmax_land/(self.CD0_land + (self.CLmax_land**2/(self.Oswald_land*self.AR*np.pi)))
         self.c_V = 0.083
         self.runway_elevation = 2500
-
         self.W_S = None
         self.W_P = None
         self.W_S = None
@@ -161,6 +160,7 @@ class WingAndPowerSizing    :
         print("Wing Area = %.2f" % self.S, " m^2")
         print("Total Power = %.2f" % (self.P / 1000), " kW")
 
-Aircraft  = WingAndPowerSizing(5500 * 9.81)
-Aircraft.plot_power(landing=True, cruise=True)
-Aircraft.print_ac_params()
+if __name__ == '__main__':
+    Aircraft  = WingAndPowerSizing(5500 * 9.81)
+    Aircraft.plot_power(landing=True, cruise=True)
+    Aircraft.print_ac_params()
