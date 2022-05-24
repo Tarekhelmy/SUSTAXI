@@ -34,6 +34,7 @@ class Aircraft(WingAndPowerSizing):
         self.m_electric_engine = None
         self.pmad_power = None
         self.engine_power = None
+        self.electric
 
         # CG Positions
         self.x_wing_cg = 0
@@ -105,6 +106,9 @@ class Aircraft(WingAndPowerSizing):
         self.lh = 5.9 * meters_to_feet
         self.lv = 5.4 * meters_to_feet
 
+        ########### PowerTrain  parameters ############
+
+
 
         # tail volumes from https://onlinelibrary.wiley.com/doi/pdf/10.1002/9781118568101.app1
 
@@ -147,7 +151,7 @@ class Aircraft(WingAndPowerSizing):
         self.specific_power_engine = 2000 * watts_to_horsepower / kg_to_pounds
         self.surface_wing = self.w_mtow / self.w_s
         self.b_w = np.sqrt(self.AR * self.surface_wing)
-
+        self.electric_net = 0
         self.vertical_volume = 0.03 * (self.surface_wing * self.b_w + 10*self.height_fus**2*self.length_fus[-1])
         self.horizontal_volume = 0.2 * (self.surface_wing * self.mac+ 2*self.width_fus**2*self.length_fus[-1])*(self.AR+2)/(self.AR-2)
         self.surface_controlv = self.vertical_volume / self.lv
@@ -201,13 +205,7 @@ class Aircraft(WingAndPowerSizing):
 
 
         """
-
-
-
-
-
-
-        # All power values in --> kW <--
+        # All power values in --> hp?? <--
         self.shaft_power = self.w_mtow / self.w_p # CONNECT!!!  # convert to kg
         # self.engine_power = self.shaft_power / self.n_ee
         # self.m_electric_engine = self.engine_power / 5 # engine power: [kW]
@@ -327,6 +325,7 @@ class Aircraft(WingAndPowerSizing):
         self.fuel_volume = self.w_fuel*2.8 / (71 * kg_to_pounds / (meters_to_feet ** 3))
         self.w_fuelsystem = 2.49*self.fuel_volume**0.726*(1/(1+1.1))**0.363*2**0.242*2**0.157  # self.shaft_power / 2  COMPLETE FORMULA
 
+
         self.w_oew = (self.m_fuselage[-1] + self.m_h + self.m_v + self.m_wing[-1] + self.w_furnishing +
                      self.w_icing + self.w_electrical + self.w_avionics + self.w_fuelsystem
                      + self.w_flightcontrols + self.w_installedEngine + self.w_hydraulics) # checked
@@ -374,16 +373,16 @@ class Aircraft(WingAndPowerSizing):
 
     def classiter(self):
 
-        print('-----------------')
-        print('iteration ', self.iter)
+        # print('-----------------')
+        # print('iteration ', self.iter)
         self.class1()
         OEW1 = self.w_oew
-        print('OEW c1 = ', OEW1*0.45, 'kg' )
+        # print('OEW c1 = ', OEW1*0.45, 'kg' )
         self.class2()
         OEW2 = self.w_oew
-        print('OEW c2 = ', OEW2*0.45 , 'kg')
+        # print('OEW c2 = ', OEW2*0.45 , 'kg')
         # self.mainsizing()
-        print('Wing Area = ', self.surface_wing/(3.28**2), 'm^2')
+        # print('Wing Area = ', self.surface_wing/(3.28**2), 'm^2')
 
         # plot all the masses
         # self.printing()
@@ -456,4 +455,4 @@ aircraft = Aircraft()
 aircraft.classiter()
 aircraft.mainsizing()
 aircraft.printing()
-aircraft.plot_mass_progression()
+# aircraft.plot_mass_progression()

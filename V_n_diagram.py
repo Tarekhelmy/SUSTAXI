@@ -1,28 +1,36 @@
 from lib2to3.pgen2.token import VBAR
 import numpy as np
 import matplotlib.pyplot as plt
-
+from Estimations import Aircraft
 from Wing_Power_Loading import WingAndPowerSizing
 
-class VNDiagram(WingAndPowerSizing):
-
-    def __init__(self, MTOW):
-        super().__init__(MTOW)
-        self.loadfactor = 2.1 + 24000 / (self.MTOW * 0.2248 + 10000)
-        #From CS-23
+class VNDiagram(WingAndPowerSizing,Aircraft):
+    def __init__(self):
+        super().__init__()
+        self.density = 0
+        self.W_S = 0
+        self.negloadfactor = 0
+        # From CS-23
+        self.CLcurve = 0
+        # DATCOM method
+        self.mu = 0
+        self.alleviationfactor = 0
+    def initialising(self):
+        # From CS-23
         self.mac = 1.85
         self.Mach = self.cruise_speed / (np.sqrt(1.4 * 287 * self.ISA(self.cruise_altitude)[1]))
-        self.density = super().ISA(self.cruise_altitude)[2]
-        self.W_S = super().find_DP()[0]
+        self.density = self.ISA(self.cruise_altitude)[2]
+        self.W_S = self.find_DP()[0]
         self.negloadfactor = -0.4 * self.loadfactor
-        #From CS-23
-        
-        self.CLcurve = (2 * np.pi * self.AR * 1.2) / (2 + np.sqrt(4 + (self.AR * 1.2 * np.sqrt(1 - self.Mach ** 2 ) / 0.95) ** 2 * (1 + 1 / (1 - self.Mach ** 2))))
-        #DATCOM method
+        # From CS-24
+        self.CLcurve = (2 * np.pi * self.AR * 1.2) / (2 + np.sqrt(
+            4 + (self.AR * 1.2 * np.sqrt(1 - self.Mach ** 2) / 0.95) ** 2 * (1 + 1 / (1 - self.Mach ** 2))))
+        # DATCOM method
 
-        self.mu = (2 * self.W_S * 0.2248 * 3.2808 ** 2) / (self.density * 0.0624 * 32.2 * self.mac * 3.2808 * self.CLcurve)
+        self.mu = (2 * self.W_S * 0.2248 * 3.2808 ** 2) / (
+                    self.density * 0.0624 * 32.2 * self.mac * 3.2808 * self.CLcurve)
         self.alleviationfactor = 0.88 * self.mu / (5.3 + self.mu)
-    
+
     def V_n_diag(self):
         
         VA = np.sqrt((self.loadfactor * self.W_S) / (0.5 * self.density * self.CLmax_land))
@@ -115,6 +123,11 @@ class VNDiagram(WingAndPowerSizing):
     def get_critical_loadfactor(self):
         print(f"The most critical load factor is: {max(self.loadfactor, self.gustloadfactor)}")
         return max(self.loadfactor, self.gustloadfactor)
+
+    """ Run in the following order : 
+    self.classiter()
+    self.mainsizing()
+    """
 
 if __name__ == "__main__":
     diagram = VNDiagram(5500 * 9.81)
