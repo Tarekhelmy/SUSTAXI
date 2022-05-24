@@ -25,21 +25,22 @@ class VNDiagram(WingAndPowerSizing):
     
     def V_n_diag(self):
         
-        VA = np.sqrt((self.loadfactor * self.W_S) / (0.5 * self.density * self.CLmax_clean))
-        loading = [0.5 * self.density * V ** 2 * self.CLmax_clean / self.W_S for V in np.linspace(0, VA, 500)]
+        VA = np.sqrt((self.loadfactor * self.W_S) / (0.5 * self.density * self.CLmax_land))
+        loading = [0.5 * self.density * V ** 2 * self.CLmax_land / self.W_S for V in np.linspace(0, VA, 500)]
 
         VC = self.cruise_speed
 
         VD = 1.25 * VC
         #Taken from CS-23
 
-        VS = np.sqrt((-self.negloadfactor * self.W_S) / (0.5 * self.density * self.CLmax_clean))
+        VS = np.sqrt((-self.negloadfactor * self.W_S) / (0.5 * self.density * self.CLmax_land))
         #This occurs at load factor of 1
 
-        negativeloading = [-0.5 * self.density * V ** 2 * self.CLmax_clean / self.W_S for V in np.linspace(0, VS, 500)]
+        negativeloading = [-0.5 * self.density * V ** 2 * self.CLmax_land / self.W_S for V in np.linspace(0, VS, 500)]
         #Negative curve is the same as the one before but with its sign changed
 
-        Vstall = np.sqrt((1 * self.W_S) / (0.5 * self.density * self.CLmax_clean))
+        Vstall = np.sqrt((1 * self.W_S) / (0.5 * self.density * self.CLmax_land))
+        print(f"Stall speed is {Vstall} m/s")
 
         uB = self.alleviationfactor * 66 * 0.3048
         uC = self.alleviationfactor * 50 * 0.3048
