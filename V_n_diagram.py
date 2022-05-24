@@ -20,7 +20,7 @@ class VNDiagram(WingAndPowerSizing):
         self.CLcurve = (2 * np.pi * self.AR * 1.2) / (2 + np.sqrt(4 + (self.AR * 1.2 * np.sqrt(1 - self.Mach ** 2 ) / 0.95) ** 2 * (1 + 1 / (1 - self.Mach ** 2))))
         #DATCOM method
 
-        self.mu = (2 * self.W_S) / (self.density * 32.2 * self.mac * self.CLcurve)
+        self.mu = (2 * self.W_S * 0.2248 * 3.2808 ** 2) / (self.density * 0.0624 * 32.2 * self.mac * 3.2808 * self.CLcurve)
         self.alleviationfactor = 0.88 * self.mu / (5.3 + self.mu)
     
     def V_n_diag(self):
@@ -41,9 +41,9 @@ class VNDiagram(WingAndPowerSizing):
 
         Vstall = np.sqrt((1 * self.W_S) / (0.5 * self.density * self.CLmax_clean))
 
-        uB = self.alleviationfactor * 66 / 3.28084
-        uC = self.alleviationfactor * 50 / 3.28084
-        uD = self.alleviationfactor * 25 / 3.28084
+        uB = self.alleviationfactor * 66 * 0.3048
+        uC = self.alleviationfactor * 50 * 0.3048
+        uD = self.alleviationfactor * 25 * 0.3048
 
         delta_n_C = self.density * VC * self.CLcurve * uC / (2 * self.W_S)
         delta_n_D = self.density * VD * self.CLcurve * uD / (2 * self.W_S)
@@ -65,7 +65,7 @@ class VNDiagram(WingAndPowerSizing):
         
         plt.figure(1)
         plt.grid()
-        plt.title("V-n Diagram")
+        plt.title("Flight Envelope")
 
         ######## MANUEVER DIAGRAM #########
 
@@ -104,6 +104,8 @@ class VNDiagram(WingAndPowerSizing):
         plt.plot([VB, VC], [n_neg_B, n_neg_C], linestyle="-", color="blue")
         plt.plot([VC, VD], [n_neg_C, n_neg_D], linestyle="-", color="blue")
 
+        plt.xlim([-0.5, 180])
+        plt.ylim([-1.4, 3.3])
         # plt.legend(loc="lower left", fontsize="small")
         plt.show()
         plt.close(1)
@@ -113,8 +115,9 @@ class VNDiagram(WingAndPowerSizing):
         print(f"The most critical load factor is: {max(self.loadfactor, self.gustloadfactor)}")
         return max(self.loadfactor, self.gustloadfactor)
 
-        
-diagram = VNDiagram(5500 * 9.81)
-diagram.V_n_diag()
+if __name__ == "__main__":
+    diagram = VNDiagram(5500 * 9.81)
+    diagram.V_n_diag()
+    print(f"The ultimate load factor for this iteration is:{diagram.get_critical_loadfactor() * 1.5}")
 
             
