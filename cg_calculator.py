@@ -2,18 +2,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 from Estimations import Aircraft
 
-aircraft = Aircraft()
-weights, fus_cg_locations, wing_cg_locations, mac = aircraft.cg_lists()
+# aircraft = Aircraft()
+# weights, fus_cg_locations, wing_cg_locations, mac = aircraft.cg_lists()
 
-class CenterOfGravity:
-    def __init__(self, weights, fus_cg_locations, wing_cg_locations, mac):
-        self.weights = weights
-        self.fus_cg_locations = fus_cg_locations
-        self.wing_cg_locations = wing_cg_locations
+class CenterOfGravity(Aircraft):
+    def __init__(self, MTOW):
+        super().__init__(MTOW)
+        self.weights = super().cg_lists()[0]
+        self.fus_cg_locations = super().cg_lists()[1]
+        self.wing_cg_locations = super().cg_lists()[2]
         self.massfractions = dict()
         self.locations = dict()
         self.bitchassfraction = 0.25
-        self.mac = mac
+        self.mac = super.cg_lists()[3]
 
     def massfractions(self):
         for entry in self.weights:
@@ -21,7 +22,9 @@ class CenterOfGravity:
 
     def macpercent(self, cg):
         return (cg - self.locations["lemac"]) / self.mac
-
+    
+    def reverse_macpercent(self, maccg):
+        return maccg * self.mac + self.locations["lemac"]
 
     def lemac_oew_pl_fuel(self):
         fus_masses = ["fuselage", "empennage", "mlg", "nlg", "crew", "fuelsystem"]
@@ -62,6 +65,7 @@ class CenterOfGravity:
 
             plt.figure(1)
             plt.grid()
+            plt.title("Class 1 Loading Diagram")
 
             plt.plot(self.macpercent(cg_OEW), self.massfractions["oew"], color="blue", label="OEW cg location")
             plt.plot(self.macpercent(cg_OEWpl), self.massfractions["oew"] + self.massfractions["payload"], color="blue", label="OEW + payload cg location")
@@ -72,7 +76,7 @@ class CenterOfGravity:
             plt.xlim(-0.1, 1.1)
             plt.xlabel("Percentage of MAC [%]")
             plt.ylabel("Mass fraction [-]")
-            plt.legend(location="best")
+            plt.legend(location="upper right", fontsize="small")
 
             plt.show()
             plt.close(1)
@@ -80,4 +84,11 @@ class CenterOfGravity:
         return self.macpercent(cg_OEW), self.macpercent(cg_OEWpl), self.macpercent(cg_OEWfpl), self.macpercent(cg_OEWf)
         
     def fwd_aft(self):
-        return min(self.cgandplot()), max(self.cgandplot())
+        return self.reverse_macpercent(min(self.cgandplot())), self.reverse_macpercent(max(self.reverse_macpercent(self.cgandplot())))
+
+
+if __name__ == "__main__":
+    cg = CenterOfGravity(5500 * 9.81)
+    cg.cgandplot(True)
+    print(f"The most forward center of gravity is at: {cg.fwd_aft()[0]} m")
+    print(f"The most aft center of gravity location is at: {cg.fwd_aft()[1]} m")
