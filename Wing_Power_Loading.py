@@ -41,10 +41,10 @@ import numpy as np
 
 ISA_density = 1.225 #[kg/m^3]
 Lambda = -0.0065
-R =287
+R = 287
 ISA_pressure = 101325
 ISA_temperature = 288.15
-gravity =9.81
+gravity = 9.81
 
 class WingAndPowerSizing    :
     def __init__(self):

@@ -9,6 +9,7 @@ class Aircraft(WingAndPowerSizing):
     def __init__(self):
         super().__init__()
 
+        ##### Conversion factors ########
         self.kg_to_pounds = 2.20462
         self.meters_to_feet = 3.28084
         self.watts_to_horsepower = 0.00134102
@@ -26,7 +27,6 @@ class Aircraft(WingAndPowerSizing):
         self.x_nlg_cg = 0
         self.x_payload_cg = 0
         self.x_crew_cg = 0
-
 
         ######## Structure Masses ########
         self.m_wing = [0]
@@ -180,40 +180,20 @@ class Aircraft(WingAndPowerSizing):
 
     def powertrain_mass(self):
 
-        """
-        Parameters:
-            n_em [x]
-            n_fc [x]
-            n_pmad [v]
-            PR_comp [x] this week
-            n_comp p[x] this week
-            rho_comp [x]
-            rho_pmad [v]
-            rho_em [x]
-            rho_fc [x]
-
-
-        1. Get Shaft Power - DONE
-        2. Calculate Electric power to produce
-           The required shaft power. -- EM efficiency
-        2.a. get EM specific power [W/kg]
-        3. Get the efficiency of the PMAD system
-        4. Calculate Compressor power
-        5. Calculate cooling power
-        6. Calculate FC efficiency & specific power
-        7.
-
-
-        """
-        # All power values in --> hp?? <--
-        self.shaft_power = self.w_mtow / self.w_p # CONNECT!!!  # convert to kg
+        # Engine power parameters
+        self.shaft_power = self.w_mtow / self.w_p
         self.electric_net = self.shaft_power / self.n_ee
-        self.m_electric_engine = self.engine_power / 5 # engine power: [kW]
-        self.pmad_power = self.engine_power / self.n_pmad
-        self.m_pmad = self.pmad_power / self.rho_pmad
+        self.m_electric_engine = self.electric_net / self.rho_ee
 
-        self.fc_power = self.pmad_power / self.n_fc
-        self.m_fuel_cell = self.fc_power / 2
+        # Parts of fuel cell power equation
+        self.delta_t_func = 0.0038 * (self.T_air / self.delta_T) ** 2 + 0.0352 * (self.T_air / self.delta_T) + 0.1817
+        part1 = (1 - 1/self.n_fc) * self.delta_t_func
+        part2 = (self.T_t1-self.T_t2) *self.c_p_air*2.856*10**-7*self.lamda_o2/(self.n_fc*self.n_ee)
+        part3 = self.electric_net + 1.33 * self.delta_t_func * self.watts_to_horsepower
+
+        # Calculate Powers
+        self.fc_power = part3/(1+0.371*part1 + part2)
+        self.cool_power = (-1*part1 * self.fc_power *0.371 + 1.33 * self.watts_to_horsepower) * self.delta_t_func
         self.waste_heat_power = (1 / self.n_fc - 1) * self.fc_power
         self.comp_power = -1*part2 *self.fc_power
 
@@ -238,61 +218,43 @@ class Aircraft(WingAndPowerSizing):
         self.m_fuselage.append(0.052*(self.length_fus[-1]*self.diameter_fus*np.pi)**1.086*(self.w_design*self.limit_load*self.limit_factor)**0.117*self.lh**(-0.051)*(self.CL_CD_cruise)**(-0.072)*self.q**0.241+11.9+(self.pressurised_volume*8)**0.271)
         self.m_wing.append(0.036*self.surface_wing**(0.758)*(800*2.208)**0.0035*(self.AR/(np.cos(self.sweep_angle)**2))**0.6*self.q**(0.006)*self.taper_ratio**0.04*(100*self.t_c/(np.cos(self.sweep_angle)))**-0.3*(self.limit_factor*self.limit_load*self.w_design)**0.49)
 
-        ###### Horizontal stabilizer mass ######
-
+        # Horizontal stabilizer mass
         self.m_h = 0.016*(self.limit_factor*self.limit_load*self.w_design)**0.414*self.q**(0.168)*self.surface_controlh**(0.896)*\
                  (100*self.t_c/np.cos(self.sweep_angle_horizontal))**(-0.12)
 
-        ###### Vertical stabilizer mass######
-
+        # Vertical stabilizer mass
         self.m_v = 0.073*(1+0.2*(Ht_Hv))*(1.5*2.5*self.w_design)**0.376*self.q**0.122*self.surface_controlv**(0.873)*\
                    (100*self.t_c/(np.cos(self.sweep_angle_vertical)))**(-0.49)*\
                    (self.AR/(np.cos(self.sweep_angle_vertical)**2))**(0.357)*(self.taper_ratiov)**0.039  #checked
 
 
-        ###### Installed Engine mass#######
+        ###### Update installed Engine mass#####
 
-        self.w_installedEngine = 2.575 * 2 * self.w_engine**0.922
+        self.powertrain_mass()
 
         ###### Landing Gear Group mass#####
 
         self.m_mlg = 0.095 * (self.ult_factor * self.w_mtow) ** 0.768 * (self.length_mlg / 12) ** 0.409
         self.m_nlg = 0.125 * (self.ult_factor * self.w_mtow) ** 0.566 * (self.length_nlg / 12) ** 0.845
         self.w_flightcontrols = 0.053 * self.length_fus[-1]**(1.536) * self.b_w ** (0.371) * (self.limit_factor*self.limit_load*self.w_design*10e-4)**0.8
-
-        ###### hydraulics mass ######
-
-        self.w_hydraulics = 0.001 * self.w_design # checked
-
-        ###### Electrical system mass ######
-
-        self.w_electrical = 12.57 * (self.w_fuelsystem+self.w_avionics) ** 0.51 # checked
-
-        ###### Avionics mass ######
-
+        self.w_hydraulics = 0.001 * self.w_design
+        self.w_electrical = 12.57 * (self.w_fuelsystem+self.w_avionics) ** 0.51
         self.w_avionics = 2.177*800**0.933  # fine
-
-        ###### AC and Icing mass #######
-
-        self.w_icing = 0.265 * self.w_design ** 0.52 * self.n_passengers**0.68 * self.w_avionics ** 0.07 * self.Mach * 0.08 # checked
-
-        ###### Furnishing mass #######
-
-        self.w_furnishing = 0.0582 * self.w_design - 65 # checked
+        self.w_icing = 0.265 * self.w_design ** 0.52 * self.n_passengers**0.68 * self.w_avionics ** 0.07 * self.Mach * 0.08
+        self.w_furnishing = 0.0582 * self.w_design - 65
 
         ###### updating OEW ########
 
         self.w_fuel = self.w_fuel *self.oew()/self.w_oew
         self.fuel_volume = self.w_fuel*2.8 / (71 * self.kg_to_pounds / (self.meters_to_feet ** 3))
-        self.w_fuelsystem = 2.49*self.fuel_volume**0.726*(1/(1+1.1))**0.363*2**0.242*2**0.157  # self.shaft_power / 2  COMPLETE FORMULA
-
+        self.w_fuelsystem = 2.49*self.fuel_volume**0.726*(1/(1+1.1))**0.363*2**0.242*2**0.157
 
         self.w_oew = (self.m_fuselage[-1] + self.m_h + self.m_v + self.m_wing[-1] + self.w_furnishing +
                      self.w_icing + self.w_electrical + self.w_avionics + self.w_fuelsystem
-                     + self.w_flightcontrols + self.w_installedEngine + self.w_hydraulics) # checked
+                     + self.w_flightcontrols + self.w_installedEngine + self.w_hydraulics)
 
         ###### updating MTOW ########
-        self.w_mtow = self.w_oew +self.w_payload + self.w_fuel # ch
+        self.w_mtow = self.w_oew +self.w_payload + self.w_fuel
 
         self.iter += 1
 
@@ -311,7 +273,7 @@ class Aircraft(WingAndPowerSizing):
         print('%.2f' % (parameter / self.meters_to_feet), ' m')
 
     def print_mass(self, parameter):
-        print('%.2f' % (parameter / self.kg_to_pounds), ' kg' )
+        print('%.2f' % (parameter / self.kg_to_pounds), ' kg')
 
     def print_power(self, parameter):
         print('%.2f' % (parameter / 1000 * self.watts_to_horsepower), ' kW')
@@ -360,6 +322,22 @@ class Aircraft(WingAndPowerSizing):
         print('MTOW = ', self.w_mtow/self.kg_to_pounds , 'kg')
         print('OEW Mainsizing = ', self.w_oew*0.45 , 'kg')
         print('Wing Area = ', self.surface_wing/(3.28**2), 'm^2')
+        print('FUEL MASS:')
+        self.print_mass(self.w_fuel)
+
+        print('Compressor power = ', self.comp_power/self.watts_to_horsepower/1000)
+        print('FC power = ', self.fc_power/self.watts_to_horsepower/1000)
+        print('cooling power:', self.cool_power/self.watts_to_horsepower/1000)
+        print('cooling system mass:')
+        self.print_mass(self.m_cooling)
+        print('compressor mass:')
+        self.print_mass(self.m_comp)
+        print('fuel cell mass:')
+        self.print_mass(self.m_fuel_cell)
+        print('electric engine mass:')
+        self.print_mass(self.m_electric_engine)
+        print('Pressure ratio ', self.PR)
+        print('----------------')
 
     def plot_mass_progression(self):
         labels = ['fuselage', 'horizontal stab', 'vertical stab', 'wing', 'furnishing', ' de-icing', ' electronics', 'avionics', ' fuelsystem', ' flightcontrols',  'engine', ' hydraulics']
