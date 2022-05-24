@@ -85,7 +85,7 @@ class CenterOfGravity(Aircraft):
         return self.macpercent(cg_OEW), self.macpercent(cg_OEWpl), self.macpercent(cg_OEWfpl), self.macpercent(cg_OEWf)
         
     def fwd_aft(self):
-        return self.reverse_macpercent(min(self.cgandplot())), self.reverse_macpercent(max(self.reverse_macpercent(self.cgandplot())))
+        return self.reverse_macpercent(min(self.cgandplot(False))), self.reverse_macpercent(max(self.reverse_macpercent(self.cgandplot(False))))
 
 
 if __name__ == "__main__":
