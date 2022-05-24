@@ -8,13 +8,13 @@ from Estimations import Aircraft
 class CenterOfGravity(Aircraft):
     def __init__(self, MTOW):
         super().__init__(MTOW)
-        self.weights = super().cg_lists()[0]
-        self.fus_cg_locations = super().cg_lists()[1]
-        self.wing_cg_locations = super().cg_lists()[2]
+        self.weights = self.cg_lists()[0]
+        self.fus_cg_locations = self.cg_lists()[1]
+        self.wing_cg_locations = self.cg_lists()[2]
         self.massfractions = dict()
         self.locations = dict()
         self.bitchassfraction = 0.25
-        self.mac = super.cg_lists()[3]
+        self.mac = self.cg_lists()[3]
 
     def massfractions(self):
         for entry in self.weights:
