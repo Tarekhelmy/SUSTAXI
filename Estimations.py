@@ -124,7 +124,9 @@ class Aircraft(WingAndPowerSizing):
         self.taper_ratio = 0.3
         self.taper_ratioh = 1
         self.taper_ratiov = 0.8
-        self.mac = self.root_chord * 2 / 3 * (1 + self.taper_ratio + self.taper_ratio ** 2) / (1 + self.taper_ratio)
+        # self.mac = self.root_chord * 2 / 3 * (1 + self.taper_ratio + self.taper_ratio ** 2) / (1 + self.taper_ratio)
+        # Mean Geometric Chord assumption
+        self.mac = 1.85
 
 
         ####### Class 1 Statistical Data ############

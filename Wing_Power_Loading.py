@@ -64,8 +64,8 @@ class WingAndPowerSizing    :
         self.landing_fraction = 0.95
         self.ground_distance = 1500 #[m]
         self.n_p = 0.85
-        self.cruise_altitude = 10000 # m
-        self.AR = 9
+        self.cruise_altitude = 5000 # m
+        self.AR = 10
         self.cruise_speed = 500 / 3.6
         self.rho = 1.225
         self.pressure = 101325
