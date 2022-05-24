@@ -206,7 +206,10 @@ class Aircraft(WingAndPowerSizing):
         # self.w_installedEngine = 1.2 * (self.m_electric_engine + self.m_fuel_cell + self.m_pmad + self.m_cooling + self.m_comp)
 
     def class2(self):
-        self.w_design = self.w_oew -self.w_crew
+        kg_to_pounds = 2.20462
+        meters_to_feet = 3.28084
+        watts_to_horsepower = 0.00134102
+        self.w_design = self.w_oew - self.w_crew
         Ht_Hv = 1
         ###### Link for mass estimations used #######
 
@@ -214,7 +217,6 @@ class Aircraft(WingAndPowerSizing):
         ###### https://brightspace.tudelft.nl/d2l/le/content/419892/viewContent/2368629/View ######  <--- all raymer formulas
 
         ###### Fuselage mass ######
-
 
         self.pressurised_volume = self.diameter_fus**2*np.pi*self.length_fus[-1]/4
         self.m_fuselage.append(0.052*(self.length_fus[-1]*self.diameter_fus*np.pi)**1.086*(self.w_design*self.limit_load*self.limit_factor)**0.117*self.lh**(-0.051)*(self.CL_CD_cruise)**(-0.072)*self.q**0.241+11.9+(self.pressurised_volume*8)**0.271)
@@ -272,7 +274,7 @@ class Aircraft(WingAndPowerSizing):
 
         ###### Fuel System mass #######
 
-        self.w_fuelsystem =  400  # self.shaft_power / 2  COMPLETE FORMULA
+        #self.w_fuelsystem =  400  # self.shaft_power / 2  COMPLETE FORMULA
         # Reference Formula from Raymer :
 
         ###### Flight controls mass ######
@@ -302,6 +304,8 @@ class Aircraft(WingAndPowerSizing):
         ###### updating OEW ########
 
         self.w_fuel = self.w_fuel *self.oew()/self.w_oew
+        self.fuel_volume = self.w_fuel*2.8 / (71 * kg_to_pounds / (meters_to_feet ** 3))
+        self.w_fuelsystem = 2.49*self.fuel_volume**0.726*(1/(1+1.1))**0.363*2**0.242*2**0.157  # self.shaft_power / 2  COMPLETE FORMULA
 
         self.w_oew = (self.m_fuselage[-1] + self.m_h + self.m_v + self.m_wing[-1] + self.w_furnishing +
                      self.w_icing + self.w_electrical + self.w_avionics + self.w_fuelsystem
@@ -389,6 +393,8 @@ class Aircraft(WingAndPowerSizing):
 
         print('fuel system mass', self.w_fuelsystem)
         print('--------')
+        print('MTOW Mainsizing = ', self.w_mtow*0.45 , 'kg')
+        print('Max Power= ',self.w_mtow/(self.w_p*watts_to_horsepower)/kg_to_pounds , ' Watt')
         print(self.w_p *9.81 /kg_to_pounds *watts_to_horsepower)
         print('Power  = ',self.w_mtow/self.w_p/watts_to_horsepower , 'W')
         print('MTOW = ', self.w_mtow/kg_to_pounds , 'kg')
