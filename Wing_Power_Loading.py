@@ -70,7 +70,7 @@ class WingAndPowerSizing    :
         self.rho = 1.225
         self.pressure = 101325
         self.temperature = 288.15
-        self.c = 5
+        self.c = 12
         self.CL_CD_TO = self.CLmax_TO/(self.CD0_TO + (self.CLmax_TO**2/(self.Oswald_TO*self.AR*np.pi)))
         self.CL_CD_cruise = self.CLmax_clean/(self.CD0_clean + (self.CLmax_clean**2/(self.Oswald_clean*self.AR*np.pi)))
         self.CL_CD_L = self.CLmax_land/(self.CD0_land + (self.CLmax_land**2/(self.Oswald_land*self.AR*np.pi)))
@@ -151,7 +151,7 @@ class WingAndPowerSizing    :
         self.W_P = self.cruise(self.W_S)
         self.S = self.MTOW / self.W_S
         self.P = self.MTOW / self.W_P
-        return self.W_S , self.W_P
+        return self.W_S, self.W_P
 
     def print_ac_params(self):
         self.W_S,self.W_P = self.find_DP()
@@ -161,6 +161,6 @@ class WingAndPowerSizing    :
         print("Total Power = %.2f" % (self.P / 1000), " kW")
 
 if __name__ == '__main__':
-    Aircraft  = WingAndPowerSizing(5500 * 9.81)
+    Aircraft = WingAndPowerSizing(5500 * 9.81)
     Aircraft.plot_power(landing=True, cruise=True)
     Aircraft.print_ac_params()
