@@ -47,14 +47,13 @@ ISA_temperature = 288.15
 gravity =9.81
 
 class WingAndPowerSizing    :
-    def __init__(self, MTOW):
+    def __init__(self):
         self.clean_stall_speed = 46.2 # [m/s]
         self.ff_stall_speed = 40.4 #[m/s]
 
         self.CLmax_clean = 1.5
         self.CLmax_TO = 2.0
-        self.CLmax_land = 2.4
-        self.MTOW = MTOW
+        self.CLmax_land = 2.1
         self.Oswald_clean = 0.78
         self.Oswald_TO = 0.83
         self.Oswald_land = 0.88
@@ -65,6 +64,7 @@ class WingAndPowerSizing    :
         self.ground_distance = 1500 #[m]
         self.n_p = 0.85
         self.cruise_altitude = 5000 # m
+        self.MTOW = 0
         self.AR = 10
         self.cruise_speed = 500 / 3.6
         self.rho = 1.225
@@ -116,6 +116,7 @@ class WingAndPowerSizing    :
         #print(rho/ISA_density)
         return y
 
+
     def climbrate(self,x):
 
         y = (self.n_p / (self.c + np.sqrt(x)*np.sqrt(2/ISA_density)/
@@ -149,18 +150,18 @@ class WingAndPowerSizing    :
     def find_DP(self):
         self.W_S = self.clean_stall()
         self.W_P = self.cruise(self.W_S)
-        self.S = self.MTOW / self.W_S
-        self.P = self.MTOW / self.W_P
+        # self.S = self.MTOW / self.W_S
+        # self.P = self.MTOW / self.W_P
         return self.W_S, self.W_P
 
     def print_ac_params(self):
         self.W_S,self.W_P = self.find_DP()
         print("Wing Loading = %.2f" % self.W_S, " N/m^2")
         print("Power Loading = %.3f" % self.W_P, " N/w")
-        print("Wing Area = %.2f" % self.S, " m^2")
-        print("Total Power = %.2f" % (self.P / 1000), " kW")
+        # print("Wing Area = %.2f" % self.S, " m^2")
+        # print("Total Power = %.2f" % (self.P / 1000), " kW")
 
 if __name__ == '__main__':
-    Aircraft = WingAndPowerSizing(5500 * 9.81)
+    Aircraft = WingAndPowerSizing()
     Aircraft.plot_power(landing=True, cruise=True)
     Aircraft.print_ac_params()

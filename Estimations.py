@@ -6,10 +6,8 @@ import math
 
 class Aircraft(WingAndPowerSizing):
 
-
-
-    def __init__(self, MTOW):
-        super().__init__(MTOW)
+    def __init__(self):
+        super().__init__()
         kg_to_pounds = 2.20462
         meters_to_feet = 3.28084
         watts_to_horsepower = 0.00134102
@@ -179,10 +177,32 @@ class Aircraft(WingAndPowerSizing):
     def powertrain_mass(self):
 
         """
-        from shaft power find:
-        --> engine input power
-        -->
+        Parameters:
+            n_em [x]
+            n_fc [x]
+            n_pmad [v]
+            PR_comp [x] this week
+            n_comp p[x] this week
+            rho_comp [x]
+            rho_pmad [v]
+            rho_em [x]
+            rho_fc [x]
+
+
+        1. Get Shaft Power - DONE
+        2. Calculate Electric power to produce
+           The required shaft power. -- EM efficiency
+        2.a. get EM specific power [W/kg]
+        3. Get the efficiency of the PMAD system
+        4. Calculate Compressor power
+        5. Calculate cooling power
+        6. Calculate FC efficiency & specific power
+        7.
+
+
         """
+
+
 
 
 
@@ -393,8 +413,6 @@ class Aircraft(WingAndPowerSizing):
 
         print('fuel system mass', self.w_fuelsystem)
         print('--------')
-        print('MTOW Mainsizing = ', self.w_mtow*0.45 , 'kg')
-        print('Max Power= ',self.w_mtow/(self.w_p*watts_to_horsepower)/kg_to_pounds , ' Watt')
         print(self.w_p *9.81 /kg_to_pounds *watts_to_horsepower)
         print('Power  = ',self.w_mtow/self.w_p/watts_to_horsepower , 'W')
         print('MTOW = ', self.w_mtow/kg_to_pounds , 'kg')
@@ -426,13 +444,15 @@ class Aircraft(WingAndPowerSizing):
 
     def landinggearsizing(self):
 
+
         pass
 
     def empennagesizing(self):
 
+
         pass
 
-aircraft = Aircraft(3000)
+aircraft = Aircraft()
 aircraft.classiter()
 aircraft.mainsizing()
 aircraft.printing()
