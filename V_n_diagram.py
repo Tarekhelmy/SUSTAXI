@@ -1,28 +1,31 @@
-from lib2to3.pgen2.token import VBAR
 import numpy as np
 import matplotlib.pyplot as plt
 from Estimations import Aircraft
 from Wing_Power_Loading import WingAndPowerSizing
 
-class VNDiagram(WingAndPowerSizing,Aircraft):
+class VNDiagram(Aircraft):
+
     def __init__(self):
         super().__init__()
         self.density = 0
         self.W_S = 0
         self.negloadfactor = 0
-        # From CS-23
         self.CLcurve = 0
-        # DATCOM method
         self.mu = 0
         self.alleviationfactor = 0
+
     def initialising(self):
-        # From CS-23
+        self.classiter()
+        self.mainsizing()
+
+        self.loadfactor = 2.1 + 24000 / (self.w_mtow + 10000)
         self.mac = 1.85
         self.Mach = self.cruise_speed / (np.sqrt(1.4 * 287 * self.ISA(self.cruise_altitude)[1]))
         self.density = self.ISA(self.cruise_altitude)[2]
         self.W_S = self.find_DP()[0]
+
         self.negloadfactor = -0.4 * self.loadfactor
-        # From CS-24
+        # From CS-23
         self.CLcurve = (2 * np.pi * self.AR * 1.2) / (2 + np.sqrt(
             4 + (self.AR * 1.2 * np.sqrt(1 - self.Mach ** 2) / 0.95) ** 2 * (1 + 1 / (1 - self.Mach ** 2))))
         # DATCOM method
@@ -32,7 +35,8 @@ class VNDiagram(WingAndPowerSizing,Aircraft):
         self.alleviationfactor = 0.88 * self.mu / (5.3 + self.mu)
 
     def V_n_diag(self):
-        
+        self.initialising()
+
         VA = np.sqrt((self.loadfactor * self.W_S) / (0.5 * self.density * self.CLmax_land))
         loading = [0.5 * self.density * V ** 2 * self.CLmax_land / self.W_S for V in np.linspace(0, VA, 500)]
 
@@ -42,7 +46,7 @@ class VNDiagram(WingAndPowerSizing,Aircraft):
         #Taken from CS-23
 
         VS = np.sqrt((-self.negloadfactor * self.W_S) / (0.5 * self.density * self.CLmax_land))
-        #This occurs at load factor of 1
+        #This occurs at the negative load factor
 
         negativeloading = [-0.5 * self.density * V ** 2 * self.CLmax_land / self.W_S for V in np.linspace(0, VS, 500)]
         #Negative curve is the same as the one before but with its sign changed
@@ -130,8 +134,8 @@ class VNDiagram(WingAndPowerSizing,Aircraft):
     """
 
 if __name__ == "__main__":
-    diagram = VNDiagram(5500 * 9.81)
+    diagram = VNDiagram()
     diagram.V_n_diag()
-    print(f"The ultimate load factor for this iteration is:{diagram.get_critical_loadfactor() * 1.5}")
+    print(f"The ultimate load factor for this iteration is: {diagram.get_critical_loadfactor() * 1.5}")
 
             
