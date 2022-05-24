@@ -6,8 +6,8 @@ from Estimations import Aircraft
 # weights, fus_cg_locations, wing_cg_locations, mac = aircraft.cg_lists()
 
 class CenterOfGravity(Aircraft):
-    def __init__(self, MTOW):
-        super().__init__(MTOW)
+    def __init__(self):
+        super().__init__()
         self.weights = self.cg_lists()[0]
         self.fus_cg_locations = self.cg_lists()[1]
         self.wing_cg_locations = self.cg_lists()[2]
@@ -16,9 +16,10 @@ class CenterOfGravity(Aircraft):
         self.bitchassfraction = 0.25
         self.mac = self.cg_lists()[3]
 
-    def massfractions(self):
+    def massfraction(self):
         for entry in self.weights:
             self.massfractions[entry] = self.weights[entry] / self.weights["mtow"]
+        pass
 
     def macpercent(self, cg):
         return (cg - self.locations["lemac"]) / self.mac
@@ -53,7 +54,7 @@ class CenterOfGravity(Aircraft):
 
 
     def cgandplot(self, plot=False):
-        self.massfractions()
+        self.massfraction()
         self.lemac_oew_pl_fuel()
 
         cg_OEW = self.locations["oew"]
@@ -88,7 +89,7 @@ class CenterOfGravity(Aircraft):
 
 
 if __name__ == "__main__":
-    cg = CenterOfGravity(5500 * 9.81)
+    cg = CenterOfGravity()
     cg.cgandplot(True)
     print(f"The most forward center of gravity is at: {cg.fwd_aft()[0]} m")
     print(f"The most aft center of gravity location is at: {cg.fwd_aft()[1]} m")
