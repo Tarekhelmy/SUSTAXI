@@ -68,24 +68,27 @@ class CenterOfGravity(Aircraft):
             plt.grid()
             plt.title("Class 1 Loading Diagram")
 
-            plt.plot(self.macpercent(cg_OEW), self.massfractions["oew"], color="blue", label="OEW cg location")
-            plt.plot(self.macpercent(cg_OEWpl), self.massfractions["oew"] + self.massfractions["payload"], color="blue", label="OEW + payload cg location")
-            plt.plot(self.macpercent(cg_OEWfpl), self.massfractions["oew"] + self.massfractions["payload"] + self.massfractions["fuel"], color="blue", label="OEW + payload + fuel cg location")
-            plt.plot(self.macpercent(cg_OEWf), self.massfractions["oew"] + self.massfractions["fuel"], color="blue", label="OEW + fuel cg location")
+            plt.plot(self.macpercent(cg_OEW), self.massfractions["oew"], marker="o", color="blue", label="OEW cg location")
+            plt.plot(self.macpercent(cg_OEWpl), self.massfractions["oew"] + self.massfractions["payload"], marker="o", color="blue", label="OEW + payload cg location")
+            plt.plot(self.macpercent(cg_OEWfpl), self.massfractions["oew"] + self.massfractions["payload"] + self.massfractions["fuel"], color="blue", marker="o", label="OEW + payload + fuel cg location")
+            plt.plot(self.macpercent(cg_OEWf), self.massfractions["oew"] + self.massfractions["fuel"], marker="o", color="blue", label="OEW + fuel cg location")
 
             plt.ylim(0, 1.2)
             plt.xlim(-0.1, 1.1)
             plt.xlabel("Percentage of MAC [%]")
             plt.ylabel("Mass fraction [-]")
-            plt.legend(location="upper right", fontsize="small")
+            plt.legend(loc="upper right", fontsize="small")
 
             plt.show()
             plt.close(1)
 
-        return self.macpercent(cg_OEW), self.macpercent(cg_OEWpl), self.macpercent(cg_OEWfpl), self.macpercent(cg_OEWf)
+        return cg_OEW, cg_OEWpl, cg_OEWfpl, cg_OEWf
         
     def fwd_aft(self):
-        return self.reverse_macpercent(min(self.cgandplot(False))), self.reverse_macpercent(max(self.reverse_macpercent(self.cgandplot(False))))
+        return min(self.cgandplot(False)), max(self.cgandplot(False))
+
+    def potato_plot(self):
+        pass
 
 
 if __name__ == "__main__":
