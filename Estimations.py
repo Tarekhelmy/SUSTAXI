@@ -82,7 +82,7 @@ class Aircraft(WingAndPowerSizing):
 
         ########## Payload Masses ###########
         self.w_fuel = 0
-        self.w_paylaod = 800*kg_to_pounds
+        self.w_payload = 800*kg_to_pounds
 
         ######### Performance ###########
         self.L_D_cruise = self.CL_CD_cruise
@@ -165,14 +165,14 @@ class Aircraft(WingAndPowerSizing):
         f2 = 1/loiter_fraction
         if self.iter>1:
             self.w_fuel = self.fuel_factor * (1 + self.f_res) * self.w_mtow*40/120
-            self.w_oew = self.w_mtow - self.w_fuel - self.w_paylaod
+            self.w_oew = self.w_mtow - self.w_fuel - self.w_payload
             self.surface_wing = self.w_mtow / self.w_s
             self.b_w = np.sqrt(self.AR * self.surface_wing)
         else:
             self.fuel_factor = 1-(f1*f2*self.fractions)
-            self.w_mtow = (self.w_paylaod + self.b + self.w_crew) / (1 - self.a - self.fuel_factor * (1 + self.f_res)*40/120)
+            self.w_mtow = (self.w_payload + self.b + self.w_crew) / (1 - self.a - self.fuel_factor * (1 + self.f_res)*40/120)
             self.w_fuel = self.fuel_factor * (1 + self.f_res) * self.w_mtow*40/120
-            self.w_oew = self.w_mtow - self.w_fuel - self.w_paylaod
+            self.w_oew = self.w_mtow - self.w_fuel - self.w_payload
             self.surface_wing = self.w_mtow / self.w_s
             self.b_w = np.sqrt(self.AR * self.surface_wing)
 
@@ -312,7 +312,7 @@ class Aircraft(WingAndPowerSizing):
                      + self.w_flightcontrols + self.w_installedEngine + self.w_hydraulics) # checked
 
         ###### updating MTOW ########
-        self.w_mtow = self.w_oew +self.w_paylaod + self.w_fuel # ch
+        self.w_mtow = self.w_oew +self.w_payload + self.w_fuel # ch
 
         self.iter += 1
 
@@ -324,7 +324,7 @@ class Aircraft(WingAndPowerSizing):
         return oew
 
     def mtow(self):
-        mtow = self.oew() + self.w_fuel + self.w_paylaod
+        mtow = self.oew() + self.w_fuel + self.w_payload
         return mtow
 
     def mainsizing(self):
