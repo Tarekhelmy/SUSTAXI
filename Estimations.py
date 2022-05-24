@@ -97,7 +97,7 @@ class Aircraft(WingAndPowerSizing):
         self.CLw_alpha = 0
         self.Mach = self.V/340
         self.w_s = self.find_DP()[0] / (9.81/kg_to_pounds*meters_to_feet**2)
-        self.w_p = self.find_DP()[1] / (9.81*watts_to_horsepower/kg_to_pounds)
+        self.w_p = self.find_DP()[1] *kg_to_pounds / (9.81*watts_to_horsepower)
 
         ########## Geometrical parameters #############
         self.length_fus = [13 * meters_to_feet]
@@ -120,6 +120,7 @@ class Aircraft(WingAndPowerSizing):
         self.sweep_angle_vertical = 30 * np.pi / 180
         self.q = 0.5 * 1.225 * (self.V)**2 * (kg_to_pounds / (meters_to_feet**2))
         self.taper_ratio = 0.4
+        self.lamda = self.taper_ratio
         self.root_chord = 2.5
         self.taper_ratio = 0.3
         self.taper_ratioh = 1
@@ -216,7 +217,7 @@ class Aircraft(WingAndPowerSizing):
 
         ###### Powertrain mass ######
         # All power values in --> kW <--
-        self.shaft_power = self.w_mtow / self.W_P # CONNECT!!!  #convert to kg
+        self.shaft_power = self.w_mtow / self.w_p # CONNECT!!!  #convert to kg
         # self.engine_power = self.shaft_power / self.n_ee
         # self.m_electric_engine = self.engine_power / 5 # engine power: [kW]
         # self.pmad_power = self.engine_power / self.n_pmad
@@ -247,7 +248,7 @@ class Aircraft(WingAndPowerSizing):
 
         ###### Fuel System mass #######
 
-        self.w_fuelsystem = 400  # self.shaft_power / 2  COMPLETE FORMULA
+        self.w_fuelsystem =  400  # self.shaft_power / 2  COMPLETE FORMULA
         # Reference Formula from Raymer :
 
         ###### Flight controls mass ######
@@ -264,7 +265,7 @@ class Aircraft(WingAndPowerSizing):
 
         ###### Avionics mass ######
 
-        # self.w_avionics = self.w_avionics  # fine
+        self.w_avionics = 2.177*800**0.933  # fine
 
         ###### AC and Icing mass #######
 
@@ -362,7 +363,9 @@ class Aircraft(WingAndPowerSizing):
         print('dyn pressure',self.q / (kg_to_pounds * meters_to_feet))
         print('pressurized volume',self.pressurised_volume * 0.3048 ** 3)
         print('--------')
-
+        print(self.w_p *9.81 /kg_to_pounds *watts_to_horsepower)
+        print('Power  = ',self.w_mtow/self.w_p/watts_to_horsepower , 'W')
+        print('MTOW = ', self.w_mtow/kg_to_pounds , 'kg')
         print('OEW Mainsizing = ', self.w_oew*0.45 , 'kg')
         print('Wing Area = ', self.surface_wing/(3.28**2), 'm^2')
 

@@ -154,7 +154,7 @@ class WingAndPowerSizing    :
         return self.W_S , self.W_P
 
     def print_ac_params(self):
-        self.find_DP()
+        self.W_S,self.W_P = self.find_DP()
         print("Wing Loading = %.2f" % self.W_S, " N/m^2")
         print("Power Loading = %.3f" % self.W_P, " N/w")
         print("Wing Area = %.2f" % self.S, " m^2")
