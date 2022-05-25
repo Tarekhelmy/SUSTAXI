@@ -123,7 +123,6 @@ class Aircraft(WingAndPowerSizing):
         self.taper_ratio = 0.4
         self.lamda = self.taper_ratio
         self.root_chord = 2.5
-        self.taper_ratio = 0.3
         self.taper_ratioh = 1
         self.taper_ratiov = 0.8
         self.mac = 1.85  # Assumed
