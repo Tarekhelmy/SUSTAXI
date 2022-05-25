@@ -16,6 +16,20 @@ class CenterOfGravity(Aircraft):
         self.oew_cg_mac = 0.25
         self.mac = self.cg_lists()[3]
 
+    def updatecg(self):
+        self.procedures()
+        # all positions are (x_cg - lemac) / mac
+        self.x_engine_cg = -0.1
+        self.x_battery = 0.45
+        self.x_empennage_cg = 0.9*self.length_fus  # - lemac / mac
+        self.x_cargopayload = 0.9*self.length_fus
+        self.x_payload_cg = ((5.1*0.5+ self.cockpitlength)*(self.w_payload-200*self.kg_to_pounds) + (self.x_cargopayload)*200)/self.w_payload
+        self.x_crew = 2/5 *self.cockpitlength
+
+        #fuselage cg is already calculated
+        #fuselage
+
+
     def massfraction(self):
         for entry in self.weights:
             self.massfractions[entry] = self.weights[entry] / self.weights["mtow"]
