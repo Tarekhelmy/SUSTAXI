@@ -4,7 +4,6 @@ from Estimations import Aircraft
 from Wing_Power_Loading import WingAndPowerSizing
 
 class VNDiagram(Aircraft):
-
     def __init__(self):
         super().__init__()
         self.density = 0
