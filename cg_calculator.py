@@ -10,16 +10,16 @@ class CenterOfGravity(Aircraft):
         super().__init__()
         self.procedures()
         self.updatecg()
-        self.weights = self.cg_lists()[0]
-        self.fus_cg_locations = self.cg_lists()[1]
-        self.wing_cg_locations = self.cg_lists()[2]
+        self.weight = self.cg_lists()
+        self.weights = self.weight[0]
+        self.fus_cg_locations = self.weight[1]
+        self.wing_cg_locations = self.weight[2]
         self.massfractions = dict()
         self.locations = dict()
-        self.oew_cg_mac = 0.25
-        self.mac = self.cg_lists()[3]
+        self.lemac = 26  # ft
+        self.mac = self.weight[3]
 
     def updatecg(self):
-        self.procedures()
         # all positions are (x_cg - lemac) / mac
         self.x_engine_cg = -0.1
         self.x_battery = 0.45
@@ -44,7 +44,7 @@ class CenterOfGravity(Aircraft):
         return maccg * self.mac + self.locations["lemac"]
 
     def lemac_oew_pl_fuel(self):
-        fus_masses = ["fuselage", "empennage", "mlg", "nlg", "crew", "fuelsystem"]
+        fus_masses = ["fuselage", "empennage", "crew", "fuelsystem"]
         wing_masses = ["wing", "battery", "engine"]
         mass_fcg, product_fcg = 0, 0
         mass_wcg, product_wcg = 0, 0
@@ -58,12 +58,13 @@ class CenterOfGravity(Aircraft):
             product_wcg += self.weights[name] * self.wing_cg_locations[name]
 
         x_fcg = product_fcg / mass_fcg
-        x_wcg = self.mac * product_wcg / mass_wcg
+        x_wcg = self.mac * product_wcg / mass_wcg  + self.lemac
 
-        x_lemac = x_fcg + self.mac * ( (x_wcg / self.mac) * (mass_wcg / mass_fcg) - self.oew_cg_mac * (1 + mass_wcg / mass_fcg))
-        x_oew = x_lemac + self.oew_cg_mac * self.mac
+        self.oew_cg_mac  =  (((mass_fcg*x_fcg + mass_wcg*x_wcg )/((mass_fcg+mass_wcg))) - self.lemac)/self.mac
+        # x_lemac = x_fcg + self.mac * ( (x_wcg / self.mac) * (mass_wcg / mass_fcg) - self.oew_cg_mac * (1 + mass_wcg / mass_fcg))
+        x_oew = self.lemac + self.oew_cg_mac * self.mac
 
-        self.locations["lemac"] = x_lemac
+        self.locations["lemac"] = self.lemac
         self.locations["oew"] = x_oew
         self.locations["payload"] = self.fus_cg_locations["payload"]
         self.locations["fuel"] = self.fus_cg_locations["fuel"]
@@ -73,6 +74,9 @@ class CenterOfGravity(Aircraft):
         self.updatecg()
         self.massfraction()
         self.lemac_oew_pl_fuel()
+        print(self.x_payload_cg/self.meters_to_feet)
+        print(self.locations['lemac']/self.meters_to_feet)
+        print(self.length_fus[-1]/self.meters_to_feet)
         cg_OEW = self.locations["oew"]
         cg_OEWpl = (self.massfractions["payload"] * self.locations["payload"] + self.massfractions["oew"] * self.locations["oew"]) / (self.massfractions["oew"] + self.massfractions["payload"])
         cg_OEWfpl = (self.massfractions["payload"] * self.locations["payload"] + self.massfractions["oew"] * self.locations["oew"] + self.massfractions["fuel"] * self.locations["fuel"]) / (self.massfractions["fuel"] + self.massfractions["payload"] + self.massfractions["oew"])

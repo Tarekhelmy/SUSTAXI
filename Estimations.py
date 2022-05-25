@@ -381,7 +381,8 @@ class Aircraft(WingAndPowerSizing):
         self.mainsizing()
         self.cgcalc()
 
-aircraft = Aircraft()
-aircraft.procedures()
-# aircraft.printing()
+if __name__ == "__main__":
+    aircraft = Aircraft()
+    aircraft.procedures()
+    # aircraft.printing()
 
