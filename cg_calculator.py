@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from Estimations import Aircraft
+import os
 
 # aircraft = Aircraft()
 # weights, fus_cg_locations, wing_cg_locations, mac = aircraft.cg_lists()
@@ -18,7 +19,7 @@ class CenterOfGravity(Aircraft):
         self.locations = dict()
         self.lemac = 26  # ft
         self.mac = self.weight[3]
-
+        # self.positions = self.cgandplot(False)
     def updatecg(self):
         # all positions are (x_cg - lemac) / mac
         self.x_engine_cg = -0.1
@@ -28,9 +29,11 @@ class CenterOfGravity(Aircraft):
         self.x_payload_cg = (((5.1*0.5+ self.cockpitlength)*(self.w_payload-200*self.kg_to_pounds) + (self.x_cargopayload)*200)/self.w_payload)*self.meters_to_feet
         self.x_crew = 2/5 *self.cockpitlength
 
-        #fuselage cg is already calculated
-        #fuselage
 
+    def script(self):
+        self.updatecg()
+        self.massfraction()
+        self.lemac_oew_pl_fuel()
 
     def massfraction(self):
         for entry in self.weights:
@@ -69,14 +72,11 @@ class CenterOfGravity(Aircraft):
         self.locations["payload"] = self.fus_cg_locations["payload"]
         self.locations["fuel"] = self.fus_cg_locations["fuel"]
 
-
+    # before calling this, call script
     def cgandplot(self, plot=False):
-        self.updatecg()
-        self.massfraction()
-        self.lemac_oew_pl_fuel()
-        print(self.x_payload_cg/self.meters_to_feet)
-        print(self.locations['lemac']/self.meters_to_feet)
-        print(self.length_fus[-1]/self.meters_to_feet)
+        # print(self.x_payload_cg/self.meters_to_feet)
+        # print(self.locations['lemac']/self.meters_to_feet)
+        # print(self.length_fus[-1]/self.meters_to_feet)
         cg_OEW = self.locations["oew"]
         cg_OEWpl = (self.massfractions["payload"] * self.locations["payload"] + self.massfractions["oew"] * self.locations["oew"]) / (self.massfractions["oew"] + self.massfractions["payload"])
         cg_OEWfpl = (self.massfractions["payload"] * self.locations["payload"] + self.massfractions["oew"] * self.locations["oew"] + self.massfractions["fuel"] * self.locations["fuel"]) / (self.massfractions["fuel"] + self.massfractions["payload"] + self.massfractions["oew"])
@@ -97,7 +97,7 @@ class CenterOfGravity(Aircraft):
             plt.ylabel("Mass fraction [-]")
             plt.legend(loc="best", fontsize="small")
 
-            plt.show()
+            plt.savefig("cg")
             plt.close(1)
 
         return cg_OEW/self.meters_to_feet, cg_OEWpl/self.meters_to_feet, cg_OEWfpl/self.meters_to_feet, cg_OEWf/self.meters_to_feet
@@ -110,6 +110,7 @@ class CenterOfGravity(Aircraft):
 
 if __name__ == "__main__":
     cg = CenterOfGravity()
+    cg.script()
     positions = cg.cgandplot(True)
     print(f"The most forward center of gravity is at: {min(positions)} m")
     print(f"The most aft center of gravity location is at: {max(positions)} m")

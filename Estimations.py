@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import linregress
 from Wing_Power_Loading import WingAndPowerSizing
+from fuel_cell_optimization import FuelCellSizing
 
 class Aircraft(WingAndPowerSizing):
 
@@ -9,6 +10,8 @@ class Aircraft(WingAndPowerSizing):
         super().__init__()
 
         ##### Conversion factors ########
+
+        self.pm_it = 0
         self.kg_to_pounds = 2.20462
         self.meters_to_feet = 3.28084
         self.watts_to_horsepower = 0.00134102
@@ -78,7 +81,7 @@ class Aircraft(WingAndPowerSizing):
 
         self.n_ee = 0.9
         self.n_pmad = 0.9
-        self.n_fc = 0.6
+        self.n_fc = 0.45
         self.n_comp = 0.7
 
         self.m_comp = 0
@@ -96,6 +99,7 @@ class Aircraft(WingAndPowerSizing):
         self.engine_power = None
         self.comp_power = None
         self.fc_power = None
+        self.fc_des_power = self.fc_power
 
         self.delta_T = 25
         self.T_air = 250
@@ -132,6 +136,7 @@ class Aircraft(WingAndPowerSizing):
         self.payloadlength = 5.1
         # self.mac = self.root_chord * 2 / 3 * (1 + self.taper_ratio + self.taper_ratio ** 2) / (1 + self.taper_ratio)
 
+
         # tail volumes from https://onlinelibrary.wiley.com/doi/pdf/10.1002/9781118568101.app1
 
         ####### Class 1 Statistical Data ############
@@ -160,7 +165,8 @@ class Aircraft(WingAndPowerSizing):
         self.surface_controlv = self.vertical_volume / self.lv
         self.surface_controlh = self.horizontal_volume / self.lh
         self.component_matrix = []
-
+        self.FC = FuelCellSizing(10)
+        self.FC.fit_plots()
 
     def class1(self):
         cruise_fraction = np.exp(self.R*(9.81*self.c_p)/(self.efficiency*self.L_D_cruise))
@@ -180,8 +186,9 @@ class Aircraft(WingAndPowerSizing):
             self.surface_wing = self.w_mtow / self.w_s
             self.b_w = np.sqrt(self.AR * self.surface_wing)
 
-    def powertrain_mass(self):
 
+
+    def powertrain_mass(self):
         # Engine power parameters
         self.shaft_power = self.w_mtow / self.w_p
         self.electric_net = self.shaft_power / self.n_ee
@@ -195,7 +202,9 @@ class Aircraft(WingAndPowerSizing):
 
         # Calculate Powers
         self.fc_power = part3/(1+0.371*part1 + part2)
-        self.cool_power = (-1*part1 * self.fc_power *0.371 + 1.33 * self.watts_to_horsepower) * self.delta_t_func
+        #if self.pm_it == 0:
+        #    self.fc_des_power = self.fc_power
+        self.cool_power = (-1 * part1 * self.fc_power * 0.371 + 1.33 * self.watts_to_horsepower) * self.delta_t_func
         self.waste_heat_power = (1 / self.n_fc - 1) * self.fc_power
         self.comp_power = -1*part2 *self.fc_power
 
@@ -205,6 +214,29 @@ class Aircraft(WingAndPowerSizing):
         self.m_comp = self.comp_power / self.rho_comp                       # lbs <- hp / [hp/lbs]
         self.m_pmad = self.fc_power / self.rho_pmad
         self.w_installedEngine = 1.2 * (self.m_electric_engine + self.m_fuel_cell + self.m_pmad + self.m_cooling + self.m_comp)
+
+        mass_ratio = (self.w_fuel + self.w_fueltank) / self.m_fuel_cell
+        pmax_p = self.FC.prat(mass_ratio)
+        p_pmax = 1/pmax_p
+
+        print('mass ratio', mass_ratio)
+        print('power ratio', pmax_p)
+        print('FC efficiency', self.FC.nu(p_pmax))
+        #
+        # print(self.pm_it)
+
+        # self.fc_des_power = self.fc_power * pmax_p
+        # if (abs(self.FC.nu(p_pmax) - self.n_fc) < 0.01) and (self.pm_it < 50):
+        #     self.n_fc = self.FC.nu(p_pmax)
+        #
+        #     print('fuel cell efficiency converged')
+        # elif self.pm_it == 50:
+        #     print('fuel cell efficiency did not converge')
+        # else:
+        #     print('FC efficiency',self.FC.nu(p_pmax))
+        #     self.n_fc = self.FC.nu(p_pmax)
+        #     self.pm_it += 1
+        #     self.powertrain_mass()
 
     def class2(self):
 
@@ -228,16 +260,16 @@ class Aircraft(WingAndPowerSizing):
         self.m_v = 0.073*(1+0.2*(Ht_Hv))*(1.5*2.5*self.w_design)**0.376*self.q**0.122*self.surface_controlv**(0.873)*\
                    (100*self.t_c/(np.cos(self.sweep_angle_vertical)))**(-0.49)*\
                    (self.AR/(np.cos(self.sweep_angle_vertical)**2))**(0.357)*(self.taper_ratiov)**0.039  #checked
-
-
-        ###### Update installed Engine mass#####
-
+        # Installed Engine mass
+        self.pm_it = 0
         self.powertrain_mass()
 
-        ###### Landing Gear Group mass#####
 
+        # Landing Gear Group mass
         self.m_mlg = 0.095 * (self.ult_factor * self.w_mtow) ** 0.768 * (self.length_mlg / 12) ** 0.409
         self.m_nlg = 0.125 * (self.ult_factor * self.w_mtow) ** 0.566 * (self.length_nlg / 12) ** 0.845
+
+        # Miscellaneous subsystems
         self.w_flightcontrols = 0.053 * self.length_fus[-1]**(1.536) * self.b_w ** (0.371) * (self.limit_factor*self.limit_load*self.w_design*10e-4)**0.8
         self.w_hydraulics = 0.001 * self.w_design
         self.w_electrical = 12.57 * (self.w_fuelsystem+self.w_avionics) ** 0.51
@@ -332,12 +364,27 @@ class Aircraft(WingAndPowerSizing):
         self.print_power(self.fc_power, 'Fuel cell power')
         self.print_power(self.cool_power, 'cooling power')
 
+        print('Compressor power = ', self.comp_power/self.watts_to_horsepower/1000)
+        print('FC power = ', self.fc_power/self.watts_to_horsepower/1000)
+        print('cooling power:', self.cool_power/self.watts_to_horsepower/1000)
+        print('cooling system mass:')
+        self.print_mass(self.m_cooling)
+        print('compressor mass:')
+        self.print_mass(self.m_comp)
+        print('fuel cell mass:')
+        self.print_mass(self.m_fuel_cell)
+        print('electric engine mass:')
+        self.print_mass(self.m_electric_engine)
+        print('Pressure ratio ', self.PR)
+        print('----------------')
         print('\nPowertrain Mass Values:\n--------------')
         self.print_mass(self.m_cooling, 'Cooling system mass')
         self.print_mass(self.m_comp, 'Compressor mass')
         self.print_mass(self.m_fuel_cell, 'Fuel cell mass')
         self.print_mass(self.m_electric_engine, 'Electric engine mass')
         self.print_mass(self.w_fuel, 'Fuel mass')
+
+        print('fuel cell efficiency', self.n_fc)
 
         #print('Pressure ratio ', self.PR)
         #print('----------------')
@@ -386,5 +433,5 @@ class Aircraft(WingAndPowerSizing):
 if __name__ == "__main__":
     aircraft = Aircraft()
     aircraft.procedures()
-    aircraft.printing()
+    # aircraft.printing()
 
