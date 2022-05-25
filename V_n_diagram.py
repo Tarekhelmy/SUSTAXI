@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from Estimations import Aircraft
 from Wing_Power_Loading import WingAndPowerSizing
+import os
 
 class VNDiagram(Aircraft):
     def __init__(self):
@@ -33,7 +34,7 @@ class VNDiagram(Aircraft):
                     self.density * 0.0624 * 32.2 * self.mac * self.CLcurve)
         self.alleviationfactor = 0.88 * self.mu / (5.3 + self.mu)
 
-    def V_n_diag(self):
+    def V_n_diag(self, plot=True):
         self.initialising()
 
         VA = np.sqrt((self.loadfactor * self.W_S) / (0.5 * self.density * self.CLmax_land))
@@ -75,52 +76,54 @@ class VNDiagram(Aircraft):
 
         self.gustloadfactor = max(n_peak_B, n_peak_C, n_neg_D)
         
-        plt.figure(1)
-        plt.grid()
-        plt.title("Flight Envelope")
+        if plot:
 
-        ######## MANUEVER DIAGRAM #########
+            plt.figure(1)
+            plt.grid()
+            plt.title("Flight Envelope")
 
-
-        #Positive side 
-        plt.plot(np.linspace(0, VA, 500), loading, linestyle="-", color="black", label="Stall curve")
-        plt.plot([VA, VD], [self.loadfactor, self.loadfactor], linestyle="-", color="black", label="Dive speed")
-        plt.vlines(VD, 0, self.loadfactor, linestyle="-", color="black")
-
-        #Negative side
-        plt.plot(np.linspace(0, VS, 500), negativeloading, linestyle="-", color="black", label="Negative load factor curve")
-        plt.plot([VS, VC], [self.negloadfactor, self.negloadfactor], linestyle="-", color="black", label="Design Cruise speed")
-        plt.plot([VC, VD], [self.negloadfactor, 0], linestyle="-", color="black")
-
-        #Stall speed line
-        plt.hlines(1, 0, VD, linestyle="--", color="black", label="Stall speed line")
-
-        ######## GUST LOADING DIAGRAM ########
+            ######## MANUEVER DIAGRAM #########
 
 
-        #Upper side dashed
-        plt.plot([0, VB], [1, n_peak_B], linestyle="-", color="blue", label="Maximum gust intensity load factor")
-        plt.plot([0, VC], [1, n_peak_C], linestyle="--", color="blue", label="Design cruise speed load factor")
-        plt.plot([0, VD], [1, n_peak_D], linestyle="--", color="blue", label="Dive speed load factor")
-        
-        #Upper side full
-        plt.plot([VB, VC], [n_peak_B, n_peak_C], linestyle="-", color="blue")
-        plt.plot([VC, VD], [n_peak_C, n_peak_D], linestyle="-", color="blue")
+            #Positive side 
+            plt.plot(np.linspace(0, VA, 500), loading, linestyle="-", color="black", label="Stall curve")
+            plt.plot([VA, VD], [self.loadfactor, self.loadfactor], linestyle="-", color="black", label="Dive speed")
+            plt.vlines(VD, 0, self.loadfactor, linestyle="-", color="black")
 
-        #Lower side dashed
-        plt.plot([0, VB], [1, n_neg_B], linestyle="-", color="blue", label="Negative maximum gust intensity load factor")
-        plt.plot([0, VC], [1, n_neg_C], linestyle="--", color="blue", label="Design cruise speed negative load factor")
-        plt.plot([0, VD], [1, n_neg_D], linestyle="--", color="blue", label="Dive speed negative load factor")
+            #Negative side
+            plt.plot(np.linspace(0, VS, 500), negativeloading, linestyle="-", color="black", label="Negative load factor curve")
+            plt.plot([VS, VC], [self.negloadfactor, self.negloadfactor], linestyle="-", color="black", label="Design Cruise speed")
+            plt.plot([VC, VD], [self.negloadfactor, 0], linestyle="-", color="black")
 
-        #Lower side full
-        plt.plot([VB, VC], [n_neg_B, n_neg_C], linestyle="-", color="blue")
-        plt.plot([VC, VD], [n_neg_C, n_neg_D], linestyle="-", color="blue")
+            #Stall speed line
+            plt.hlines(1, 0, VD, linestyle="--", color="black", label="Stall speed line")
 
-        plt.xlim([-0.5, 180])
-        plt.ylim([-1.4, 3.4])
-        # plt.legend(loc="lower left", fontsize="small")
-        plt.show()
-        plt.close(1)
+            ######## GUST LOADING DIAGRAM ########
+
+
+            #Upper side dashed
+            plt.plot([0, VB], [1, n_peak_B], linestyle="-", color="blue", label="Maximum gust intensity load factor")
+            plt.plot([0, VC], [1, n_peak_C], linestyle="--", color="blue", label="Design cruise speed load factor")
+            plt.plot([0, VD], [1, n_peak_D], linestyle="--", color="blue", label="Dive speed load factor")
+            
+            #Upper side full
+            plt.plot([VB, VC], [n_peak_B, n_peak_C], linestyle="-", color="blue")
+            plt.plot([VC, VD], [n_peak_C, n_peak_D], linestyle="-", color="blue")
+
+            #Lower side dashed
+            plt.plot([0, VB], [1, n_neg_B], linestyle="-", color="blue", label="Negative maximum gust intensity load factor")
+            plt.plot([0, VC], [1, n_neg_C], linestyle="--", color="blue", label="Design cruise speed negative load factor")
+            plt.plot([0, VD], [1, n_neg_D], linestyle="--", color="blue", label="Dive speed negative load factor")
+
+            #Lower side full
+            plt.plot([VB, VC], [n_neg_B, n_neg_C], linestyle="-", color="blue")
+            plt.plot([VC, VD], [n_neg_C, n_neg_D], linestyle="-", color="blue")
+
+            plt.xlim([-0.5, 180])
+            plt.ylim([-1.4, 3.4])
+            # plt.legend(loc="lower left", fontsize="small")
+            plt.savefig("flight envelope")
+            plt.close(1)
 
 
     def get_critical_loadfactor(self):

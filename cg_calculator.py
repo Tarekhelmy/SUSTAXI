@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from Estimations import Aircraft
+import os
 
 # aircraft = Aircraft()
 # weights, fus_cg_locations, wing_cg_locations, mac = aircraft.cg_lists()
@@ -96,7 +97,7 @@ class CenterOfGravity(Aircraft):
             plt.ylabel("Mass fraction [-]")
             plt.legend(loc="best", fontsize="small")
 
-            plt.show()
+            plt.savefig("cg")
             plt.close(1)
 
         return cg_OEW/self.meters_to_feet, cg_OEWpl/self.meters_to_feet, cg_OEWfpl/self.meters_to_feet, cg_OEWf/self.meters_to_feet
