@@ -360,10 +360,6 @@ class Aircraft(WingAndPowerSizing):
         self.y_mac = ((self.tip_chord*self.b_w*0.5)+((self.root_chord-self.tip_chord)*self.b_w*0.5)*(1/3))/(((self.root_chord-self.tip_chord)*self.b_w*0.5)+self.tip_chord*self.b_w)
 
     def cg_lists(self):
-
-        self.classiter()
-        self.mainsizing()
-
         weights = {"fuselage": self.m_fuselage[-1], "empennage": self.m_h + self.m_v, "mlg": self.m_mlg, "nlg": self.m_nlg, "crew": self.w_crew, "wing": self.m_wing[-1], "battery": self.w_battery, "engine": self.w_installedEngine, "fuelsystem": self.w_fuelsystem, "mtow": self.w_mtow, "oew": self.w_oew, "payload": self.w_payload, "fuel": self.w_fuel}
         fuselage_cg = {"fuselage": self.x_fuselage_cg, "empennage": self.x_empennage_cg, "mlg": self.x_landingGear_cg, "nlg": self.x_nlg_cg, "crew": self.x_fuselage_cg, "fuelsystem": self.x_fuel_cg, "payload": self.x_payload_cg, "fuel": self.x_fuel_cg}
         wing_cg = {"wing": self.x_wing_cg, "battery": self.x_battery, "engine": self.x_engine_cg}
@@ -387,4 +383,5 @@ class Aircraft(WingAndPowerSizing):
 
 aircraft = Aircraft()
 aircraft.procedures()
-aircraft.printing()
+# aircraft.printing()
+

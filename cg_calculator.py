@@ -8,6 +8,8 @@ from Estimations import Aircraft
 class CenterOfGravity(Aircraft):
     def __init__(self):
         super().__init__()
+        self.procedures()
+        self.updatecg()
         self.weights = self.cg_lists()[0]
         self.fus_cg_locations = self.cg_lists()[1]
         self.wing_cg_locations = self.cg_lists()[2]
@@ -21,9 +23,9 @@ class CenterOfGravity(Aircraft):
         # all positions are (x_cg - lemac) / mac
         self.x_engine_cg = -0.1
         self.x_battery = 0.45
-        self.x_empennage_cg = 0.9*self.length_fus  # - lemac / mac
-        self.x_cargopayload = 0.9*self.length_fus
-        self.x_payload_cg = ((5.1*0.5+ self.cockpitlength)*(self.w_payload-200*self.kg_to_pounds) + (self.x_cargopayload)*200)/self.w_payload
+        self.x_empennage_cg = 0.9*self.length_fus[-1]  # - lemac / mac
+        self.x_cargopayload = 0.9*self.length_fus[-1]
+        self.x_payload_cg = (((5.1*0.5+ self.cockpitlength)*(self.w_payload-200*self.kg_to_pounds) + (self.x_cargopayload)*200)/self.w_payload)*self.meters_to_feet
         self.x_crew = 2/5 *self.cockpitlength
 
         #fuselage cg is already calculated
@@ -68,9 +70,9 @@ class CenterOfGravity(Aircraft):
 
 
     def cgandplot(self, plot=False):
+        self.updatecg()
         self.massfraction()
         self.lemac_oew_pl_fuel()
-
         cg_OEW = self.locations["oew"]
         cg_OEWpl = (self.massfractions["payload"] * self.locations["payload"] + self.massfractions["oew"] * self.locations["oew"]) / (self.massfractions["oew"] + self.massfractions["payload"])
         cg_OEWfpl = (self.massfractions["payload"] * self.locations["payload"] + self.massfractions["oew"] * self.locations["oew"] + self.massfractions["fuel"] * self.locations["fuel"]) / (self.massfractions["fuel"] + self.massfractions["payload"] + self.massfractions["oew"])
@@ -82,24 +84,21 @@ class CenterOfGravity(Aircraft):
             plt.grid()
             plt.title("Class 1 Loading Diagram")
 
-            plt.plot(self.macpercent(cg_OEW), self.massfractions["oew"], marker="o", color="blue", label="OEW cg location")
+            plt.plot(self.macpercent(cg_OEW), self.massfractions["oew"], marker="o", color="red", label="OEW cg location")
             plt.plot(self.macpercent(cg_OEWpl), self.massfractions["oew"] + self.massfractions["payload"], marker="o", color="blue", label="OEW + payload cg location")
-            plt.plot(self.macpercent(cg_OEWfpl), self.massfractions["oew"] + self.massfractions["payload"] + self.massfractions["fuel"], color="blue", marker="o", label="OEW + payload + fuel cg location")
-            plt.plot(self.macpercent(cg_OEWf), self.massfractions["oew"] + self.massfractions["fuel"], marker="o", color="blue", label="OEW + fuel cg location")
+            plt.plot(self.macpercent(cg_OEWfpl), self.massfractions["oew"] + self.massfractions["payload"] + self.massfractions["fuel"], color="green", marker="o", label="OEW + payload + fuel cg location")
+            plt.plot(self.macpercent(cg_OEWf), self.massfractions["oew"] + self.massfractions["fuel"], marker="o", color="yellow", label="OEW + fuel cg location")
 
-            plt.ylim(0, 1.2)
-            plt.xlim(-0.1, 1.1)
             plt.xlabel("Percentage of MAC [%]")
             plt.ylabel("Mass fraction [-]")
-            plt.legend(loc="upper right", fontsize="small")
+            plt.legend(loc="best", fontsize="small")
 
             plt.show()
             plt.close(1)
 
-        return cg_OEW, cg_OEWpl, cg_OEWfpl, cg_OEWf
-        
-    def fwd_aft(self):
-        return min(self.cgandplot(False)), max(self.cgandplot(False))
+        return cg_OEW/self.meters_to_feet, cg_OEWpl/self.meters_to_feet, cg_OEWfpl/self.meters_to_feet, cg_OEWf/self.meters_to_feet
+
+
 
     def potato_plot(self):
         pass
@@ -107,6 +106,6 @@ class CenterOfGravity(Aircraft):
 
 if __name__ == "__main__":
     cg = CenterOfGravity()
-    cg.cgandplot(True)
-    print(f"The most forward center of gravity is at: {cg.fwd_aft()[0]} m")
-    print(f"The most aft center of gravity location is at: {cg.fwd_aft()[1]} m")
+    positions = cg.cgandplot(True)
+    print(f"The most forward center of gravity is at: {min(positions)} m")
+    print(f"The most aft center of gravity location is at: {max(positions)} m")
