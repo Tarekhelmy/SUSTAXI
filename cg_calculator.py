@@ -13,7 +13,7 @@ class CenterOfGravity(Aircraft):
         self.wing_cg_locations = self.cg_lists()[2]
         self.massfractions = dict()
         self.locations = dict()
-        self.bitchassfraction = 0.25
+        self.oew_cg_mac = 0.25
         self.mac = self.cg_lists()[3]
 
     def massfraction(self):
@@ -44,8 +44,8 @@ class CenterOfGravity(Aircraft):
         x_fcg = product_fcg / mass_fcg
         x_wcg = self.mac * product_wcg / mass_wcg
 
-        x_lemac = x_fcg + self.mac * ( (x_wcg / self.mac) * (mass_wcg / mass_fcg) - self.bitchassfraction * (1 + mass_wcg / mass_fcg))
-        x_oew = x_lemac + self.bitchassfraction * self.mac
+        x_lemac = x_fcg + self.mac * ( (x_wcg / self.mac) * (mass_wcg / mass_fcg) - self.oew_cg_mac * (1 + mass_wcg / mass_fcg))
+        x_oew = x_lemac + self.oew_cg_mac * self.mac
 
         self.locations["lemac"] = x_lemac
         self.locations["oew"] = x_oew

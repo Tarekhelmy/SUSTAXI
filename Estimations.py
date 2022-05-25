@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import linregress
 from Wing_Power_Loading import WingAndPowerSizing
-import math
 
 class Aircraft(WingAndPowerSizing):
 
