@@ -31,7 +31,7 @@ class VNDiagram(Aircraft):
         # DATCOM method
 
         self.mu = (2 * self.W_S * 0.2248 * 3.2808 ** 2) / (
-                    self.density * 0.0624 * 32.2 * self.mac * 3.2808 * self.CLcurve)
+                    self.density * 0.0624 * 32.2 * self.mac * self.CLcurve)
         self.alleviationfactor = 0.88 * self.mu / (5.3 + self.mu)
 
     def V_n_diag(self):
@@ -118,7 +118,7 @@ class VNDiagram(Aircraft):
         plt.plot([VC, VD], [n_neg_C, n_neg_D], linestyle="-", color="blue")
 
         plt.xlim([-0.5, 180])
-        plt.ylim([-1.4, 3.3])
+        plt.ylim([-1.4, 3.4])
         # plt.legend(loc="lower left", fontsize="small")
         plt.show()
         plt.close(1)
