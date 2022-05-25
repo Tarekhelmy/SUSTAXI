@@ -127,6 +127,55 @@ def I_xx_trail(x_1, x_4):
 # Optimization Algorithm
 I_xx_list = []
 x_list = []
+x_i = []
+class airfoilselect:
+    def __init__(self):
+        self.selfiterationupper = 0
+        self.selfiterationlower = 0
+
+        self.Airfoil_shape = [
+            [1.000000, 0.950230, 0.900490, 0.850700, 0.800840, 0.750890, 0.700870, 0.650760, 0.600570, 0.550310,
+             0.500000, 0.449640, 0.399240, 0.348820, 0.298400, 0.248000, 0.197650, 0.147350, 0.097180, 0.072180,
+             0.047270, 0.022570, 0.010410, 0.005670, 0.003360, 0.000000, 0.006640, 0.009330, 0.014590, 0.027430,
+             0.052730, 0.077820, 0.102820, 0.152650, 0.202350, 0.252000, 0.301600, 0.351118, 0.400760, 0.450350,
+             0.500000, 0.549690, 0.599430, 0.649240, 0.699130, 0.749110, 0.799160, 0.849300, 0.899510, 0.949770,
+             1.000000],
+            [0.000000, 0.008810, 0.017390, 0.026180, 0.034920, 0.043440, 0.051530, 0.058990, 0.065620, 0.071250,
+             0.075670, 0.078940, 0.080620, 0.080590, 0.078720, 0.074990, 0.069290, 0.061380, 0.050630, 0.043790,
+             0.035440, 0.024600, 0.017190, 0.013200, 0.010710, 0.000000, -0.008710, -0.010400, -0.012910, -0.017160,
+             -0.022800, -0.026850, -0.029950, -0.034460, -0.037450, -0.039190, -0.039840, -0.039390, -0.037780,
+             -0.035140, -0.031640, -0.027450, -0.022780, -0.017990, -0.012650, -0.007640, -0.003080, 0.000740, 0.003290,
+             0.003300, 0.000000]]
+        self.Airfoil_upper = [Airfoil_shape[0][0:Airfoil_shape[0].index(0)], Airfoil_shape[1][0:Airfoil_shape[0].index(0)]]
+        self.Airfoil_lower = [Airfoil_shape[0][Airfoil_shape[0].index(0):], Airfoil_shape[1][Airfoil_shape[0].index(0):]]
+        self.x_i = []
+        self.I_xx_tot = None
+        self.I_xx_list = []
+        self.x_list = []
+
+    def airfoiliteration(self):
+        for i in range(len(self.Airfoil_upper[0])):
+            self.x_i.append(self.Airfoil_upper[0][i])
+            if self.x_i[-1] <= 0.75 and self.x_i[-1] >= 0.2 and self.selfiterationupper < 2:
+                self.selfiterationupper += 1
+                self.airfoiliteration()
+                if self.x_i[-1] <= 0.75 and self.x_i[-1] >= 0.2 and self.selfiterationlower< 2:
+                    self.selfiterationlower += 1
+                    self.airfoiliteration()
+            elif self.x_i[-1] <= 0.75 and self.x_i[-1] >= 0.2:
+                self.I_xx_tot = I_xx_upper(self.x_i[0], self.x_i[1]) + I_xx_lower(self.x_i[2], self.x_i[3]) + I_xx_lead(self.x_i[0], self.x_i[2]) + I_xx_trail(
+                    self.x_i[1], self.x_i[3])
+                self.I_xx_list.append(self.I_xx_tot)
+                self.x_list.append([self.x_i[0], self.x_i[1], self.x_i[2], self.x_i[3]])
+        return None
+    
+airfoil = airfoilselect()
+airfoil.airfoiliteration()
+print(airfoil.I_xx_list)
+
+
+
+
 for i in range(len(Airfoil_upper[0])):
     x_1 = Airfoil_upper[0][i]
     if x_1 <= 0.75 and x_1 >= 0.2:

@@ -246,6 +246,7 @@ class Aircraft(WingAndPowerSizing):
         self.w_furnishing = 0.0582 * self.w_design - 65
 
         ###### updating OEW ########
+        self.w_fueltank = 200*self.kg_to_pounds
 
         self.w_fuel = self.w_fuel *self.oew()/self.w_oew
         self.fuel_volume = self.w_fuel*2.8 / (71 * self.kg_to_pounds / (self.meters_to_feet ** 3))
@@ -253,7 +254,7 @@ class Aircraft(WingAndPowerSizing):
 
         self.w_oew = (self.m_fuselage[-1] + self.m_h + self.m_v + self.m_wing[-1] + self.w_furnishing +
                      self.w_icing + self.w_electrical + self.w_avionics + self.w_fuelsystem
-                     + self.w_flightcontrols + self.w_installedEngine + self.w_hydraulics)
+                     + self.w_flightcontrols + self.w_installedEngine + self.w_hydraulics+self.w_fueltank)
 
         ###### updating MTOW ########
         self.w_mtow = self.w_oew +self.w_payload + self.w_fuel
@@ -264,7 +265,7 @@ class Aircraft(WingAndPowerSizing):
     def oew(self):
         oew = float(self.m_fuselage[-1] + self.m_h + self.m_v+ self.m_wing[-1]+ self.w_furnishing +
          self.w_icing + self.w_electrical + self.w_avionics + self.w_fuelsystem
-         + self.w_flightcontrols + self.w_installedEngine + self.w_hydraulics)
+         + self.w_flightcontrols + self.w_installedEngine + self.w_hydraulics+self.w_fueltank)
         return oew
 
     def mtow(self):
@@ -385,5 +386,5 @@ class Aircraft(WingAndPowerSizing):
 if __name__ == "__main__":
     aircraft = Aircraft()
     aircraft.procedures()
-    # aircraft.printing()
+    aircraft.printing()
 
