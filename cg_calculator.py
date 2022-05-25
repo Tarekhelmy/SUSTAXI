@@ -44,7 +44,7 @@ class CenterOfGravity(Aircraft):
         return maccg * self.mac + self.locations["lemac"]
 
     def lemac_oew_pl_fuel(self):
-        fus_masses = ["fuselage", "empennage", "crew", "fuelsystem"]
+        fus_masses = ["fuselage", "empennage", "crew", "fueltank"]
         wing_masses = ["wing", "battery", "engine"]
         mass_fcg, product_fcg = 0, 0
         mass_wcg, product_wcg = 0, 0
