@@ -364,6 +364,19 @@ class Aircraft(WingAndPowerSizing):
         self.print_power(self.fc_power, 'Fuel cell power')
         self.print_power(self.cool_power, 'cooling power')
 
+        print('Compressor power = ', self.comp_power/self.watts_to_horsepower/1000)
+        print('FC power = ', self.fc_power/self.watts_to_horsepower/1000)
+        print('cooling power:', self.cool_power/self.watts_to_horsepower/1000)
+        print('cooling system mass:')
+        self.print_mass(self.m_cooling)
+        print('compressor mass:')
+        self.print_mass(self.m_comp)
+        print('fuel cell mass:')
+        self.print_mass(self.m_fuel_cell)
+        print('electric engine mass:')
+        self.print_mass(self.m_electric_engine)
+        print('Pressure ratio ', self.PR)
+        print('----------------')
         print('\nPowertrain Mass Values:\n--------------')
         self.print_mass(self.m_cooling, 'Cooling system mass')
         self.print_mass(self.m_comp, 'Compressor mass')
@@ -420,5 +433,5 @@ class Aircraft(WingAndPowerSizing):
 if __name__ == "__main__":
     aircraft = Aircraft()
     aircraft.procedures()
-    aircraft.printing()
+    # aircraft.printing()
 
