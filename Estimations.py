@@ -24,6 +24,7 @@ class Aircraft(WingAndPowerSizing):
         self.x_empennage_cg = 0
         self.x_landingGear_cg = 0
         self.x_nlg_cg = 0
+        self.x_mlg = 0
         self.x_payload_cg = 0
         self.x_crew_cg = 0
 
@@ -116,18 +117,19 @@ class Aircraft(WingAndPowerSizing):
         self.fractions = 0.992 * 0.996 * 0.996 * 0.990 * 0.992 * 0.992
         self.fuel_factor = 0
         self.AR = 10
-        self.sweep_angle = 30 * np.pi / 180
-        self.sweep_angle_horizontal = 30 * np.pi / 180
-        self.sweep_angle_vertical = 30 * np.pi / 180
+        self.sweep_angle = 4 * np.pi / 180
+        self.sweep_angle_horizontal = 20 * np.pi / 180
+        self.sweep_angle_vertical = 20 * np.pi / 180
         self.q = 0.5 * 1.225 * (self.V)**2 * (self.kg_to_pounds / (self.meters_to_feet**2))
         self.taper_ratio = 0.4
         self.lamda = self.taper_ratio
-        self.root_chord = 2.5
-        self.taper_ratio = 0.3
+        self.root_chord = 2.5 *self.meters_to_feet
         self.taper_ratioh = 1
         self.taper_ratiov = 0.8
-        self.mac = 1.85  # Assumed
-        self.mac = self.root_chord * 2 / 3 * (1 + self.taper_ratio + self.taper_ratio ** 2) / (1 + self.taper_ratio)
+        self.mac = 1.85 * self.meters_to_feet # Assumed
+        self.cockpitlength = 2.52
+        self.payloadlength = 5.1
+        # self.mac = self.root_chord * 2 / 3 * (1 + self.taper_ratio + self.taper_ratio ** 2) / (1 + self.taper_ratio)
 
         # tail volumes from https://onlinelibrary.wiley.com/doi/pdf/10.1002/9781118568101.app1
 
@@ -337,6 +339,7 @@ class Aircraft(WingAndPowerSizing):
         self.print_mass(self.m_electric_engine)
         print('Pressure ratio ', self.PR)
         print('----------------')
+        print(self.b_w/self.meters_to_feet)
 
     def plot_mass_progression(self):
         labels = ['fuselage', 'horizontal stab', 'vertical stab', 'wing', 'furnishing', ' de-icing', ' electronics', 'avionics', ' fuelsystem', ' flightcontrols',  'engine', ' hydraulics']
@@ -350,11 +353,13 @@ class Aircraft(WingAndPowerSizing):
             plt.legend()
             plt.show()
 
+    def cgcalc(self):
+        self.tip_chord = self.root_chord*self.taper_ratio
+        # self.x_wing_cg = ((1.25)*(self.root_chord*self.b_w/2)-(2)*((self.root_chord-self.taper_ratio*self.root_chord)*self.b_w/2*0.5))/(((self.root_chord-self.taper_ratio*self.root_chord)*self.b_w*0.5)+(self.root_chord*self.b_w/2))
+        self.x_wing_cg = ((self.tip_chord**2*0.5*self.b_w)+((self.root_chord-self.tip_chord)*0.5*self.b_w)*(self.tip_chord+(2/3)*(self.root_chord-self.tip_chord)))/(self.b_w*self.tip_chord+(self.root_chord-self.tip_chord)*self.b_w*0.5)/self.root_chord
+        self.y_mac = ((self.tip_chord*self.b_w*0.5)+((self.root_chord-self.tip_chord)*self.b_w*0.5)*(1/3))/(((self.root_chord-self.tip_chord)*self.b_w*0.5)+self.tip_chord*self.b_w)
+
     def cg_lists(self):
-
-        self.classiter()
-        self.mainsizing()
-
         weights = {"fuselage": self.m_fuselage[-1], "empennage": self.m_h + self.m_v, "mlg": self.m_mlg, "nlg": self.m_nlg, "crew": self.w_crew, "wing": self.m_wing[-1], "battery": self.w_battery, "engine": self.w_installedEngine, "fuelsystem": self.w_fuelsystem, "mtow": self.w_mtow, "oew": self.w_oew, "payload": self.w_payload, "fuel": self.w_fuel}
         fuselage_cg = {"fuselage": self.x_fuselage_cg, "empennage": self.x_empennage_cg, "mlg": self.x_landingGear_cg, "nlg": self.x_nlg_cg, "crew": self.x_fuselage_cg, "fuelsystem": self.x_fuel_cg, "payload": self.x_payload_cg, "fuel": self.x_fuel_cg}
         wing_cg = {"wing": self.x_wing_cg, "battery": self.x_battery, "engine": self.x_engine_cg}
@@ -371,7 +376,12 @@ class Aircraft(WingAndPowerSizing):
 
         pass
 
+    def procedures(self):
+        self.classiter()
+        self.mainsizing()
+        self.cgcalc()
+
 aircraft = Aircraft()
-aircraft.classiter()
-aircraft.mainsizing()
-aircraft.printing()
+aircraft.procedures()
+# aircraft.printing()
+
