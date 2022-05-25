@@ -272,14 +272,14 @@ class Aircraft(WingAndPowerSizing):
         mtow = self.oew() + self.w_fuel + self.w_payload
         return mtow
 
-    def print_length(self, parameter):
-        print('%.2f' % (parameter / self.meters_to_feet), ' m')
+    def print_length(self, parameter, name=''):
+        print(name,'= %.2f' % (parameter / self.meters_to_feet), 'm')
 
-    def print_mass(self, parameter):
-        print('%.2f' % (parameter / self.kg_to_pounds), ' kg')
+    def print_mass(self, parameter, name=''):
+        print(name,'= %.2f' % (parameter / self.kg_to_pounds), 'kg')
 
-    def print_power(self, parameter):
-        print('%.2f' % (parameter / 1000 * self.watts_to_horsepower), ' kW')
+    def print_power(self, parameter, name=''):
+        print(name,'= %.2f' % (parameter / (self.watts_to_horsepower * 1000)), 'kW')
 
     def mainsizing(self):
         self.fuel_volume = self.w_fuel / (71 * self.kg_to_pounds / (self.meters_to_feet**3))
@@ -308,40 +308,40 @@ class Aircraft(WingAndPowerSizing):
 
     def printing(self):
 
-        print('-------')
-        print('fuse length ',self.length_fus[-1] * 0.3048)
-        print('fuse mass ',self.m_fuselage[-1]/self.kg_to_pounds)
-        print('fuse diam',self.diameter_fus * 0.3048)
-        print('design weight',self.w_design / self.kg_to_pounds )
-        print('lh',self.lh * 0.3048)
-        print('cl/cd cruise',self.CL_CD_cruise)
-        print('dyn pressure',self.q / (self.kg_to_pounds * self.meters_to_feet))
-        print('pressurized volume',self.pressurised_volume * 0.3048 ** 3)
+        #self.print_length(self.diameter_fus,'fuse diam')
+        #self.print('design weight',self.w_design / self.kg_to_pounds )
+        #self.print_length(self.lh, 'lh')
+        #print('cl/cd cruise',self.CL_CD_cruise)
+        #self.print('dyn pressure',self.q / (self.kg_to_pounds * self.meters_to_feet))
+        #self.print('pressurized volume',self.pressurised_volume * 0.3048 ** 3)
+        #self.print_mass(self.w_fuelsystem, 'fuel system mass')
+        #self.print('--------')
+        #print('Power loading = ', self.w_p * 9.81 / self.kg_to_pounds * self.watts_to_horsepower, 'N/W')
 
-        print('fuel system mass', self.w_fuelsystem)
-        print('--------')
-        print(self.w_p *9.81 /self.kg_to_pounds *self.watts_to_horsepower)
-        print('Power  = ',self.w_mtow/self.w_p/self.watts_to_horsepower , 'W')
-        print('MTOW = ', self.w_mtow/self.kg_to_pounds , 'kg')
-        print('OEW Mainsizing = ', self.w_oew*0.45 , 'kg')
-        print('Wing Area = ', self.surface_wing/(3.28**2), 'm^2')
-        print('FUEL MASS:')
-        self.print_mass(self.w_fuel)
+        print('\nGeneral Aircraft Parameters:\n--------------')
+        self.print_length(self.length_fus[-1],'fuselage length ')
+        self.print_mass(self.m_fuselage[-1],'fuselage mass ')
+        self.print_mass(self.w_mtow , 'MTOW')
+        self.print_mass(self.w_oew, 'OEW')
+        print('Wing Area = %.2f' % (self.surface_wing/(3.28**2)), 'm^2')
+        self.print_length(self.b_w, 'Wingspan')
 
-        print('Compressor power = ', self.comp_power/self.watts_to_horsepower/1000)
-        print('FC power = ', self.fc_power/self.watts_to_horsepower/1000)
-        print('cooling power:', self.cool_power/self.watts_to_horsepower/1000)
-        print('cooling system mass:')
-        self.print_mass(self.m_cooling)
-        print('compressor mass:')
-        self.print_mass(self.m_comp)
-        print('fuel cell mass:')
-        self.print_mass(self.m_fuel_cell)
-        print('electric engine mass:')
-        self.print_mass(self.m_electric_engine)
-        print('Pressure ratio ', self.PR)
-        print('----------------')
-        print(self.b_w/self.meters_to_feet)
+        print('\nPower Values:\n---------------')
+        self.print_power(self.shaft_power , 'Shaft power')
+        self.print_power(self.comp_power, 'Compressor power')
+        self.print_power(self.fc_power, 'Fuel cell power')
+        self.print_power(self.cool_power, 'cooling power')
+
+        print('\nPowertrain Mass Values:\n--------------')
+        self.print_mass(self.m_cooling, 'Cooling system mass')
+        self.print_mass(self.m_comp, 'Compressor mass')
+        self.print_mass(self.m_fuel_cell, 'Fuel cell mass')
+        self.print_mass(self.m_electric_engine, 'Electric engine mass')
+        self.print_mass(self.w_fuel, 'Fuel mass')
+
+        #print('Pressure ratio ', self.PR)
+        #print('----------------')
+
 
     def plot_mass_progression(self):
         labels = ['fuselage', 'horizontal stab', 'vertical stab', 'wing', 'furnishing', ' de-icing', ' electronics', 'avionics', ' fuelsystem', ' flightcontrols',  'engine', ' hydraulics']

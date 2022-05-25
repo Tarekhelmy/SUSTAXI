@@ -102,7 +102,8 @@ class WingAndPowerSizing    :
         #print('sigma = %.2f' % sigma)
         CL_TO = self.CLmax_TO / (1.1 * 1.1)
         #print('take off lift coefficient = %.2f' % CL_TO)
-        TOP = 570
+        #TOP = 570
+        TOP = 100
         W_over_P = (sigma * CL_TO * TOP) / W_over_S
         return W_over_P
 
