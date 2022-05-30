@@ -77,10 +77,12 @@ class Stability(CenterOfGravity,VNDiagram):
 
     def landinggearsizing(self):
         x_oew = self.locations['oew']
-        f_nlg = 0.08*(self.w_oew)
-        f_mlg = 0.92*(self.w_oew)
-        self.x_nlg_cg = self.cockpitlength *self.meters_to_feet
-        self.x_mlg = x_oew + f_nlg*self.x_nlg_cg /f_mlg
+        f_nlg = 0.08   # Percentage of Weight on nose landing gear
+        f_mlg = 0.92   # Percentage of Weight on main landing gear
+        l_nlg = x_oew - self.cockpitlength
+        l_mlg = f_nlg*l_nlg/f_mlg
+        self.x_nlg_cg = x_oew - l_nlg
+        self.x_mlg = x_oew + l_mlg
         return None
 
 
