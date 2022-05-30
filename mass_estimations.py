@@ -49,7 +49,7 @@ class Aircraft(WingAndPowerSizing):
         self.w_fuelsystem = 0
         self.w_furnishing = 0
         self.w_avionics = 1000
-        self.w_battery = 50 * self.kg_to_pounds
+        self.w_battery = 50 * self.kg_to_pounds # from https://www.aircraft-battery.com/search-by-your-aircraft/battery_detail/293
         self.w_mtow = 0
         self.w_oew = 3500*2.25
         self.w_fueltank = 200 * self.kg_to_pounds
