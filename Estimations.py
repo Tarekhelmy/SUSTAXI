@@ -81,8 +81,9 @@ class Aircraft(WingAndPowerSizing):
 
         self.n_ee = 0.9
         self.n_pmad = 0.9
-        self.n_fc = 0.45
+        self.n_fc = 0.5
         self.n_comp = 0.7
+        self.n_fuel_tank = 0.5
 
         self.m_comp = 0
         self.m_cooling = 0
@@ -93,7 +94,7 @@ class Aircraft(WingAndPowerSizing):
         self.rho_pmad = 10000 * (self.watts_to_horsepower / self.kg_to_pounds)
         self.rho_comp = 2000 * (self.watts_to_horsepower / self.kg_to_pounds)
         self.rho_ee = 5000 * (self.watts_to_horsepower / self.kg_to_pounds)
-        self.rho_fc = 4400 * (self.watts_to_horsepower / self.kg_to_pounds)
+        self.rho_fc = 3000 * (self.watts_to_horsepower / self.kg_to_pounds)
 
         self.pmad_power = None
         self.engine_power = None
@@ -219,9 +220,9 @@ class Aircraft(WingAndPowerSizing):
         pmax_p = self.FC.prat(mass_ratio)
         p_pmax = 1/pmax_p
 
-        print('mass ratio', mass_ratio)
-        print('power ratio', pmax_p)
-        print('FC efficiency', self.FC.nu(p_pmax))
+        # print('mass ratio', mass_ratio)
+        # print('power ratio', pmax_p)
+        # print('FC efficiency', self.FC.nu(p_pmax))
         #
         # print(self.pm_it)
 
@@ -278,7 +279,7 @@ class Aircraft(WingAndPowerSizing):
         self.w_furnishing = 0.0582 * self.w_design - 65
 
         ###### updating OEW ########
-        self.w_fueltank = 200*self.kg_to_pounds
+        self.w_fueltank = ((1 - self.n_fuel_tank) / self.n_fuel_tank) * self.w_fuel
 
         self.w_fuel = self.w_fuel *self.oew()/self.w_oew
         self.fuel_volume = self.w_fuel*2.8 / (71 * self.kg_to_pounds / (self.meters_to_feet ** 3))
@@ -323,6 +324,8 @@ class Aircraft(WingAndPowerSizing):
         self.m_wing.append(self.m_wing[-1] * self.change)
         self.change = self.oew() / self.w_oew
         self.surface_wing = self.w_mtow / self.w_s
+        self.w_fueltank = ((1 - self.n_fuel_tank) / self.n_fuel_tank) * self.w_fuel
+
         pass
 
     def classiter(self):
@@ -367,22 +370,23 @@ class Aircraft(WingAndPowerSizing):
         print('Compressor power = ', self.comp_power/self.watts_to_horsepower/1000)
         print('FC power = ', self.fc_power/self.watts_to_horsepower/1000)
         print('cooling power:', self.cool_power/self.watts_to_horsepower/1000)
-        print('cooling system mass:')
-        self.print_mass(self.m_cooling)
-        print('compressor mass:')
-        self.print_mass(self.m_comp)
-        print('fuel cell mass:')
-        self.print_mass(self.m_fuel_cell)
-        print('electric engine mass:')
-        self.print_mass(self.m_electric_engine)
-        print('Pressure ratio ', self.PR)
-        print('----------------')
+        # print('cooling system mass:')
+        # self.print_mass(self.m_cooling)
+        # print('compressor mass:')
+        # self.print_mass(self.m_comp)
+        # print('fuel cell mass:')
+        # self.print_mass(self.m_fuel_cell)
+        # print('electric engine mass:')
+        # self.print_mass(self.m_electric_engine)
+        # print('Pressure ratio ', self.PR)
+        # print('----------------')
         print('\nPowertrain Mass Values:\n--------------')
         self.print_mass(self.m_cooling, 'Cooling system mass')
         self.print_mass(self.m_comp, 'Compressor mass')
         self.print_mass(self.m_fuel_cell, 'Fuel cell mass')
         self.print_mass(self.m_electric_engine, 'Electric engine mass')
         self.print_mass(self.w_fuel, 'Fuel mass')
+        self.print_mass(self.w_fueltank, 'Tank mass')
 
         print('fuel cell efficiency', self.n_fc)
 
@@ -433,5 +437,5 @@ class Aircraft(WingAndPowerSizing):
 if __name__ == "__main__":
     aircraft = Aircraft()
     aircraft.procedures()
-    # aircraft.printing()
+    aircraft.printing()
 
