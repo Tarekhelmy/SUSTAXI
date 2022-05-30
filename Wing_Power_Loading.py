@@ -110,9 +110,9 @@ class WingAndPowerSizing    :
 
     def cruise(self,x):
         pressure,temperature,rho = self.ISA(self.cruise_altitude)
-        y = (9/8) *  (self.n_p * (rho/ISA_density) ** (0.75) * ((self.CD0_clean * 0.5 * rho
+        y = (9/8) * (self.n_p * (rho/ISA_density) ** (0.75) * ((self.CD0_clean * 0.5 * rho
                                                       * self.cruise_speed ** 3) / (0.8*x) +
-                                                     0.8*x / (np.pi * self.AR * self.Oswald_clean *
+                                                     0.8 * x / (np.pi * self.AR * self.Oswald_clean *
                                                           0.5 * rho * self.cruise_speed))**-1)
         #print(rho/ISA_density)
         return y

@@ -5,7 +5,8 @@ from V_n_diagram import VNDiagram
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.transforms as mtransforms
-plt.rcParams['text.usetex'] = True
+import os
+
 
 class Stability(CenterOfGravity,VNDiagram):
     def __init__(self):
@@ -19,9 +20,6 @@ class Stability(CenterOfGravity,VNDiagram):
         self.min_difference = 0
         self.CLhmax_land = -0.35*5**(1/3)
         self.Cm_cg =self.CLhmax_land
-        # self.minimum = min(self.positions)*self.meters_to_feet
-        # self.maximum = max(self.positions)*self.meters_to_feet
-        # self.Cm_ac = self.Cm_cg + self.CLmax_land*((self.maximum) - self.x_ac)/self.mac
         self.recursion = 0
         self.deps_dalpha = 0
         self.difference = []
@@ -41,7 +39,7 @@ class Stability(CenterOfGravity,VNDiagram):
             4 + (self.AR * 1.2 * np.sqrt(1 - self.Mach ** 2) / 0.95) ** 2 * (1 + 1 / (1 - self.Mach ** 2))))
         return self.CLcurve
 
-    def scissor(self):
+    def scissor(self, plot=False):
         self.lemac_oew_pl_fuel()
         self.positions = self.cgandplot(False)
         self.maximum= max(self.positions)*self.meters_to_feet
@@ -68,8 +66,7 @@ class Stability(CenterOfGravity,VNDiagram):
             ig, ax = plt.subplots()
             ax.plot(Stability, Sh_S, label='Neutral Point')
             ax.axhline(y=Constraint, color='red', linestyle='--', label='Optimised constraint')
-            ax.axhline(y=Constraint * 1.15, color='black', linestyle='--',
-                       label='Optimised constraint + 15\% safety')
+            ax.axhline(y=Constraint * 1.15, color='black', linestyle='--', label='Optimised constraint + 15\% safety')
             ax.plot(Controlability, Sh_S, label='Controlability')
             plt.fill_between(Stability, 0, Sh_S, alpha=0.5, color='grey')
             plt.fill_between(Controlability, 0, Sh_S, alpha=0.5, color='grey')
@@ -79,7 +76,7 @@ class Stability(CenterOfGravity,VNDiagram):
             plt.xlabel(r'$x_{cg}/MAC$')
             plt.ylabel(r'$\frac{S_{h}}{S}$')
             plt.legend()
-            plt.show()
+            plt.savefig("scissor plot")
 
     def landinggearsizing(self):
         x_oew = self.locations['oew']
