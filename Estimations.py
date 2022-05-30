@@ -421,7 +421,6 @@ class Aircraft(WingAndPowerSizing):
 
     def landinggearsizing(self):
 
-
         pass
 
     def empennagesizing(self):

@@ -1,12 +1,8 @@
-from Estimations import Aircraft
 from cg_calculator import CenterOfGravity
-from Wing_Power_Loading import WingAndPowerSizing
 from V_n_diagram import VNDiagram
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.transforms as mtransforms
-import os
-# plt.rcParams['text.usetex'] = True
+
 
 class Stability(CenterOfGravity,VNDiagram):
     def __init__(self):
@@ -20,9 +16,6 @@ class Stability(CenterOfGravity,VNDiagram):
         self.min_difference = 0
         self.CLhmax_land = -0.35*5**(1/3)
         self.Cm_cg =self.CLhmax_land
-        # self.minimum = min(self.positions)*self.meters_to_feet
-        # self.maximum = max(self.positions)*self.meters_to_feet
-        # self.Cm_ac = self.Cm_cg + self.CLmax_land*((self.maximum) - self.x_ac)/self.mac
         self.recursion = 0
         self.deps_dalpha = 0
         self.difference = []
@@ -71,7 +64,6 @@ class Stability(CenterOfGravity,VNDiagram):
             ax.axhline(y=Constraint, color='red', linestyle='--', label='Optimised constraint')
             ax.axhline(y=Constraint * 1.15, color='black', linestyle='--', label='Optimised constraint + 15\% safety')
             ax.plot(Controlability, Sh_S, label='Controlability')
-            trans = mtransforms.blended_transform_factory(ax.transData, ax.transAxes)
             plt.fill_between(Stability, 0, Sh_S, alpha=0.5, color='grey')
             plt.fill_between(Controlability, 0, Sh_S, alpha=0.5, color='grey')
             plt.title('Scissor Plot')
@@ -82,11 +74,20 @@ class Stability(CenterOfGravity,VNDiagram):
             plt.legend()
             plt.savefig("scissor plot")
 
+    def landinggearsizing(self):
+        x_oew = self.locations['oew']
+        f_nlg = 0.08*(self.w_oew)
+        f_mlg = 0.92*(self.w_oew)
+        self.x_nlg_cg = self.cockpitlength *self.meters_to_feet
+        self.x_mlg = x_oew + f_nlg*self.x_nlg_cg /f_mlg
+        return None
 
 
 if __name__ == "__main__":
-
     stability = Stability()
     stability.script()
-    stability.scissor(plot=True)
+    stability.scissor()
+    stability.landinggearsizing()
+    print('Nose landing gear positioning =',stability.x_nlg_cg)
+    print('Main landing gear positioning =',stability.x_mlg )
 
