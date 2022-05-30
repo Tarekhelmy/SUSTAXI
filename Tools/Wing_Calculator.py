@@ -26,9 +26,9 @@ class wing_calculator(Aircraft):
 """
 
 AR=10
-surfacewing= 28.49
-w_mtow = 5692.6
-tapratio = 0.4
+surfacewing= 36.1
+w_mtow = 7228
+tapratio = 0.36
 
 def spanb():
     return round(np.sqrt(surfacewing*AR),2)
@@ -44,7 +44,7 @@ print("c_t=",c_t())
 print("c_r=",c_r())
 
 
-v_stall=46 #m/s
+v =46 #m/s
 rho=1.225
 
 #data = pd.read_table("winglift_v=46_a=15vlm.txt", sep='\s+')
@@ -130,9 +130,11 @@ def wing_area():
 
 def lift():
     cl_data = (comp_halfdata[:-1,1] + comp_halfdata[1:,1])/2
+    list_ones = [1] * (len(cl_data)-1)
+    list_ones.append(2)
+    cl_data = cl_data * list_ones
 
-
-    return cl_data*wing_area()*v_stall*v_stall*0.5*rho
+    return cl_data*wing_area()*v*v*0.5*rho
 
 
 
@@ -146,11 +148,13 @@ comp_data=comp_data[:,0]
 rightlift=lift()[::-1]
 leftlift = lift()
 comp_lift = np.hstack((leftlift,rightlift))
-print(sum(comp_lift))
+print("total lift =", round(sum(comp_lift),2))
+print("MTOW=", 9.81*w_mtow)
+print("CLmax =", sum(comp_lift)/(0.5*rho*v*v*surfacewing))
 
 
 
-plt.plot(comp_data[1:-1],comp_lift)
-plt.show()
+#plt.plot(comp_data[1:-1],comp_lift)
+#plt.show()
 
 
