@@ -49,7 +49,7 @@ class Aircraft(WingAndPowerSizing):
         self.w_fuelsystem = 0
         self.w_furnishing = 0
         self.w_avionics = 1000
-        self.w_battery = 0
+        self.w_battery = 50 * self.kg_to_pounds
         self.w_mtow = 0
         self.w_oew = 3500*2.25
         self.w_fueltank = 200 * self.kg_to_pounds
@@ -302,7 +302,7 @@ class Aircraft(WingAndPowerSizing):
     def oew(self):
         oew = float(self.m_fuselage[-1] + self.m_h + self.m_v+ self.m_wing[-1]+ self.w_furnishing +
          self.w_icing + self.w_electrical + self.w_avionics + self.w_fuelsystem
-         + self.w_flightcontrols + self.w_installedEngine + self.w_hydraulics+self.w_fueltank)
+         + self.w_flightcontrols + self.w_installedEngine + self.w_hydraulics + self.w_fueltank + self.w_battery)
         return oew
 
     def mtow(self):
