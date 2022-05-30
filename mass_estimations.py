@@ -32,10 +32,10 @@ class Aircraft(WingAndPowerSizing):
         self.x_crew_cg = 0
 
         ######## Structure Masses ########
-        self.m_wing = [0]
+        self.m_wing = []
         self.m_h = 0
         self.m_v = 0
-        self.m_fuselage = [0]
+        self.m_fuselage = []
         self.w_design = 0
         self.w_crew = 200 * self.kg_to_pounds
         self.f_res = 0.2
@@ -170,6 +170,7 @@ class Aircraft(WingAndPowerSizing):
         self.surface_controlv = self.vertical_volume / self.lv
         self.surface_controlh = self.horizontal_volume / self.lh
         self.component_matrix = []
+        self.fuel_diameter = 1.56*self.meters_to_feet
         #self.FC = FuelCellSizing(10)
         #self.FC.fit_plots()
 
@@ -291,7 +292,7 @@ class Aircraft(WingAndPowerSizing):
 
         self.w_oew = (self.m_fuselage[-1] + self.m_h + self.m_v + self.m_wing[-1] + self.w_furnishing +
                      self.w_icing + self.w_electrical + self.w_avionics + self.w_fuelsystem
-                     + self.w_flightcontrols + self.w_installedEngine + self.w_hydraulics+self.w_fueltank)
+                     + self.w_flightcontrols + self.w_installedEngine + self.w_hydraulics+self.w_fueltank+self.w_battery)
 
         ###### updating MTOW ########
         self.w_mtow = self.w_oew +self.w_payload + self.w_fuel
@@ -300,9 +301,9 @@ class Aircraft(WingAndPowerSizing):
 
 
     def oew(self):
-        oew = float(self.m_fuselage[-1] + self.m_h + self.m_v+ self.m_wing[-1]+ self.w_furnishing +
-         self.w_icing + self.w_electrical + self.w_avionics + self.w_fuelsystem
-         + self.w_flightcontrols + self.w_installedEngine + self.w_hydraulics + self.w_fueltank + self.w_battery)
+        oew = (self.m_fuselage[-1] + self.m_h + self.m_v + self.m_wing[-1] + self.w_furnishing +
+                     self.w_icing + self.w_electrical + self.w_avionics + self.w_fuelsystem
+                     + self.w_flightcontrols + self.w_installedEngine + self.w_hydraulics+self.w_fueltank+self.w_battery)
         return oew
 
     def mtow(self):
@@ -319,18 +320,19 @@ class Aircraft(WingAndPowerSizing):
         print(name,'= %.2f' % (parameter / (self.watts_to_horsepower * 1000)), 'kW')
 
     def mainsizing(self):
-        self.fuel_volume = self.w_fuel / (71 * self.kg_to_pounds / (self.meters_to_feet**3))
-        self.fuel_length = self.fuel_volume / ((self.diameter_fus)**2 * np.pi / 4) +self.insulation_length
+        self.fuel_volume = self.w_fuel / (71 * self.kg_to_pounds / (self.meters_to_feet**3))/0.9
+        self.fuel_length = self.fuel_volume / ((self.fuel_diameter) **2 * np.pi / 4) +0.3*self.meters_to_feet
         self.length_fus.append(self.length_fus[0] + self.fuel_length)
         self.x_fuselage_cg = self.length_fus[-1] / 2
         self.x_fuel_cg = self.cockpitlength +self.payloadlength+ 0.5 *self.fuel_length
         self.change = (self.length_fus[-1] / self.length_fus[0]) * self.subsystem_weightage['fuselage']/100 + (1-self.subsystem_weightage['fuselage']/100)
-        self.m_fuselage.append(self.change * self.m_fuselage[0])
-        self.m_wing.append(self.m_wing[0] * self.change)
+        self.m_fuselage.append(self.change * self.m_fuselage[-1])
+        self.m_wing.append(self.m_wing[-1] * self.change)
         self.change = self.oew() / self.w_oew
         self.surface_wing = self.w_mtow / self.w_s
         self.w_fueltank = ((1 - self.n_fuel_tank) / self.n_fuel_tank) * self.w_fuel
-
+        self.w_oew = self.oew()
+        self.w_mtow = self.mtow()
         pass
 
     def classiter(self):
