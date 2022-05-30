@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import linregress
-from Wing_Power_Loading import WingAndPowerSizing
-from fuel_cell_optimization import FuelCellSizing
+from Tools.Wing_Power_Loading import WingAndPowerSizing
+from Tools.fuel_cell_optimization import FuelCellSizing
 
 class Aircraft(WingAndPowerSizing):
 
