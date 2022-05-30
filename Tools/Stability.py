@@ -34,6 +34,12 @@ class Stability(CenterOfGravity,VNDiagram):
         self.CLcurve = (2 * np.pi * self.AR * 1.2) / (2 + np.sqrt(
             4 + (self.AR * 1.2 * np.sqrt(1 - self.Mach ** 2) / 0.95) ** 2 * (1 + 1 / (1 - self.Mach ** 2))))
         return self.CLcurve
+    def exception(self,funcname):
+        try:
+            funcname()
+        except ValueError:
+            self.lemac+=0.1
+            self.exception(funcname)
 
     def scissor(self, plot=False):
         self.lemac_oew_pl_fuel()
@@ -50,15 +56,19 @@ class Stability(CenterOfGravity,VNDiagram):
         Sh_S = np.linspace(0,4,40)
         Stability =self.stability(Sh_S)
         Controlability =self.control(Sh_S)
-        Constraint = max(min(Sh_S[Controlability > minimum]), min(Sh_S[Stability > maximum]))
-        self.difference_constraint = (self.stability(Constraint)-self.control(Constraint) )
-        self.difference.append(self.difference_constraint - self.min_difference)
-        if abs(self.difference[-1] )> 0.0005 and self.recursion<1000 :
-            self.lemac+=0.01
-            self.recursion+=1
+        try :
+            Constraint = max(min(Sh_S[Controlability > minimum]), min(Sh_S[Stability > maximum]))
+            self.difference_constraint = (self.stability(Constraint)-self.control(Constraint) )
+            self.difference.append(self.difference_constraint - self.min_difference)
+            if abs(self.difference[-1]) > 0.0005 and self.recursion < 1000:
+                self.lemac += 0.01
+                self.recursion += 1
+                self.scissor()
+        except ValueError:
+            self.lemac += 0.01
             self.scissor()
-        else:
-            print('Perfect lemac positioning =',self.lemac , 'ft')
+
+        if plot==True:
             ig, ax = plt.subplots()
             ax.plot(Stability, Sh_S, label='Neutral Point')
             ax.axhline(y=Constraint, color='red', linestyle='--', label='Optimised constraint')
@@ -85,12 +95,19 @@ class Stability(CenterOfGravity,VNDiagram):
         self.x_mlg = x_oew + l_mlg
         return None
 
+    def printing(self):
+        print('Fuselage Length =',self.length_fus)
+        print('Wing Lemac Position =',self.lemac)
+        print('OEW cg = ',self.locations['oew'])
+        print('Nose landing gear positioning =', self.x_nlg_cg)
+        print('Main landing gear positioning =', self.x_mlg)
+
 
 if __name__ == "__main__":
     stability = Stability()
     stability.script()
-    stability.scissor(plot=True)
+    stability.scissor()
     stability.landinggearsizing()
-    print('Nose landing gear positioning =',stability.x_nlg_cg)
-    print('Main landing gear positioning =',stability.x_mlg )
+    stability.printing()
+
 
