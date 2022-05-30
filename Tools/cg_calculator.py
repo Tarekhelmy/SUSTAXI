@@ -17,7 +17,7 @@ class CenterOfGravity(Aircraft):
         self.wing_cg_locations = self.weight[2]
         self.massfractions = dict()
         self.locations = dict()
-        self.lemac = 26  # ft
+        self.lemac = 21  # ft
         self.mac = self.weight[3]
         # self.positions = self.cgandplot(False)
     def updatecg(self):
@@ -26,7 +26,7 @@ class CenterOfGravity(Aircraft):
         self.x_battery = 0.45
         self.x_empennage_cg = 0.9*self.length_fus[-1]  # - lemac / mac
         self.x_cargopayload = 0.9*self.length_fus[-1]
-        self.x_payload_cg = (((5.1*0.5+ self.cockpitlength)*(self.w_payload-200*self.kg_to_pounds) + (self.x_cargopayload)*200)/self.w_payload)*self.meters_to_feet
+        self.x_payload_cg = (((5.1*0.5+ self.cockpitlength)*(self.w_payload-200*self.kg_to_pounds) + (self.x_cargopayload)*200)/self.w_payload)
         self.x_crew = 2/5 *self.cockpitlength
 
 

@@ -121,6 +121,8 @@ class VNDiagram(Aircraft):
 
             plt.xlim([-0.5, 180])
             plt.ylim([-1.4, 3.4])
+            plt.xlabel('Airspeed m/s ')
+            plt.ylabel('Loading factor')
             # plt.legend(loc="lower left", fontsize="small")
             plt.savefig("flight envelope")
             plt.close(1)

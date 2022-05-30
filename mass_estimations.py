@@ -119,6 +119,7 @@ class Aircraft(WingAndPowerSizing):
         self.lh = 5.9 * self.meters_to_feet
         self.lv = 5.4 * self.meters_to_feet
         self.t_c = 0.1
+        self.fuel_length = 0
 
         self.fractions = 0.992 * 0.996 * 0.996 * 0.990 * 0.992 * 0.992
         self.fuel_factor = 0
@@ -133,8 +134,9 @@ class Aircraft(WingAndPowerSizing):
         self.taper_ratioh = 1
         self.taper_ratiov = 0.8
         self.mac = 1.85 * self.meters_to_feet # Assumed
-        self.cockpitlength = 2.52
-        self.payloadlength = 5.1
+        self.cockpitlength = 2.52 *self.meters_to_feet
+        self.payloadlength = 5.1*self.meters_to_feet
+        self.insulation_length = 2.1*self.meters_to_feet
         # self.mac = self.root_chord * 2 / 3 * (1 + self.taper_ratio + self.taper_ratio ** 2) / (1 + self.taper_ratio)
 
 
@@ -316,12 +318,13 @@ class Aircraft(WingAndPowerSizing):
 
     def mainsizing(self):
         self.fuel_volume = self.w_fuel / (71 * self.kg_to_pounds / (self.meters_to_feet**3))
-        self.length_fus.append(self.length_fus[-1] + self.fuel_volume / ((self.diameter_fus)**2 * np.pi / 4))
+        self.fuel_length = self.fuel_volume / ((self.diameter_fus)**2 * np.pi / 4) +self.insulation_length
+        self.length_fus.append(self.length_fus[0] + self.fuel_length)
         self.x_fuselage_cg = self.length_fus[-1] / 2
-        self.x_fuel_cg = self.length_fus[-1] - 0.5 * self.fuel_volume / ((self.diameter_fus-0.14)**2 * np.pi / 4)
-        self.change = (self.length_fus[-1] / self.length_fus[-2]) * self.subsystem_weightage['fuselage']/100 + (1-self.subsystem_weightage['fuselage']/100)
-        self.m_fuselage.append(self.change * self.m_fuselage[-1])
-        self.m_wing.append(self.m_wing[-1] * self.change)
+        self.x_fuel_cg = self.cockpitlength +self.payloadlength+ 0.5 *self.fuel_length
+        self.change = (self.length_fus[-1] / self.length_fus[0]) * self.subsystem_weightage['fuselage']/100 + (1-self.subsystem_weightage['fuselage']/100)
+        self.m_fuselage.append(self.change * self.m_fuselage[0])
+        self.m_wing.append(self.m_wing[0] * self.change)
         self.change = self.oew() / self.w_oew
         self.surface_wing = self.w_mtow / self.w_s
         self.w_fueltank = ((1 - self.n_fuel_tank) / self.n_fuel_tank) * self.w_fuel
@@ -338,7 +341,6 @@ class Aircraft(WingAndPowerSizing):
         self.component_matrix.append(mass_vec)
         if np.abs(OEW2 - OEW1)/OEW2 >= 0.01:
             self.classiter()
-
 
 
     def printing(self):

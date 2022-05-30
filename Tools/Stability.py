@@ -72,7 +72,8 @@ class Stability(CenterOfGravity,VNDiagram):
             plt.xlabel(r'$x_{cg}/MAC$')
             plt.ylabel(r'$\frac{S_{h}}{S}$')
             plt.legend()
-            plt.savefig("scissor plot")
+            plt.show()
+            # plt.savefig("scissor plot")
 
     def landinggearsizing(self):
         x_oew = self.locations['oew']
@@ -86,7 +87,7 @@ class Stability(CenterOfGravity,VNDiagram):
 if __name__ == "__main__":
     stability = Stability()
     stability.script()
-    stability.scissor()
+    stability.scissor(plot=True)
     stability.landinggearsizing()
     print('Nose landing gear positioning =',stability.x_nlg_cg)
     print('Main landing gear positioning =',stability.x_mlg )
