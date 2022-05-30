@@ -1,11 +1,7 @@
-from Estimations import Aircraft
 from cg_calculator import CenterOfGravity
-from Wing_Power_Loading import WingAndPowerSizing
 from V_n_diagram import VNDiagram
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.transforms as mtransforms
-import os
 
 
 class Stability(CenterOfGravity,VNDiagram):
