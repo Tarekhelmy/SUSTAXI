@@ -112,7 +112,6 @@ class Aircraft(WingAndPowerSizing):
         self.T_t2 = self.T_t1 * (1 + (1 / self.n_comp) * ((self.PR)**((0.4 / 1.4))-1))
 
         ########## Geometrical parameters #############
-        self.length_fus = [13 * self.meters_to_feet]
         self.height_fus = 1.73 * self.meters_to_feet
         self.width_fus = 1.9 * self.meters_to_feet
         self.diameter_fus = 1.9 * self.meters_to_feet
@@ -120,6 +119,7 @@ class Aircraft(WingAndPowerSizing):
         self.lv = 5.4 * self.meters_to_feet
         self.t_c = 0.1
         self.fuel_length = 0
+        self.length_tailcone = 3.7*self.meters_to_feet
 
         self.fractions = 0.992 * 0.996 * 0.996 * 0.990 * 0.992 * 0.992
         self.fuel_factor = 0
@@ -137,6 +137,8 @@ class Aircraft(WingAndPowerSizing):
         self.cockpitlength = 2.52 *self.meters_to_feet
         self.payloadlength = 5.1*self.meters_to_feet
         self.insulation_length = 2.1*self.meters_to_feet
+        self.length_fus = [(self.cockpitlength+self.payloadlength+self.length_tailcone+0.6*self.meters_to_feet) ]
+
         # self.mac = self.root_chord * 2 / 3 * (1 + self.taper_ratio + self.taper_ratio ** 2) / (1 + self.taper_ratio)
 
 
