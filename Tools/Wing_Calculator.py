@@ -130,6 +130,7 @@ def wing_area():
 
 def lift():
     cl_data = (comp_halfdata[:-1,1] + comp_halfdata[1:,1])/2
+    "multiply middle by 2"
     list_ones = [1] * (len(cl_data)-1)
     list_ones.append(2)
     cl_data = cl_data * list_ones
