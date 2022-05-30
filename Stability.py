@@ -71,7 +71,6 @@ class Stability(CenterOfGravity,VNDiagram):
             ax.axhline(y=Constraint * 1.15, color='black', linestyle='--',
                        label='Optimised constraint + 15\% safety')
             ax.plot(Controlability, Sh_S, label='Controlability')
-            trans = mtransforms.blended_transform_factory(ax.transData, ax.transAxes)
             plt.fill_between(Stability, 0, Sh_S, alpha=0.5, color='grey')
             plt.fill_between(Controlability, 0, Sh_S, alpha=0.5, color='grey')
             plt.title('Scissor Plot')
@@ -82,11 +81,20 @@ class Stability(CenterOfGravity,VNDiagram):
             plt.legend()
             plt.show()
 
+    def landinggearsizing(self):
+        x_oew = self.locations['oew']
+        f_nlg = 0.08*(self.w_oew)
+        f_mlg = 0.92*(self.w_oew)
+        self.x_nlg_cg = self.cockpitlength *self.meters_to_feet
+        self.x_mlg = x_oew + f_nlg*self.x_nlg_cg /f_mlg
+        return None
 
 
-
-
-stability = Stability()
-stability.script()
-stability.scissor()
+if __name__ == "__main__":
+    stability = Stability()
+    stability.script()
+    stability.scissor()
+    stability.landinggearsizing()
+    print('Nose landing gear positioning =',stability.x_nlg_cg)
+    print('Main landing gear positioning =',stability.x_mlg )
 
