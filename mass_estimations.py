@@ -169,6 +169,7 @@ class Aircraft(WingAndPowerSizing):
         self.horizontal_volume = 0.2 * (self.surface_wing * self.mac+ 2*self.width_fus**2*self.length_fus[-1])*(self.AR+2)/(self.AR-2)
         self.surface_controlv = self.vertical_volume / self.lv
         self.surface_controlh = self.horizontal_volume / self.lh
+        self.surface_controlh = 51.09013541454193
         self.component_matrix = []
         self.fuel_diameter = 1.56*self.meters_to_feet
         #self.FC = FuelCellSizing(10)
@@ -322,6 +323,7 @@ class Aircraft(WingAndPowerSizing):
     def mainsizing(self):
         self.fuel_volume = self.w_fuel / (71 * self.kg_to_pounds / (self.meters_to_feet**3))/0.9
         self.fuel_length = self.fuel_volume / ((self.fuel_diameter) **2 * np.pi / 4) +0.3*self.meters_to_feet
+
         self.length_fus.append(self.length_fus[0] + self.fuel_length)
         self.x_fuselage_cg = self.length_fus[-1] / 2
         self.x_fuel_cg = self.cockpitlength +self.payloadlength+ 0.5 *self.fuel_length
@@ -343,6 +345,7 @@ class Aircraft(WingAndPowerSizing):
         mass_vec = np.array([self.m_fuselage[-1], self.m_h, self.m_v, self.m_wing[-1], self.w_furnishing, self.w_icing,
             self.w_electrical, self.w_avionics, self.w_fuelsystem, self.w_flightcontrols, self.w_installedEngine, self.w_hydraulics])
         self.component_matrix.append(mass_vec)
+
         if np.abs(OEW2 - OEW1)/OEW2 >= 0.01:
             self.classiter()
 
@@ -394,6 +397,8 @@ class Aircraft(WingAndPowerSizing):
         self.print_mass(self.m_electric_engine, 'Electric engine mass')
         self.print_mass(self.w_fuel, 'Fuel mass')
         self.print_mass(self.w_fueltank, 'Tank mass')
+        self.print_length(self.fuel_volume/(self.meters_to_feet**2), 'Volume m^3')
+
 
         print('fuel cell efficiency', self.n_fc)
 
