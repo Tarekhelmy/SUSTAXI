@@ -25,8 +25,8 @@ class FuelCellSizing:
         make polynomial fits for the fuel cell sizing plots
         :return:
         """
-        self.eff_prat = np.genfromtxt('../Data/eff_prat.csv', delimiter=',')
-        self.prat_mrat = np.genfromtxt('../Data/prat_mrat.csv', delimiter=',')
+        self.eff_prat = np.genfromtxt("eff_prat.csv", delimiter=',')
+        self.prat_mrat = np.genfromtxt("prat_mrat.csv", delimiter=',')
 
         self.x_prat = self.eff_prat[:, 0]
         self.y_nu = self.eff_prat[:, 1]

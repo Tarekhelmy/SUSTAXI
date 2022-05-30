@@ -168,8 +168,8 @@ class Aircraft(WingAndPowerSizing):
         self.surface_controlv = self.vertical_volume / self.lv
         self.surface_controlh = self.horizontal_volume / self.lh
         self.component_matrix = []
-        self.FC = FuelCellSizing(10)
-        self.FC.fit_plots()
+        #self.FC = FuelCellSizing(10)
+        #self.FC.fit_plots()
 
     def class1(self):
         cruise_fraction = np.exp(self.R*(9.81*self.c_p)/(self.efficiency*self.L_D_cruise))
@@ -218,9 +218,9 @@ class Aircraft(WingAndPowerSizing):
         self.m_pmad = self.fc_power / self.rho_pmad
         self.w_installedEngine = 1.2 * (self.m_electric_engine + self.m_fuel_cell + self.m_pmad + self.m_cooling + self.m_comp)
 
-        mass_ratio = (self.w_fuel + self.w_fueltank) / self.m_fuel_cell
-        pmax_p = self.FC.prat(mass_ratio)
-        p_pmax = 1/pmax_p
+        #mass_ratio = (self.w_fuel + self.w_fueltank) / self.m_fuel_cell
+        #pmax_p = self.FC.prat(mass_ratio)
+        #p_pmax = 1/pmax_p
 
         # print('mass ratio', mass_ratio)
         # print('power ratio', pmax_p)
@@ -341,6 +341,7 @@ class Aircraft(WingAndPowerSizing):
         self.component_matrix.append(mass_vec)
         if np.abs(OEW2 - OEW1)/OEW2 >= 0.01:
             self.classiter()
+
 
 
     def printing(self):
