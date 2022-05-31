@@ -44,7 +44,8 @@ print("c_t=",c_t())
 print("c_r=",c_r())
 
 
-v =46 #m/s
+v = 46 #m/s
+v_c = 150
 rho=1.225
 
 #data = pd.read_table("winglift_v=46_a=15vlm.txt", sep='\s+')
@@ -152,8 +153,9 @@ comp_lift = np.hstack((leftlift,rightlift))
 print("total lift =", round(sum(comp_lift),2))
 print("MTOW=", 9.81*w_mtow)
 print("CLmax =", sum(comp_lift)/(0.5*rho*v*v*surfacewing))
-
-
+q=0.5*rho*v*v
+W_S= (w_mtow*9.81)/surfacewing
+print("required wing lift coefficient=",(1.1*(1/q)*W_S))
 
 #plt.plot(comp_data[1:-1],comp_lift)
 #plt.show()

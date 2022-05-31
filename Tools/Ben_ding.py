@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
-
-from Wing_Calculator import lift, comp_halfdata
+#from Wing_box_adsee import x_mid, y_mid, wing_box
+from Wing_Calculator import lift, comp_halfdata, trailingedgeangle, leadingedgeangle, c_r
 import numpy as np
 #print((lift()))
 #print(-1*comp_halfdata[:,0])
@@ -13,7 +13,15 @@ def Mz():
 
     return Mn
 
-print(len(Mz()))
-#print(len(comp_halfdata[:,0]))
-plt.plot(comp_halfdata[1:,0],Mz())
-plt.show()
+#plt.plot(comp_halfdata[1:,0],Mz())
+#plt.show()
+
+"calculating chord at x coordinates"
+def chord():
+    x_coords = -comp_halfdata[:,0]
+    return c_r() - (x_coords*(np.tan(trailingedgeangle())+np.tan(leadingedgeangle())))
+
+print(chord())
+"required I_yy at each point"
+
+
