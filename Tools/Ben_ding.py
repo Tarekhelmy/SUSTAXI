@@ -25,3 +25,11 @@ print(chord())
 "required I_yy at each point"
 
 
+# ======= Materials =======
+# Aluminium 7075
+E_al7075 = 71.7 # GPa
+UTS_al7075 = 572 # MPa
+YTS_al7075 = 503 # MPa
+poisson_al7075 = 0.33
+G_al7075 = 26.9 # GPa
+ShS_al7075 =
