@@ -142,6 +142,8 @@ class WingAndPowerSizing    :
             plt.plot(x_list, self.takeoff(x_list), linestyle="solid", color="orange", label="Take-off constraint")
         plt.ylim((0,0.4))
         plt.legend()
+        x,y = self.find_DP()
+        plt.scatter(x,y,color = 'red' , linewidths=5)
         plt.xlabel("Wing loading (W/S) [N/m^2]")
         plt.ylabel("Power loading (W/P) [N/W]")
         plt.legend()
