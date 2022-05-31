@@ -1,10 +1,10 @@
 from cg_calculator import CenterOfGravity
-from V_n_diagram import VNDiagram
+# from V_n_diagram import VNDiagram
 import numpy as np
 import matplotlib.pyplot as plt
 
 
-class Stability(CenterOfGravity,VNDiagram):
+class Stability(CenterOfGravity):
     def __init__(self):
         super(Stability, self).__init__()
         self.script()
@@ -18,6 +18,7 @@ class Stability(CenterOfGravity,VNDiagram):
         self.Cm_cg =self.CLhmax_land
         self.recursion = 0
         self.deps_dalpha = 0
+        self.convergenceiter = 0
         self.difference = []
 
     def control(self,Sh_s):
@@ -43,7 +44,6 @@ class Stability(CenterOfGravity,VNDiagram):
 
     def scissor(self, plot=False):
         global Constraint
-        self.lemac_oew_pl_fuel()
         self.positions = self.cgandplot(False)
         self.maximum= max(self.positions)*self.meters_to_feet
         self.minimum = min(self.positions)*self.meters_to_feet
@@ -54,19 +54,20 @@ class Stability(CenterOfGravity,VNDiagram):
         self.CLw_alpha = self.CL(self.AR)
         self.CLh_alpha = self.CL(5,self.Vh_V)
         self.min_difference = maximum - minimum
-        Sh_S = np.linspace(0,4,40)
+        Sh_S = np.linspace(0,2,40000)
         Stability =self.stability(Sh_S)
         Controlability =self.control(Sh_S)
         try :
             Constraint = max(min(Sh_S[Controlability > minimum]), min(Sh_S[Stability > maximum]))
-            self.difference_constraint = (self.stability(Constraint)-self.control(Constraint) )
+            self.difference_constraint = (self.stability(Constraint)-self.control(Constraint))
             self.difference.append(self.difference_constraint - self.min_difference)
-            if abs(self.difference[-1]) > 0.05 and self.recursion < 1000:
-                self.lemac += 0.1
+            if abs(self.difference[-1]) > 0.01 and self.recursion < 1000:
+                self.lemac -= 0.1
                 self.recursion += 1
                 self.scissor()
+
         except ValueError:
-            self.lemac += 0.1
+            self.lemac -= 0.1
             self.scissor()
         self.surface_controlh = Constraint *1.15 *self.surface_wing
 
@@ -79,7 +80,7 @@ class Stability(CenterOfGravity,VNDiagram):
             plt.fill_between(Stability, 0, Sh_S, alpha=0.5, color='grey')
             plt.fill_between(Controlability, 0, Sh_S, alpha=0.5, color='grey')
             plt.title('Scissor Plot')
-            plt.xlim((0.2, 0.7))
+            plt.xlim((-0.2, 0.7))
             plt.ylim((0, 0.3))
             plt.xlabel(r'$x_{cg}/MAC$')
             plt.ylabel(r'$\frac{S_{h}}{S}$')
@@ -90,17 +91,18 @@ class Stability(CenterOfGravity,VNDiagram):
     def convergence(self):
         self.script()
         self.lh = self.length_fus[-1] - self.locations['oew']
-        print(self.lh/self.meters_to_feet)
-        self.scissor()
+        self.scissor(plot=True)
         new = self.surface_controlh
         self.classiter()
+        self.convergenceiter+=1
         previous = self.surface_controlh
         # self.script()
         if abs(previous - new) >= 0.1:
-            self.lemac = 20  # ft
+            self.lemac = 25 # ft
             self.convergence()
         else:
             self.mainsizing()
+            self.scissor(plot=True)
 
 
 
@@ -112,22 +114,38 @@ class Stability(CenterOfGravity,VNDiagram):
         l_mlg = f_nlg*l_nlg/f_mlg
         self.x_nlg_cg = x_oew - l_nlg
         self.x_mlg = x_oew + l_mlg
-        return None
-    #
-    def printing(self):
-        print('Fuselage Length =',self.length_fus[-1]/self.meters_to_feet)
-        print('Wing Lemac Position =',self.lemac/self.meters_to_feet)
-        print('OEW cg = ',self.locations['oew']/self.meters_to_feet)
-        print('Nose landing gear positioning =', self.x_nlg_cg/self.meters_to_feet)
-        print('Main landing gear positioning =', self.x_mlg/self.meters_to_feet)
+        point1x = self.length_fus[-1]-(self.length_tailcone-2.82*self.meters_to_feet)-self.length_tailcone
+        point1y = 1.44*self.meters_to_feet
+        point2x = x_oew
+        # print(point1x)
+        point2y = 0.5*self.diameter_fus
+        # lengthofstrut=1.5
+        x = np.linspace(0,self.length_fus[-1]/self.meters_to_feet,100)
+        y1 = np.tan(15*np.pi / 180)*(x-point1x)+point1y
+        y2 = np.tan(-75*np.pi / 180)*(x-point2x)+point2y
+        diff = y1-y2
+        pointy= y1[y1 == y1[diff == min(diff)]]
+        pointx = x[y1 == y1[diff == min(diff)]]
+        # staticload_mlg = 0.46*self.w_mtow/self.kg_to_pounds
+        # staticload_nlg = 0.04 * self.w_mtow / self.kg_to_pounds
+        # inflationpressure = 0.0101972
+        # print(pointy/self.meters_to_feet)
+        # print(pointx/self.meters_to_feet)
 
+
+
+
+        return None
+
+    # def printing(self):
+    #     print('Fuselage Length =',self.length_fus[-1]/self.meters_to_feet)
+    #     print('Wing Lemac Position =',self.lemac/self.meters_to_feet)
+    #     print('OEW cg = ',self.locations['oew']/self.meters_to_feet)
+    #     print('Nose landing gear positioning =', self.x_nlg_cg/self.meters_to_feet)
+    #     print('Main landing gear positioning =', self.x_mlg/self.meters_to_feet)
 
 if __name__ == "__main__":
     stability = Stability()
-    # stability.script()
     stability.convergence()
     stability.landinggearsizing()
     stability.printing()
-
-
-

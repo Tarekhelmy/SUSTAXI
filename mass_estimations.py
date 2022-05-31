@@ -51,7 +51,7 @@ class Aircraft(WingAndPowerSizing):
         self.w_avionics = 1000
         self.w_battery = 50 * self.kg_to_pounds # from https://www.aircraft-battery.com/search-by-your-aircraft/battery_detail/293
         self.w_mtow = 0
-        self.w_oew = 3500*2.25
+        self.w_oew = 3500*self.kg_to_pounds
         self.w_fueltank = 200 * self.kg_to_pounds
 
         ########## Payload Masses ###########
@@ -72,6 +72,7 @@ class Aircraft(WingAndPowerSizing):
         self.Mach = self.V/np.sqrt(1.4*287*self.ISA(self.cruise_altitude)[1])
         self.w_s = self.find_DP()[0] / (9.81/self.kg_to_pounds*self.meters_to_feet**2)
         self.w_p = self.find_DP()[1] *self.kg_to_pounds / (9.81*self.watts_to_horsepower)
+
 
         #### Powertrain parameters ####
         self.delta_t_func = None
@@ -329,7 +330,6 @@ class Aircraft(WingAndPowerSizing):
         self.change = (self.length_fus[-1] / self.length_fus[0]) * self.subsystem_weightage['fuselage']/100 + (1-self.subsystem_weightage['fuselage']/100)
         self.m_fuselage.append(self.change * self.m_fuselage[-1])
         self.m_wing.append(self.m_wing[-1] * self.change)
-        self.change = self.oew() / self.w_oew
         self.surface_wing = self.w_mtow / self.w_s
         self.w_fueltank = ((1 - self.n_fuel_tank) / self.n_fuel_tank) * self.w_fuel
         self.w_oew = self.oew()
@@ -397,6 +397,7 @@ class Aircraft(WingAndPowerSizing):
         self.print_mass(self.w_fuel, 'Fuel mass')
         self.print_mass(self.w_fueltank, 'Tank mass')
         self.print_length(self.fuel_volume/(self.meters_to_feet**2), 'Volume m^3')
+        self.print_mass(self.m_wing[-1])
 
 
         print('fuel cell efficiency', self.n_fc)
@@ -448,4 +449,3 @@ if __name__ == "__main__":
     aircraft = Aircraft()
     aircraft.procedures()
     aircraft.printing()
-

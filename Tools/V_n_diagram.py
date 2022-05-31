@@ -19,7 +19,7 @@ class VNDiagram(Aircraft):
         self.mainsizing()
 
         self.loadfactor = 2.1 + 24000 / (self.w_mtow + 10000)
-        self.mac = 1.85
+        self.mac = 1.85 *self.meters_to_feet
         self.Mach = self.cruise_speed / (np.sqrt(1.4 * 287 * self.ISA(self.cruise_altitude)[1]))
         self.density = self.ISA(self.cruise_altitude)[2]
         self.W_S = self.find_DP()[0]
