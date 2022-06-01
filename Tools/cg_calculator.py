@@ -1,7 +1,5 @@
-import numpy as np
 import matplotlib.pyplot as plt
-from mass_estimations import Aircraft
-import os
+from Tools.mass_estimations import Aircraft
 
 
 # aircraft = Aircraft()

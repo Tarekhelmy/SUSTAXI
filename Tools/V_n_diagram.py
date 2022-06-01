@@ -1,8 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from mass_estimations import Aircraft
-from Wing_Power_Loading import WingAndPowerSizing
-import os
+from Tools.mass_estimations import Aircraft
+
 
 class VNDiagram(Aircraft):
     def __init__(self):
