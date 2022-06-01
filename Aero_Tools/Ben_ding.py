@@ -13,7 +13,13 @@ UTS_al7050 = 572 # MPa
 YTS_al7050 = 503 # MPa
 poisson_al7050 = 0.33
 G_al7050 = 26.9 # GPa
-#ShS_al7075 =
+
+# Aluminium 7050
+E_al7050 = 75 # GPa --> The sources say 70 - 80 GPa ...
+UTS_al7050 = 515 # MPa
+YTS_al7050 = 455 # MPa
+poisson_al7050 = 0.33
+G_al7050 = 26.9 # GPa
 
 def Mz():
     Mz = abs(comp_halfdata[1:,0]) * lift()
