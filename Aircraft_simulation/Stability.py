@@ -44,7 +44,7 @@ class Stability(CenterOfGravity):
 
     def scissor(self, plot=False):
         global Constraint
-        self.positions = self.cgandplot(False)
+        self.positions = self.cgandplot(True)
         self.maximum= max(self.positions)*self.meters_to_feet
         self.minimum = min(self.positions)*self.meters_to_feet
         maximum = (self.maximum-self.lemac) /self.mac
