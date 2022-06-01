@@ -137,11 +137,13 @@ class Stability(CenterOfGravity):
         self.scissor(plot=True)
 
     def printing1(self):
-        print('Fuselage Length =',self.length_fus[-1]/self.meters_to_feet)
-        print('Wing Lemac Position =',self.lemac/self.meters_to_feet)
-        print('OEW cg = ',self.locations['oew']/self.meters_to_feet)
-        print('Nose landing gear positioning =', self.x_nlg_cg/self.meters_to_feet)
-        print('Main landing gear positioning =', self.x_mlg/self.meters_to_feet)
+        print('\nOther important parameters:\n---------------')
+        print('Fuselage Length =',np.round(self.length_fus[-1]/self.meters_to_feet, 2), " [m]")
+        print("All the following values have the tip of the nose as reference:")
+        print('Wing Lemac Position =',np.round(self.lemac/self.meters_to_feet, 2), " [m]")
+        print('OEW cg = ',np.round(self.locations['oew']/self.meters_to_feet, 2), " [m]")
+        print('Nose landing gear positioning =', np.round(self.x_nlg_cg/self.meters_to_feet, 2), " [m]")
+        print('Main landing gear positioning =', np.round(self.x_mlg/self.meters_to_feet, 2), " [m]")
 
 if __name__ == "__main__":
     stability = Stability()

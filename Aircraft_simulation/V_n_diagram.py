@@ -92,34 +92,34 @@ class VNDiagram(Stability):
 
 
             #Positive side 
-            plt.plot(np.linspace(0, VA, 500), loading, linestyle="-", color="black", label="Stall curve")
-            plt.plot([VA, VD], [self.loadfactor, self.loadfactor], linestyle="-", color="black", label="Dive speed")
+            plt.plot(np.linspace(0, VA, 500), loading, linestyle="-", color="black", label="Maneuver Diagram")
+            plt.plot([VA, VD], [self.loadfactor, self.loadfactor], linestyle="-", color="black")
             plt.vlines(VD, 0, self.loadfactor, linestyle="-", color="black")
 
             #Negative side
-            plt.plot(np.linspace(0, VS, 500), negativeloading, linestyle="-", color="black", label="Negative load factor curve")
-            plt.plot([VS, VC], [self.negloadfactor, self.negloadfactor], linestyle="-", color="black", label="Design Cruise speed")
+            plt.plot(np.linspace(0, VS, 500), negativeloading, linestyle="-", color="black")
+            plt.plot([VS, VC], [self.negloadfactor, self.negloadfactor], linestyle="-", color="black")
             plt.plot([VC, VD], [self.negloadfactor, 0], linestyle="-", color="black")
 
             #Stall speed line
-            plt.hlines(1, 0, VD, linestyle="--", color="black", label="Stall speed line")
+            plt.hlines(1, 0, VD, linestyle="--", color="black")
 
             ######## GUST LOADING DIAGRAM ########
 
 
             #Upper side dashed
-            plt.plot([0, VB], [1, n_peak_B], linestyle="-", color="blue", label="Maximum gust intensity load factor")
-            plt.plot([0, VC], [1, n_peak_C], linestyle="--", color="blue", label="Design cruise speed load factor")
-            plt.plot([0, VD], [1, n_peak_D], linestyle="--", color="blue", label="Dive speed load factor")
+            plt.plot([0, VB], [1, n_peak_B], linestyle="-", color="blue", label="Gust Loading Diagram")
+            plt.plot([0, VC], [1, n_peak_C], linestyle="--", color="blue")
+            plt.plot([0, VD], [1, n_peak_D], linestyle="--", color="blue")
             
             #Upper side full
             plt.plot([VB, VC], [n_peak_B, n_peak_C], linestyle="-", color="blue")
             plt.plot([VC, VD], [n_peak_C, n_peak_D], linestyle="-", color="blue")
 
             #Lower side dashed
-            plt.plot([0, VB], [1, n_neg_B], linestyle="-", color="blue", label="Negative maximum gust intensity load factor")
-            plt.plot([0, VC], [1, n_neg_C], linestyle="--", color="blue", label="Design cruise speed negative load factor")
-            plt.plot([0, VD], [1, n_neg_D], linestyle="--", color="blue", label="Dive speed negative load factor")
+            plt.plot([0, VB], [1, n_neg_B], linestyle="-", color="blue")
+            plt.plot([0, VC], [1, n_neg_C], linestyle="--", color="blue")
+            plt.plot([0, VD], [1, n_neg_D], linestyle="--", color="blue")
 
             #Lower side full
             plt.plot([VB, VC], [n_neg_B, n_neg_C], linestyle="-", color="blue")
@@ -127,8 +127,9 @@ class VNDiagram(Stability):
 
             plt.xlim([-0.5, 180])
             plt.ylim([-1.4, 3.4])
-            plt.xlabel('Airspeed m/s ')
-            plt.ylabel('Loading factor')
+            plt.xlabel('Airspeed [m/s]')
+            plt.ylabel('Loading factor [-]')
+            plt.legend(loc="upper left", fontsize="medium")
             # plt.legend(loc="lower left", fontsize="small")
             plt.savefig("flight envelope")
             plt.close(1)
@@ -148,6 +149,7 @@ class VNDiagram(Stability):
 
     def final_print(self):
         self.printing()
+        self.printing1()
         crit_factor = np.round(self.get_critical_loadfactor(), 2)
         print('\nLoading factors during flight:\n---------------')
         print(f"The positive design load factor is: {crit_factor} [-]")

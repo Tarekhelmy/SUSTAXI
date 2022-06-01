@@ -26,9 +26,9 @@ class wing_calculator(Aircraft):
 """
 
 AR=10
-surfacewing= 36.1
+surfacewing= 31.4
 w_mtow = 7228
-tapratio = 0.36
+tapratio = 0.37
 
 def spanb():
     return round(np.sqrt(surfacewing*AR),2)
