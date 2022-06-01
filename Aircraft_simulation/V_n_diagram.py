@@ -148,6 +148,7 @@ class VNDiagram(Stability):
 
     def final_print(self):
         self.printing()
+        self.printing1()
         crit_factor = np.round(self.get_critical_loadfactor(), 2)
         print('\nLoading factors during flight:\n---------------')
         print(f"The positive design load factor is: {crit_factor} [-]")
