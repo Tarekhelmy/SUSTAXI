@@ -155,6 +155,7 @@ def wing_box(x_le, x_te):
     #print(I_yy_LE)
     #print(I_yy_TE)
     print(I_yy_TE+I_yy_LE+I_yy_sheet_upper+I_yy_sheet_lower)
+    I_yy_box = I_yy_TE+I_yy_LE+I_yy_sheet_upper+I_yy_sheet_lower
     # Centroid
     x_cent = (x_le + x_te)/2
     y_cent = (y_le_up + y_te_up + y_le_low + y_te_low)/4
@@ -189,7 +190,8 @@ def wing_box(x_le, x_te):
     Ixx_t = I_xx_up + I_xx_low + I_xx_le + I_xx_te
     points = [[y_le_up, x_le], [y_le_low, x_le], [y_te_low, x_te], [y_te_low, x_te]]
 
-    return x_le, x_te, y_le_up, y_te_up, y_le_low, y_te_low, Ixx_t, points, x_cent, y_cent, Upper_sheet, Lower_sheet
+    return I_yy_box, Upper_sheet, Lower_sheet
+    #return x_le, x_te, y_le_up, y_te_up, y_le_low, y_te_low, Ixx_t, points, x_cent, y_cent, Upper_sheet, Lower_sheet
 #x_le, x_te, y_le_up, y_te_up, y_le_low, y_te_low, Ixx_t, points, x_cent, y_cent = wing_box(0.15, 0.7)
 wing_box(0.15, 0.7)
 wing_box(0.1, 0.65)
