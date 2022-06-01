@@ -111,10 +111,7 @@ def wing_box(x_le, x_te):
 
     plt.plot(Airfoil_shape[0], Airfoil_shape[1], ls='--')
     plt.plot(Upper_sheet[0] + Lower_sheet[0] + [Upper_sheet[0][0]], Upper_sheet[1] + Lower_sheet[1] + [Upper_sheet[1][0]])
-    print(Upper_sheet[0])
-    print(Upper_sheet[1])
-    #plt.plot(Lower_sheet[0], Lower_sheet[1])
-    print(Lower_sheet)
+
     plt.xlim(0,1)
     plt.ylim(-0.5,0.5)
     plt.grid()
@@ -123,7 +120,7 @@ def wing_box(x_le, x_te):
 
     # ======== I_yy of Wingbox without stringers --> Times c^3 ==========
     y_centroid = np.average(Upper_sheet[1] + Lower_sheet[1])
-    print('y_centroid=', y_centroid)
+    #print('y_centroid=', y_centroid)
     #plt.scatter(0.5, y_centroid)
     I_yy_sheet_upper_lst = []
     t_upper = 4  # mm
@@ -153,10 +150,11 @@ def wing_box(x_le, x_te):
     t_te = 7    # mm
     I_yy_LE = (y_le_up-y_le_low)**3 * t_le/12 + (y_le_up-y_le_low) * t_le * ((y_le_up-y_le_low)/2-y_centroid)**2
     I_yy_TE = (y_te_up-y_te_low)**3 * t_te/12 + (y_te_up-y_te_low) * t_te * ((y_te_up-y_te_low)/2-y_centroid)**2
-    print(I_yy_sheet_upper)
-    print(I_yy_sheet_lower)
-    print(I_yy_LE)
-    print(I_yy_TE)
+    #print(I_yy_sheet_upper)
+    #print(I_yy_sheet_lower)
+    #print(I_yy_LE)
+    #print(I_yy_TE)
+    print(I_yy_TE+I_yy_LE+I_yy_sheet_upper+I_yy_sheet_lower)
     # Centroid
     x_cent = (x_le + x_te)/2
     y_cent = (y_le_up + y_te_up + y_le_low + y_te_low)/4
@@ -193,6 +191,8 @@ def wing_box(x_le, x_te):
 
     return x_le, x_te, y_le_up, y_te_up, y_le_low, y_te_low, Ixx_t, points, x_cent, y_cent, Upper_sheet, Lower_sheet
 #x_le, x_te, y_le_up, y_te_up, y_le_low, y_te_low, Ixx_t, points, x_cent, y_cent = wing_box(0.15, 0.7)
+wing_box(0.15, 0.7)
+wing_box(0.1, 0.65)
 wing_box(0.2, 0.75)
 '''print(Ixx_t)
 plt.plot(Airfoil_shape[0], Airfoil_shape[1])
