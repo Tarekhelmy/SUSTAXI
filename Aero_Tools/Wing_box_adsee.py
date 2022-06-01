@@ -193,6 +193,7 @@ wing_box(0.15, 0.7)
 wing_box(0.1, 0.65)
 wing_box(0.2, 0.75)
 
+I_yy_box, Upper_sheet, Lower_sheet = wing_box(0.15, 0.7)
 '''print(Ixx_t)
 plt.plot(Airfoil_shape[0], Airfoil_shape[1])
 plt.scatter(x_mid(), y_mid(), marker='+')
@@ -203,7 +204,7 @@ plt.ylim(-0.5, 0.5)
 plt.grid()
 plt.show()'''
 
-y_dist = max(Airfoil_shape[1])-y_mid()
+y_dist = max(Airfoil_shape[1])-np.average(Upper_sheet[1] + Lower_sheet[1])
 print('maximum y distance =', y_dist, 'of chord')
 
 # Stringers (L-shape)
