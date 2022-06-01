@@ -4,7 +4,7 @@ import numpy as np
 #print((lift()))
 #print(-1*comp_halfdata[:,0])
 
-n_safety=1.5
+n_safety=1.5 * 4.6
 
 # ======= Materials =======
 # Aluminium 7075
@@ -43,13 +43,14 @@ def chord():
 "required I_yy at each point along span"
 yy = chord()*y_dist
 mz = np.array(Mz())
-sigma = 1.5*YTS_al7050*10**6
-i_yy = mz[1:]*yy/sigma
+sigma = n_safety*YTS_al7050*10**6
+i_yy = (mz[1:]*yy)/sigma
 
-scaled = wing_box(0.15, 0.7)[0] * (chord()*1000)**3
-#print(scaled)
 
-print("required I_yy",(i_yy*10**12) - scaled)
+scaled = wing_box(0.15, 0.7)[0] * ((chord())**2)
+print(scaled)
+
+print("required I_yy",i_yy - scaled)
 
 "I_yy of a single stringer"
 t_string = 10
