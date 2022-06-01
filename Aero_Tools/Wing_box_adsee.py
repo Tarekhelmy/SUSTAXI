@@ -152,39 +152,6 @@ def wing_box(x_le, x_te):
     I_yy_TE = (y_te_up-y_te_low)**3 * t_te/12 + (y_te_up-y_te_low) * t_te * ((y_te_up-y_te_low)/2-y_centroid)**2
     print(I_yy_TE+I_yy_LE+I_yy_sheet_upper+I_yy_sheet_lower)
     I_yy_box = I_yy_TE+I_yy_LE+I_yy_sheet_upper+I_yy_sheet_lower
-    # Centroid
-    x_cent = (x_le + x_te)/2
-    y_cent = (y_le_up + y_te_up + y_le_low + y_te_low)/4
-
-    # Bending Resistance (Ixx(t))
-    # Upper Sheet
-    b_up = np.sqrt((x_te - x_le) ** 2 + (y_le_up - y_te_up) ** 2)
-    beta_up = abs(np.arcsin(abs(y_le_up - y_te_up) / b_up))
-    d_up = (y_le_up + y_te_up) / 2 - y_cent
-    # I_xx_u = (b_u) * t ^ 3 * np.cos(beta)**2 / 12 + (b) * t * (d_u) ^ 2  >>>>  assuming small thickness
-    I_xx_up = b_up * d_up ** 2  # ...* t
-
-    # Lower Sheet
-    b_low = np.sqrt((x_te - x_le) ** 2 + (y_te_low - y_le_low) ** 2)
-    beta_low = abs(np.arcsin(abs(y_te_low - y_le_low) / b_low))
-    d_low = (y_le_low + y_te_low) / 2 - y_cent
-    # I_xx_l = (b_u) * t ^ 3 * np.cos(beta)**2 / 12 + (b) * t * (d_u) ^ 2  >>>>  assuming small thickness
-    I_xx_low = b_low * d_low ** 2  # ...* t
-
-    # Leading Sheet
-    h_le = np.sqrt((y_le_up - y_le_low))
-    d_le = (y_le_up + y_le_low) / 2 - y_cent
-    # I_xx = t * (h)^3 * sin^2(beta) / 12 + t *1(h) * (d)^2
-    I_xx_le = h_le ** 3 / 12 + h_le * d_le ** 2  # ...* t
-
-    # Trailing Sheet
-    h_te = np.sqrt((y_te_up - y_te_low))
-    d_te = (y_te_up + y_te_low) / 2 - y_cent
-    # I_xx = t * (h)^3 * sin^2(beta) / 12 + t *1(h) * (d)^2
-    I_xx_te = h_te ** 3 / 12 + h_te * d_te ** 2  # ...* t
-
-    Ixx_t = I_xx_up + I_xx_low + I_xx_le + I_xx_te
-    points = [[y_le_up, x_le], [y_le_low, x_le], [y_te_low, x_te], [y_te_low, x_te]]
 
     return I_yy_box, Upper_sheet, Lower_sheet
     #return x_le, x_te, y_le_up, y_te_up, y_le_low, y_te_low, Ixx_t, points, x_cent, y_cent, Upper_sheet, Lower_sheet
@@ -215,6 +182,3 @@ cent_y_stringer = (L_base * t_str * t_str/2 + L_web * t_str * L_web/2)/(L_base *
 I_yy_str = t_str*L_web**3/12 + (L_web/2 - cent_y_stringer)**2 * L_web*t_str \
            + (cent_y_stringer - t_str/2)**2 * L_base*t_str
 
-def I_yy_sheet(Upper_sheet, Lower_sheet):
-
-    return
