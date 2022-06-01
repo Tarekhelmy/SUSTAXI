@@ -65,7 +65,6 @@ class Stability(CenterOfGravity):
                 self.lemac -= 0.1
                 self.recursion += 1
                 self.scissor()
-
         except ValueError:
             self.lemac -= 0.1
             self.scissor()
@@ -135,17 +134,19 @@ class Stability(CenterOfGravity):
         self.x_mlg = x_oew + l_mlg
         return None
 
-    def printing(self):
-        print('Fuselage Length =',self.length_fus[-1]/self.meters_to_feet)
-        print('Wing Lemac Position =',self.lemac/self.meters_to_feet)
-        print('OEW cg = ',self.locations['oew']/self.meters_to_feet)
-        print('Nose landing gear positioning =', self.x_nlg_cg/self.meters_to_feet)
-        print('Main landing gear positioning =', self.x_mlg/self.meters_to_feet)
+    # def printing(self):
+    #     print('Fuselage Length =',self.length_fus[-1]/self.meters_to_feet)
+    #     print('Wing Lemac Position =',self.lemac/self.meters_to_feet)
+    #     print('OEW cg = ',self.locations['oew']/self.meters_to_feet)
+    #     print('Nose landing gear positioning =', self.x_nlg_cg/self.meters_to_feet)
+    #     print('Main landing gear positioning =', self.x_mlg/self.meters_to_feet)
 
 if __name__ == "__main__":
     stability = Stability()
     stability.convergence()
     stability.landinggearsizing()
+    stability.classiter2()
     stability.printing()
     stability.scissor(plot=True)
+
 

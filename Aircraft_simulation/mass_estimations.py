@@ -321,7 +321,7 @@ class Aircraft(WingAndPowerSizing):
         print(name,'= %.2f' % (parameter / (self.watts_to_horsepower * 1000)), 'kW')
 
     def mainsizing(self):
-        self.fuel_volume = self.w_fuel / (71 * self.kg_to_pounds / (self.meters_to_feet**3))/0.85
+        self.fuel_volume = self.w_fuel / (71 * self.kg_to_pounds / (self.meters_to_feet**3))/0.9
         self.fuel_length = self.fuel_volume / ((self.fuel_diameter) **2 * np.pi / 4) +0.3*self.meters_to_feet
         self.length_fus.append(self.length_fus[0] + self.fuel_length)
         self.x_fuselage_cg = self.length_fus[-1] / 2
