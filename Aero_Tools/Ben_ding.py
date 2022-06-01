@@ -1,4 +1,4 @@
-from Aero_Tools.Wing_box_adsee import y_dist
+from Aero_Tools.Wing_box_adsee import y_dist, wing_box
 from Wing_Calculator import lift, comp_halfdata, trailingedgeangle, leadingedgeangle, c_r
 import numpy as np
 #print((lift()))
@@ -10,35 +10,40 @@ n_safety=1.5
 # Aluminium 7075
 E_al7050 = 71.7 # GPa
 UTS_al7050 = 572 # MPa
-YTS_al7050 = 503 # MPa
+YTS_al7050 = 469 # MPa
 poisson_al7050 = 0.33
 G_al7050 = 26.9 # GPa
 #ShS_al7075 =
 
 def Mz():
-    Mz = abs(comp_halfdata[1:,0]) * lift()
+    Mz = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2 * lift()
     Mn = ()
     for i in range(0,len(Mz)+1,1):
         Mn += (sum(Mz[:i]),)
-
     return Mn
+
+
+
 
 #plt.plot(comp_halfdata[1:,0],Mz())
 #plt.show()
 
 "calculating chord at x coordinates"
 def chord():
-    x_coords = -comp_halfdata[1:,0]
-    return c_r() - (x_coords*(np.tan(trailingedgeangle())+np.tan(leadingedgeangle())))
+    z_coords = abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0])/2
+    return c_r() - (z_coords*(np.tan(trailingedgeangle())+np.tan(leadingedgeangle())))
 
-print(chord())
+
 "required I_yy at each point along span"
 yy = chord()*y_dist
 mz = np.array(Mz())
-sigma = 1.5*YTS_al7075*10**6
+sigma = 1.5*YTS_al7050*10**6
 i_yy = mz[1:]*yy/sigma
 
-print("required I_yy in m4 * 10^6",i_yy*10**6)
+scaled = wing_box(0.15, 0.7)[0] * (chord()*1000)**3
+#print(scaled)
+
+print("required I_yy",(i_yy*10**12) - scaled)
 
 "I_yy of a single stringer"
 t_string = 10
