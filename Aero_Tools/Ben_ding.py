@@ -71,18 +71,28 @@ l_string = 100
 L_base = 100 # mm
 L_web = 100 # mm
 t_str_L = 3 # mm
+A_str_L = L_base*t_str_L + L_web*t_str_L
 cent_y_str_L = (L_base * t_str_L * t_str_L/2 + L_web * t_str_L * L_web/2)/(L_base * t_str_L + L_web * t_str_L)
 I_yy_str_L = t_str_L*L_web**3/12 + (L_web/2 - cent_y_str_L)**2 * L_web*t_str_L \
            + (cent_y_str_L - t_str_L/2)**2 * L_base*t_str_L
+
 
 # Z-shape
 Z_base = 50     # mm
 Z_web = 100     # mm
 Z_top = 50      # mm
 t_str_Z = 3       # mm
+A_str_Z = Z_base*t_str_Z + Z_web*t_str_Z + Z_top*t_str_Z
 cent_y_str_Z = Z_web/2
-I_yy_str_L_Z = t_str_Z*Z_web**3/12 \
+I_yy_str_Z = t_str_Z*Z_web**3/12 \
             + (cent_y_str_Z - t_str_Z/2)**2 * (Z_base + Z_top) *t_str_Z
+
+# Add Stringers
+I_yy_four_corner_str = 4*I_yy_str_L \
+                      + A_str_L*((Upper_sheet[1][0]-box_centre)**2 + (Upper_sheet[1][-1]-box_centre)**2 +
+                                 (Lower_sheet[1][0]-box_centre)**2 + (Lower_sheet[1][-1]-box_centre)**2) * chord()
+
+print(I_yy_four_corner_str)
 
 "deflection with this I_yy"
 
