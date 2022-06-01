@@ -453,10 +453,10 @@ class Aircraft(WingAndPowerSizing):
 
     def procedures(self):
         self.classiter()
-        self.mainsizing()
+        self.classiter2()
         self.cgcalc()
+        self.printing()
 
 if __name__ == "__main__":
     aircraft = Aircraft()
     aircraft.procedures()
-    aircraft.printing()

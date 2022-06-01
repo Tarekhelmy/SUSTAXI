@@ -116,37 +116,37 @@ class Stability(CenterOfGravity):
         point1x = self.length_fus[-1]-(2.82*self.meters_to_feet)
         point1y = 0.14*self.meters_to_feet
         point2x = x_oew
-        # print(point1x)
         point2y = 0.5*self.diameter_fus
-        # lengthofstrut=1.5
         x = np.linspace(0,self.length_fus[-1],100)
         y1 = np.tan(15*np.pi / 180)*(x-point1x)+point1y
         y2 = np.tan(-75*np.pi / 180)*(x-point2x)+point2y
         diff = abs(y1-y2)
         pointy= y1[diff == min(diff)][0]
         pointx = x[diff == min(diff)][0]
-        # staticload_mlg = 0.46*self.w_mtow/self.kg_to_pounds
-        # staticload_nlg = 0.04 * self.w_mtow / self.kg_to_pounds
-        # inflationpressure = 0.0101972
         l_mlg = pointx - x_oew
         l_nlg = f_mlg*l_mlg/f_nlg
         self.x_nlg_cg = x_oew - l_nlg
         self.x_mlg = x_oew + l_mlg
         return None
 
-    # def printing(self):
-    #     print('Fuselage Length =',self.length_fus[-1]/self.meters_to_feet)
-    #     print('Wing Lemac Position =',self.lemac/self.meters_to_feet)
-    #     print('OEW cg = ',self.locations['oew']/self.meters_to_feet)
-    #     print('Nose landing gear positioning =', self.x_nlg_cg/self.meters_to_feet)
-    #     print('Main landing gear positioning =', self.x_mlg/self.meters_to_feet)
+    def procedures(self):
+        self.convergence()
+        self.landinggearsizing()
+        self.classiter2()
+        self.printing1()
+        self.scissor(plot=True)
+
+    def printing1(self):
+        print('\nOther important parameters:\n---------------')
+        print('Fuselage Length =',np.round(self.length_fus[-1]/self.meters_to_feet, 2), " [m]")
+        print("All the following values have the tip of the nose as reference:")
+        print('Wing Lemac Position =',np.round(self.lemac/self.meters_to_feet, 2), " [m]")
+        print('OEW cg = ',np.round(self.locations['oew']/self.meters_to_feet, 2), " [m]")
+        print('Nose landing gear positioning =', np.round(self.x_nlg_cg/self.meters_to_feet, 2), " [m]")
+        print('Main landing gear positioning =', np.round(self.x_mlg/self.meters_to_feet, 2), " [m]")
 
 if __name__ == "__main__":
     stability = Stability()
-    stability.convergence()
-    stability.landinggearsizing()
-    stability.classiter2()
-    stability.printing()
-    stability.scissor(plot=True)
+    stability.procedures()
 
 
