@@ -63,7 +63,7 @@ class Aircraft(WingAndPowerSizing):
         self.L_D_loiter = self.CL_CD_cruise
         self.c_p = 90 * 10**-3 * 10**-6
         self.R = 1500 * 1000
-        self.V = 500 * 1000 / 3600
+        self.V = 475 * 1000 / 3600
         self.E = self.R / self.V
         self.efficiency = 0.85
         self.CL_alpha = 0
@@ -82,7 +82,7 @@ class Aircraft(WingAndPowerSizing):
 
         self.n_ee = 0.9
         self.n_pmad = 0.9
-        self.n_fc = 0.5
+        self.n_fc = 0.55
         self.n_comp = 0.7
         self.n_fuel_tank = 0.5
 
@@ -94,7 +94,7 @@ class Aircraft(WingAndPowerSizing):
 
         self.rho_pmad = 10000 * (self.watts_to_horsepower / self.kg_to_pounds)
         self.rho_comp = 2000 * (self.watts_to_horsepower / self.kg_to_pounds)
-        self.rho_ee = 5000 * (self.watts_to_horsepower / self.kg_to_pounds)
+        self.rho_ee = 2800 * (self.watts_to_horsepower / self.kg_to_pounds)
         self.rho_fc = 3000 * (self.watts_to_horsepower / self.kg_to_pounds)
 
         self.pmad_power = None
@@ -288,7 +288,6 @@ class Aircraft(WingAndPowerSizing):
         ###### updating OEW ########
         self.w_fueltank = ((1 - self.n_fuel_tank) / self.n_fuel_tank) * self.w_fuel
 
-        self.w_fuel = self.w_fuel *self.oew()/self.w_oew
         self.fuel_volume = self.w_fuel*2.8 / (71 * self.kg_to_pounds / (self.meters_to_feet ** 3))
         self.w_fuelsystem = 2.49*self.fuel_volume**0.726*(1/(1+1.1))**0.363*2**0.242*2**0.157
 
@@ -322,7 +321,7 @@ class Aircraft(WingAndPowerSizing):
         print(name,'= %.2f' % (parameter / (self.watts_to_horsepower * 1000)), 'kW')
 
     def mainsizing(self):
-        self.fuel_volume = self.w_fuel / (71 * self.kg_to_pounds / (self.meters_to_feet**3))/0.9
+        self.fuel_volume = self.w_fuel / (71 * self.kg_to_pounds / (self.meters_to_feet**3))/0.85
         self.fuel_length = self.fuel_volume / ((self.fuel_diameter) **2 * np.pi / 4) +0.3*self.meters_to_feet
         self.length_fus.append(self.length_fus[0] + self.fuel_length)
         self.x_fuselage_cg = self.length_fus[-1] / 2
@@ -397,8 +396,7 @@ class Aircraft(WingAndPowerSizing):
         self.print_mass(self.w_fuel, 'Fuel mass')
         self.print_mass(self.w_fueltank, 'Tank mass')
         self.print_length(self.fuel_volume/(self.meters_to_feet**2), 'Volume m^3')
-        self.print_mass(self.m_wing[-1])
-
+        print(self.fuel_volume*71/(self.meters_to_feet**3))
 
         print('fuel cell efficiency', self.n_fc)
 

@@ -66,7 +66,7 @@ class WingAndPowerSizing    :
         self.cruise_altitude = 5000 # m
         self.MTOW = 0
         self.AR = 10
-        self.cruise_speed = 500 / 3.6
+        self.cruise_speed = 475 / 3.6
         self.rho = 1.225
         self.pressure = 101325
         self.temperature = 288.15
@@ -152,7 +152,7 @@ class WingAndPowerSizing    :
 
     def find_DP(self):
         self.W_S = self.clean_stall()
-        self.W_P = self.cruise(self.W_S)
+        self.W_P = self.climbrate(self.W_S)
         # self.S = self.MTOW / self.W_S
         # self.P = self.MTOW / self.W_P
         return self.W_S, self.W_P

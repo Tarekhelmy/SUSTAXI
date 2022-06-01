@@ -80,8 +80,8 @@ class Stability(CenterOfGravity):
             plt.fill_between(Stability, 0, Sh_S, alpha=0.5, color='grey')
             plt.fill_between(Controlability, 0, Sh_S, alpha=0.5, color='grey')
             plt.title('Scissor Plot')
-            plt.xlim((-0.2, 0.7))
-            plt.ylim((0, 0.3))
+            plt.xlim((0.1, 0.7))
+            plt.ylim((0, 0.15))
             plt.xlabel(r'$x_{cg}/MAC$')
             plt.ylabel(r'$\frac{S_{h}}{S}$')
             plt.legend()
@@ -91,7 +91,7 @@ class Stability(CenterOfGravity):
     def convergence(self):
         self.script()
         self.lh = self.length_fus[-1] - self.locations['oew']
-        self.scissor(plot=True)
+        self.scissor()
         new = self.surface_controlh
         self.classiter()
         self.convergenceiter+=1
@@ -102,7 +102,7 @@ class Stability(CenterOfGravity):
             self.convergence()
         else:
             self.mainsizing()
-            self.scissor(plot=True)
+            self.scissor()
 
 
 
@@ -114,38 +114,38 @@ class Stability(CenterOfGravity):
         l_mlg = f_nlg*l_nlg/f_mlg
         self.x_nlg_cg = x_oew - l_nlg
         self.x_mlg = x_oew + l_mlg
-        point1x = self.length_fus[-1]-(self.length_tailcone-2.82*self.meters_to_feet)-self.length_tailcone
-        point1y = 1.44*self.meters_to_feet
+        point1x = self.length_fus[-1]-(2.82*self.meters_to_feet)
+        point1y = 0.14*self.meters_to_feet
         point2x = x_oew
         # print(point1x)
         point2y = 0.5*self.diameter_fus
         # lengthofstrut=1.5
-        x = np.linspace(0,self.length_fus[-1]/self.meters_to_feet,100)
+        x = np.linspace(0,self.length_fus[-1],100)
         y1 = np.tan(15*np.pi / 180)*(x-point1x)+point1y
         y2 = np.tan(-75*np.pi / 180)*(x-point2x)+point2y
-        diff = y1-y2
-        pointy= y1[y1 == y1[diff == min(diff)]]
-        pointx = x[y1 == y1[diff == min(diff)]]
+        diff = abs(y1-y2)
+        pointy= y1[diff == min(diff)][0]
+        pointx = x[diff == min(diff)][0]
         # staticload_mlg = 0.46*self.w_mtow/self.kg_to_pounds
         # staticload_nlg = 0.04 * self.w_mtow / self.kg_to_pounds
         # inflationpressure = 0.0101972
-        # print(pointy/self.meters_to_feet)
-        # print(pointx/self.meters_to_feet)
-
-
-
-
+        l_mlg = pointx - x_oew
+        l_nlg = f_mlg*l_mlg/f_nlg
+        self.x_nlg_cg = x_oew - l_nlg
+        self.x_mlg = x_oew + l_mlg
         return None
 
-    # def printing(self):
-    #     print('Fuselage Length =',self.length_fus[-1]/self.meters_to_feet)
-    #     print('Wing Lemac Position =',self.lemac/self.meters_to_feet)
-    #     print('OEW cg = ',self.locations['oew']/self.meters_to_feet)
-    #     print('Nose landing gear positioning =', self.x_nlg_cg/self.meters_to_feet)
-    #     print('Main landing gear positioning =', self.x_mlg/self.meters_to_feet)
+    def printing(self):
+        print('Fuselage Length =',self.length_fus[-1]/self.meters_to_feet)
+        print('Wing Lemac Position =',self.lemac/self.meters_to_feet)
+        print('OEW cg = ',self.locations['oew']/self.meters_to_feet)
+        print('Nose landing gear positioning =', self.x_nlg_cg/self.meters_to_feet)
+        print('Main landing gear positioning =', self.x_mlg/self.meters_to_feet)
 
 if __name__ == "__main__":
     stability = Stability()
     stability.convergence()
     stability.landinggearsizing()
     stability.printing()
+    stability.scissor(plot=True)
+
