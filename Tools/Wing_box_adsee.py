@@ -8,6 +8,7 @@ Airfoil_shape = [[1.000000, 0.950230, 0.900490, 0.850700, 0.800840, 0.750890, 0.
 Airfoil_upper = [Airfoil_shape[0][0:Airfoil_shape[0].index(0)], Airfoil_shape[1][0:Airfoil_shape[0].index(0)]]
 Airfoil_lower = [Airfoil_shape[0][Airfoil_shape[0].index(0):], Airfoil_shape[1][Airfoil_shape[0].index(0):]]
 
+
 # Centroid
 def x_mid():
     A_x_list = []
@@ -137,7 +138,7 @@ def wing_box(x_le, x_te):
     points = [[y_le_up, x_le], [y_le_low, x_le], [y_te_low, x_te], [y_te_low, x_te]]
 
     return x_le, x_te, y_le_up, y_te_up, y_le_low, y_te_low, Ixx_t, points, x_cent, y_cent
-x_le, x_te, y_le_up, y_te_up, y_le_low, y_te_low, Ixx_t, points, x_cent, y_cent = wing_box(0.2, 0.75)
+x_le, x_te, y_le_up, y_te_up, y_le_low, y_te_low, Ixx_t, points, x_cent, y_cent = wing_box(0.15, 0.7)
 #print(wing_box(0.2, 0.75))
 print(Ixx_t)
 plt.plot(Airfoil_shape[0], Airfoil_shape[1])
@@ -148,4 +149,7 @@ plt.xlim(0, 1)
 plt.ylim(-0.5, 0.5)
 plt.grid()
 plt.show()
+
+y_dist = max(Airfoil_shape[1])-y_mid()
+print('maximum y distance =', y_dist, 'of chord')
 
