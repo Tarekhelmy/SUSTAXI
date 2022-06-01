@@ -120,7 +120,7 @@ class Aircraft(WingAndPowerSizing):
         self.lv = 5.4 * self.meters_to_feet
         self.t_c = 0.1
         self.fuel_length = 0
-        self.length_tailcone = 3.7*self.meters_to_feet
+        self.length_tailcone = 3.70*self.meters_to_feet
 
         self.fractions = 0.992 * 0.996 * 0.996 * 0.990 * 0.992 * 0.992
         self.fuel_factor = 0
@@ -181,7 +181,7 @@ class Aircraft(WingAndPowerSizing):
         f1 = 1/cruise_fraction
         loiter_fraction = np.exp(self.E*(9.81*self.c_p)/(self.V*self.L_D_loiter))
         f2 = 1/loiter_fraction
-        if self.iter>1:
+        if self.iter>0:
             self.w_fuel = self.fuel_factor * (1 + self.f_res) * self.w_mtow*40/120
             self.w_oew = self.w_mtow - self.w_fuel - self.w_payload
             self.surface_wing = self.w_mtow / self.w_s
@@ -321,7 +321,7 @@ class Aircraft(WingAndPowerSizing):
         print(name,'= %.2f' % (parameter / (self.watts_to_horsepower * 1000)), 'kW')
 
     def mainsizing(self):
-        self.fuel_volume = self.w_fuel / (71 * self.kg_to_pounds / (self.meters_to_feet**3))/0.85
+        self.fuel_volume = self.w_fuel / (71 * self.kg_to_pounds / (self.meters_to_feet**3))/0.9
         self.fuel_length = self.fuel_volume / ((self.fuel_diameter) **2 * np.pi / 4) +0.3*self.meters_to_feet
         self.length_fus.append(self.length_fus[0] + self.fuel_length)
         self.x_fuselage_cg = self.length_fus[-1] / 2
@@ -437,6 +437,19 @@ class Aircraft(WingAndPowerSizing):
 
 
         pass
+    def classiter2(self):
+        self.class1()
+        OEW1 = self.w_oew
+        self.class2()
+        OEW2 = self.w_oew
+        self.mainsizing()
+        mass_vec = np.array([self.m_fuselage[-1], self.m_h, self.m_v, self.m_wing[-1], self.w_furnishing, self.w_icing,
+            self.w_electrical, self.w_avionics, self.w_fuelsystem, self.w_flightcontrols, self.w_installedEngine, self.w_hydraulics])
+        self.component_matrix.append(mass_vec)
+
+        if np.abs(OEW2 - OEW1)/OEW2 >= 0.01:
+            self.classiter()
+
 
     def procedures(self):
         self.classiter()
