@@ -40,7 +40,7 @@ def chord():
     return c_r() - (z_coords*(np.tan(trailingedgeangle())+np.tan(leadingedgeangle())))
 
 
-"required I_yy at each point along span"
+"Bending required I_yy at each point along span"
 yy = chord()*y_dist
 mz = np.array(Mz())
 sigma = n_safety*YTS_al7050*10**6
@@ -51,6 +51,16 @@ scaled = wing_box(0.15, 0.7)[0] * ((chord())**2)
 print(scaled)
 
 print("required I_yy",i_yy - scaled)
+
+"buckling"
+
+def buckling():
+    C = 4
+    b = 0.55
+    t = 4 #mm
+    return (C*np.pi*np.pi*E_al7050/(12*(1-poisson_al7050)))*((t/b)**2)
+
+#print(buckling())
 
 "I_yy of a single stringer"
 t_string = 10
