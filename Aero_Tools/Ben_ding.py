@@ -8,11 +8,11 @@ n_safety=1.5
 
 # ======= Materials =======
 # Aluminium 7075
-E_al7075 = 71.7 # GPa
-UTS_al7075 = 572 # MPa
-YTS_al7075 = 503 # MPa
-poisson_al7075 = 0.33
-G_al7075 = 26.9 # GPa
+E_al7050 = 71.7 # GPa
+UTS_al7050 = 572 # MPa
+YTS_al7050 = 503 # MPa
+poisson_al7050 = 0.33
+G_al7050 = 26.9 # GPa
 #ShS_al7075 =
 
 def Mz():
