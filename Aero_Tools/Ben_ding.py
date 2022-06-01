@@ -4,8 +4,8 @@ import numpy as np
 #print((lift()))
 #print(-1*comp_halfdata[:,0])
 
-n_safety=1.5 * 4.6
-
+n_safety=1.5
+n_load = 4.6
 # ======= Materials =======
 # Aluminium 7075
 E_al7050 = 71.7 # GPa
@@ -22,7 +22,7 @@ poisson_al7050 = 0.33
 G_al7050 = 26.9 # GPa
 
 def Mz():
-    Mz = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2 * lift()
+    Mz = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2 * (lift()*n_load)
     Mn = ()
     for i in range(0,len(Mz)+1,1):
         Mn += (sum(Mz[:i]),)
@@ -43,24 +43,25 @@ def chord():
 "Bending required I_yy at each point along span"
 yy = chord()*y_dist
 mz = np.array(Mz())
-sigma = n_safety*YTS_al7050*10**6
+sigma = YTS_al7050/n_safety*10**6
 i_yy = (mz[1:]*yy)/sigma
 
 
 scaled = wing_box(0.15, 0.7)[0] * ((chord())**2)
-print(scaled)
 
-print("required I_yy",i_yy - scaled)
+req_I_yy = i_yy - scaled
+#print(mz[1:]*yy/i_yy/10**6)
+#print(mz[1:]*yy/scaled/10**6)
 
 "buckling"
 
 def buckling():
     C = 4
     b = 0.55
-    t = 4 #mm
+    t = 0.004 #m
     return (C*np.pi*np.pi*E_al7050/(12*(1-poisson_al7050)))*((t/b)**2)
 
-#print(buckling())
+print(buckling())
 
 "I_yy of a single stringer"
 t_string = 10
@@ -68,23 +69,23 @@ l_string = 100
 
 # Stringers
 # L-shape
-L_base = 100 # mm
-L_web = 100 # mm
-t_str_L = 3 # mm
+L_base = 0.100 # mm
+L_web = 0.100 # mm
+t_str_L = 0.003 # mm
 cent_y_str_L = (L_base * t_str_L * t_str_L/2 + L_web * t_str_L * L_web/2)/(L_base * t_str_L + L_web * t_str_L)
 I_yy_str_L = t_str_L*L_web**3/12 + (L_web/2 - cent_y_str_L)**2 * L_web*t_str_L \
            + (cent_y_str_L - t_str_L/2)**2 * L_base*t_str_L
 
 # Z-shape
-Z_base = 50     # mm
-Z_web = 100     # mm
-Z_top = 50      # mm
-t_str_Z = 3       # mm
+Z_base = 0.050     # mm
+Z_web = 0.100     # mm
+Z_top = 0.050      # mm
+t_str_Z = 0.003       # mm
 cent_y_str_Z = Z_web/2
 I_yy_str_L_Z = t_str_Z*Z_web**3/12 \
             + (cent_y_str_Z - t_str_Z/2)**2 * (Z_base + Z_top) *t_str_Z
 
-"deflection with this I_yy"
+
 
 
 
