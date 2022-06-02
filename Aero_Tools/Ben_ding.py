@@ -1,8 +1,9 @@
 from Aero_Tools.Wing_box_adsee import y_dist, wing_box
-from Wing_Calculator import lift, comp_halfdata, trailingedgeangle, leadingedgeangle, c_r
+from Wing_Calculator import lift, comp_halfdata, trailingedgeangle, leadingedgeangle, c_r, engine
 import numpy as np
 import math as mt
-print(comp_halfdata[:,0])
+import matplotlib.pyplot as plt
+
 
 
 n_safety=1.5
@@ -24,7 +25,7 @@ poisson_al7050 = 0.33
 G_al7050 = 26.9 # GPa
 
 def Mz():
-    Mz = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2 * (lift()*n_load)
+    Mz = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2 * ((lift()*n_load)+engine())
     Mn = ()
     for i in range(0,len(Mz)+1,1):
         Mn += (sum(Mz[:i]),)
@@ -33,7 +34,7 @@ def Mz():
 
 
 
-#plt.plot(comp_halfdata[1:,0],Mz())
+#plt.plot(comp_halfdata[:,0],Mz())
 #plt.show()
 
 "calculating chord at x coordinates"

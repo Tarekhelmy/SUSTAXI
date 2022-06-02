@@ -71,18 +71,18 @@ def full_data():
 
     return ful_data
 
-a=len(full_data())/2
+ar=len(full_data())/2
 
-if (a %2) == 0:
-    print(full_data()[a,0], "check if x=0")
+if (ar %2) == 0:
+    print(full_data()[ar,0], "check if x=0")
     comp_halfdata = full_data()
 
 else:
     print("middle is added")
-    data=full_data()[:int(a),:int(a)]
-    half_data = full_data()[:int(a)+1,:int(a)+1]
-    cl_half_data = half_data[:int(a)+1,1]
-    data_middle = [0,(cl_half_data[int(a)]+cl_half_data[int(a)-1])/2]
+    data=full_data()[:int(ar),:int(ar)]
+    half_data = full_data()[:int(ar)+1,:int(ar)+1]
+    cl_half_data = half_data[:int(ar)+1,1]
+    data_middle = [0,(cl_half_data[int(ar)]+cl_half_data[int(ar)-1])/2]
     comp_halfdata = np.vstack([data,data_middle])
     #print(comp_halfdata)
 
@@ -136,19 +136,24 @@ def lift():
     list_ones.append(2)
     cl_data = cl_data * list_ones
     lift = cl_data*wing_area()*v*v*0.5*rho
-    "add engine"
-    list_zeros = [0] * (len(lift))
-    def find_nearest(array, value):
-        array = np.asarray(array)
-        idx = (np.abs(array - value)).argmin()
-        return array[idx]
-    Z_loc_eng = 2.85
-
-    Z_place_eng = find_nearest(abs(comp_halfdata[:,0]),Z_loc_eng)
 
     return lift
 
-print()
+"add engine"
+def engine():
+    Z_loc_eng = 2.85
+    M_engine = 500 #kg
+    list_zeros = [0] * (len(lift()))
+
+    def find_nearest(array, value):
+        array = np.asarray(array)
+        idx = (np.abs(array - value)).argmin()
+        return array[idx], idx
+
+    Z_place_eng, n = find_nearest(abs(comp_halfdata[:,0]),Z_loc_eng)
+    list_zeros[n] = -M_engine*9.81
+
+    return list_zeros
 
 
 "add right half"
