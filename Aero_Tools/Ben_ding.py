@@ -1,5 +1,5 @@
 from Aero_Tools.Wing_box_adsee import y_dist, wing_box
-from Wing_Calculator import lift, comp_halfdata, trailingedgeangle, leadingedgeangle, c_r, engine
+from Wing_Calculator import lift, comp_halfdata, trailingedgeangle, leadingedgeangle, c_r, engine, chord
 import numpy as np
 import math as mt
 import matplotlib.pyplot as plt
@@ -31,16 +31,11 @@ def Mz():
         Mn += (sum(Mz[:i]),)
     return Mn
 
-
-
-
 #plt.plot(comp_halfdata[:,0],Mz())
 #plt.show()
 
-"calculating chord at x coordinates"
-def chord():
-    z_coords = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2
-    return c_r() - z_coords*mt.tan(trailingedgeangle()) - z_coords*mt.tan(leadingedgeangle())
+
+
 
 
 "Bending required I_yy at each point along span"

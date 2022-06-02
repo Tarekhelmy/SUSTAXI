@@ -95,7 +95,9 @@ def trailingedgeangle():
 def leadingedgeangle():
     return mt.atan(offset/(spanb()/2))
 
-
+def chord():
+    z_coords = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2
+    return c_r() - z_coords*mt.tan(trailingedgeangle()) - z_coords*mt.tan(leadingedgeangle())
 
 
 "calculating area"
@@ -140,6 +142,7 @@ def lift():
 
     return lift
 
+
 "add engine"
 def engine():
     Z_loc_eng = 2.85
@@ -150,14 +153,16 @@ def engine():
         array = np.asarray(array)
         idx = (np.abs(array - value)).argmin()
         return array[idx], idx
-    Z_loc_eng = 2.85
+
 
     Z_place_eng, n = find_nearest(abs(comp_halfdata[:,0]),Z_loc_eng)
     list_zeros[n] = -M_engine*9.81
 
     return list_zeros
 
-
+#plt.plot(((comp_halfdata[1:,0]) + (comp_halfdata[:-1,0]))/2,lift()+engine())
+#plt.show()
+#print(sum(lift()+engine()))
 "add right half"
 
 righthalf_data=abs(comp_halfdata[::-1])

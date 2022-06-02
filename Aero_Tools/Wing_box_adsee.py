@@ -109,13 +109,13 @@ def wing_box(x_le, x_te):
     Lower_sheet = [[x_le] + Airfoil_lower[0][idx_le_low:idx_te_low] + [x_te],
                    [y_le_low] + Airfoil_lower[1][idx_le_low:idx_te_low] + [y_te_low]]
 
-    plt.plot(Airfoil_shape[0], Airfoil_shape[1], ls='--')
+    """plt.plot(Airfoil_shape[0], Airfoil_shape[1], ls='--')
     plt.plot(Upper_sheet[0] + Lower_sheet[0] + [Upper_sheet[0][0]], Upper_sheet[1] + Lower_sheet[1] + [Upper_sheet[1][0]])
 
     plt.xlim(0,1)
     plt.ylim(-0.5,0.5)
     plt.grid()
-    plt.show()
+    plt.show()"""
 
 
     # ======== I_yy of Wingbox without stringers --> Times c^3 ==========
