@@ -49,7 +49,7 @@ sigma = YTS_al7050/n_safety*10**6
 i_yy = (mz[1:]*yy)/sigma
 
 
-scaled = wing_box(0.15, 0.7)[0] * ((chord())**2)
+scaled = wing_box(0.15, 0.7)[0] * ((chord())**3)
 print(scaled)
 
 req_I_yy = i_yy - scaled
