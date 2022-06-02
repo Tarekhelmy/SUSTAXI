@@ -100,4 +100,5 @@ print(req_I_yy - (I_yy_four_corner_str/10**12))
 y_top_avg = np.average(Upper_sheet[1])      # * chord
 y_bottom_avg = np.average(Lower_sheet[1])   # * chord
 
-
+dist_top_avg = y_top_avg - box_centre
+dist_bottom_avg =

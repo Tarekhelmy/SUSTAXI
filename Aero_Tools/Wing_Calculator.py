@@ -71,6 +71,7 @@ def full_data():
 
     return ful_data
 
+
 ar=len(full_data())/2
 
 if (ar %2) == 0:
@@ -149,6 +150,7 @@ def engine():
         array = np.asarray(array)
         idx = (np.abs(array - value)).argmin()
         return array[idx], idx
+    Z_loc_eng = 2.85
 
     Z_place_eng, n = find_nearest(abs(comp_halfdata[:,0]),Z_loc_eng)
     list_zeros[n] = -M_engine*9.81
