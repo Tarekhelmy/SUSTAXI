@@ -1,8 +1,9 @@
 from Aero_Tools.Wing_box_adsee import y_dist, wing_box
 from Wing_Calculator import lift, comp_halfdata, trailingedgeangle, leadingedgeangle, c_r
 import numpy as np
+import math as mt
 #print((lift()))
-#print(-1*comp_halfdata[:,0])
+
 
 n_safety=1.5
 n_load = 4.6
@@ -37,8 +38,8 @@ def Mz():
 
 "calculating chord at x coordinates"
 def chord():
-    z_coords = abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0])/2
-    return c_r() - (z_coords*(np.tan(trailingedgeangle())+np.tan(leadingedgeangle())))
+    z_coords = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2
+    return c_r() - z_coords*mt.tan(trailingedgeangle()) - z_coords*mt.tan(leadingedgeangle())
 
 
 "Bending required I_yy at each point along span"

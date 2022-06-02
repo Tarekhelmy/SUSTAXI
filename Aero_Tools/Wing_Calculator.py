@@ -31,13 +31,13 @@ w_mtow = 6395
 tapratio = 0.39
 
 def spanb():
-    return round(np.sqrt(surfacewing*AR),2)
+    return round(np.sqrt(surfacewing*AR),3)
 
 def c_t():
     return round((2*surfacewing/spanb())/(1+(1/tapratio)),2)
 
 def c_r():
-    return round(c_t()/tapratio,2)
+    return round(c_t()/tapratio,3)
 
 print("b/2=",spanb()/2)
 print("c_t=",c_t())
