@@ -25,10 +25,10 @@ class wing_calculator(Aircraft):
         return self.surface_wing, self.w_mtow, self.AR, self.b
 """
 
-AR=10
-surfacewing= 31.4
-w_mtow = 7228
-tapratio = 0.37
+AR= 10.1
+surfacewing= 32.04
+w_mtow = 6395
+tapratio = 0.39
 
 def spanb():
     return round(np.sqrt(surfacewing*AR),2)
@@ -44,7 +44,7 @@ print("c_t=",c_t())
 print("c_r=",c_r())
 
 
-v = 46 #m/s
+v = 40 #m/s
 v_c = 150
 rho=1.225
 
@@ -155,7 +155,7 @@ print("MTOW=", 9.81*w_mtow)
 print("CLmax =", sum(comp_lift)/(0.5*rho*v*v*surfacewing))
 q=0.5*rho*v*v
 W_S= (w_mtow*9.81)/surfacewing
-print("required wing lift coefficient=",(1.1*(1/q)*W_S))
+#print("required wing lift coefficient=",(1.1*(1/q)*W_S))
 
 #plt.plot(comp_data[1:-1],comp_lift)
 #plt.show()
