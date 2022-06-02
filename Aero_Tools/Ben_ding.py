@@ -47,9 +47,11 @@ yy = chord()*y_dist
 mz = np.array(Mz())
 sigma = YTS_al7050/n_safety*10**6
 i_yy = (mz[1:]*yy)/sigma
-"scaled calculates I_yy of the sheet at every x position"
-scaled = wing_box(0.15, 0.7)[0] * ((chord())**3)
-"req_I_yy is the remaining I_yy that has to be satisfied with stringers"
+
+
+scaled = wing_box(0.15, 0.7)[0] * ((chord())**2)
+print(scaled)
+
 req_I_yy = i_yy - scaled
 
 "buckling"
@@ -60,7 +62,11 @@ def buckling():
     t = 4 #mm
     return (C*np.pi*np.pi*E_al7050/(12*(1-poisson_al7050)))*((t/b)**2)
 
+#print(buckling())
 
+"I_yy of a single stringer"
+t_string = 10
+l_string = 100
 
 I_yy_box, Upper_sheet, Lower_sheet = wing_box(0.15, 0.7)
 
@@ -92,5 +98,10 @@ I_yy_four_corner_str = 4*I_yy_str_L \
                                   (Lower_sheet[1][0]-box_centre)**2 + (Lower_sheet[1][-1]-box_centre)**2) * (chord()*1000)**2
 
 print(req_I_yy - (I_yy_four_corner_str/10**12))
+
+
+# Average height
+y_top_avg = np.average(Upper_sheet[1])      # * chord
+y_bottom_avg = np.average(Lower_sheet[1])   # * chord
 
 
