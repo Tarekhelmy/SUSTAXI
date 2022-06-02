@@ -4,7 +4,7 @@ import numpy as np
 #----------------------------------------------------INPUTS aileron design
 b   = 18    #m
 c_r = 2.564 #m
-c_t = 1.0   #m2
+c_t = 1.0   #m
 
 b1 = 6.7 #m
 b2 = 8   #m
