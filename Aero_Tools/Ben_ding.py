@@ -2,7 +2,7 @@ from Aero_Tools.Wing_box_adsee import y_dist, wing_box
 from Wing_Calculator import lift, comp_halfdata, trailingedgeangle, leadingedgeangle, c_r
 import numpy as np
 import math as mt
-#print((lift()))
+print(comp_halfdata[:,0])
 
 
 n_safety=1.5

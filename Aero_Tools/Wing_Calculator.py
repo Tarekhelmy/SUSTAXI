@@ -135,10 +135,20 @@ def lift():
     list_ones = [1] * (len(cl_data)-1)
     list_ones.append(2)
     cl_data = cl_data * list_ones
+    lift = cl_data*wing_area()*v*v*0.5*rho
+    "add engine"
+    list_zeros = [0] * (len(lift))
+    def find_nearest(array, value):
+        array = np.asarray(array)
+        idx = (np.abs(array - value)).argmin()
+        return array[idx]
+    Z_loc_eng = 2.85
 
-    return cl_data*wing_area()*v*v*0.5*rho
+    Z_place_eng = find_nearest(abs(comp_halfdata[:,0]),Z_loc_eng)
 
+    return lift
 
+print()
 
 
 "add right half"

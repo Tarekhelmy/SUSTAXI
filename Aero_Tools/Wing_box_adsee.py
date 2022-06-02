@@ -198,6 +198,6 @@ I_yy_str_Z = t_str_Z*Z_web**3/12 \
 # Add Stringers
 I_yy_four_corner_str = 4*I_yy_str_L \
                       + A_str_L*((Upper_sheet[1][0]-box_centre)**2 + (Upper_sheet[1][-1]-box_centre)**2 +
-                                 (Lower_sheet[1][0]-box_centre)**2 + (Lower_sheet[1][-1]-box_centre)**2) * chord()**2
+                                 (Lower_sheet[1][0]-box_centre)**2 + (Lower_sheet[1][-1]-box_centre)**2)
 
 print(I_yy_four_corner_str)
