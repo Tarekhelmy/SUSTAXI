@@ -1,5 +1,7 @@
 from Aero_Tools.Wing_box_adsee import y_dist, wing_box
-from Wing_Calculator import lift, comp_halfdata, trailingedgeangle, leadingedgeangle, c_r
+#from Wing_Calculator import lift, comp_halfdata, trailingedgeangle, leadingedgeangle, c_r
+from Wing_Calculator import *
+
 import numpy as np
 import math as mt
 print(comp_halfdata[:,0])
@@ -99,4 +101,5 @@ print(req_I_yy - (I_yy_four_corner_str/10**12))
 y_top_avg = np.average(Upper_sheet[1])      # * chord
 y_bottom_avg = np.average(Lower_sheet[1])   # * chord
 
-
+dist_top_avg = y_top_avg - box_centre
+dist_bottom_avg =

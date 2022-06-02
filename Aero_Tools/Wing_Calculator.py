@@ -71,18 +71,19 @@ def full_data():
 
     return ful_data
 
-a=len(full_data())/2
 
-if (a %2) == 0:
-    print(full_data()[a,0], "check if x=0")
+ar=len(full_data())/2
+
+if (ar %2) == 0:
+    print(full_data()[ar,0], "check if x=0")
     comp_halfdata = full_data()
 
 else:
     print("middle is added")
-    data=full_data()[:int(a),:int(a)]
-    half_data = full_data()[:int(a)+1,:int(a)+1]
-    cl_half_data = half_data[:int(a)+1,1]
-    data_middle = [0,(cl_half_data[int(a)]+cl_half_data[int(a)-1])/2]
+    data=full_data()[:int(ar),:int(ar)]
+    half_data = full_data()[:int(ar)+1,:int(ar)+1]
+    cl_half_data = half_data[:int(ar)+1,1]
+    data_middle = [0,(cl_half_data[int(ar)]+cl_half_data[int(ar)-1])/2]
     comp_halfdata = np.vstack([data,data_middle])
     #print(comp_halfdata)
 
