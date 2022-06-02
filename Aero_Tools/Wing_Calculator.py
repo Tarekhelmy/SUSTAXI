@@ -44,7 +44,7 @@ print("c_t=",c_t())
 print("c_r=",c_r())
 
 
-v = 40 #m/s
+v = 46 #m/s
 v_c = 150
 rho=1.225
 

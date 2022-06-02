@@ -25,7 +25,7 @@ poisson_al7050 = 0.33
 G_al7050 = 26.9 # GPa
 
 def Mz():
-    Mz = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2 * ((lift()*n_load)+engine())
+    Mz = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2 * (((lift()+engine())*n_load))
     Mn = ()
     for i in range(0,len(Mz)+1,1):
         Mn += (sum(Mz[:i]),)
@@ -101,4 +101,4 @@ y_top_avg = np.average(Upper_sheet[1])      # * chord
 y_bottom_avg = np.average(Lower_sheet[1])   # * chord
 
 dist_top_avg = y_top_avg - box_centre
-dist_bottom_avg =
+#dist_bottom_avg =

@@ -150,7 +150,7 @@ def wing_box(x_le, x_te):
     t_te = 0.005    # m
     I_yy_LE = (y_le_up-y_le_low)**3 * t_le/12 + (y_le_up-y_le_low) * t_le * ((y_le_up-y_le_low)/2-y_centroid)**2
     I_yy_TE = (y_te_up-y_te_low)**3 * t_te/12 + (y_te_up-y_te_low) * t_te * ((y_te_up-y_te_low)/2-y_centroid)**2
-    print(I_yy_TE+I_yy_LE+I_yy_sheet_upper+I_yy_sheet_lower)
+    #print(I_yy_TE+I_yy_LE+I_yy_sheet_upper+I_yy_sheet_lower)
     I_yy_box = I_yy_TE+I_yy_LE+I_yy_sheet_upper+I_yy_sheet_lower
 
     return I_yy_box, Upper_sheet, Lower_sheet
@@ -200,4 +200,4 @@ I_yy_four_corner_str = 4*I_yy_str_L \
                       + A_str_L*((Upper_sheet[1][0]-box_centre)**2 + (Upper_sheet[1][-1]-box_centre)**2 +
                                  (Lower_sheet[1][0]-box_centre)**2 + (Lower_sheet[1][-1]-box_centre)**2)
 
-print(I_yy_four_corner_str)
+#print(I_yy_four_corner_str)
