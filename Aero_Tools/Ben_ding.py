@@ -66,7 +66,7 @@ box_centre = np.average(Upper_sheet[1] + Lower_sheet[1])
 # Stringers (L-shape)
 L_base = 100 # mm
 L_web = 100 # mm
-t_str_L = 3 # mm
+t_str_L = 5 # mm
 A_str_L = L_base*t_str_L + L_web*t_str_L
 cent_y_str_L = (L_base * t_str_L * t_str_L/2 + L_web * t_str_L * L_web/2)/(L_base * t_str_L + L_web * t_str_L)
 I_yy_str_L = t_str_L*L_web**3/12 + (L_web/2 - cent_y_str_L)**2 * L_web*t_str_L \
@@ -77,23 +77,62 @@ I_yy_str_L = t_str_L*L_web**3/12 + (L_web/2 - cent_y_str_L)**2 * L_web*t_str_L \
 Z_base = 50     # mm
 Z_web = 100     # mm
 Z_top = 50      # mm
-t_str_Z = 3       # mm
+t_str_Z = 5       # mm
 A_str_Z = Z_base*t_str_Z + Z_web*t_str_Z + Z_top*t_str_Z
 cent_y_str_Z = Z_web/2
 I_yy_str_Z = t_str_Z*Z_web**3/12 \
              + (cent_y_str_Z - t_str_Z/2)**2 * (Z_base + Z_top) *t_str_Z
 
 # Add Stringers
-I_yy_four_corner_str = 4*I_yy_str_L \
-                       + A_str_L*((Upper_sheet[1][0]-box_centre)**2 + (Upper_sheet[1][-1]-box_centre)**2 +
-                                  (Lower_sheet[1][0]-box_centre)**2 + (Lower_sheet[1][-1]-box_centre)**2) * (chord()*1000)**2
+I_yy_four_corner_str = 4*I_yy_str_L * 10**-12 \
+                       + A_str_L*10**-6*((Upper_sheet[1][0]-box_centre)**2 + (Upper_sheet[1][-1]-box_centre)**2 +
+                                  (Lower_sheet[1][0]-box_centre)**2 + (Lower_sheet[1][-1]-box_centre)**2) * (chord())**2
 
-print(req_I_yy - (I_yy_four_corner_str/10**12))
-
+print(req_I_yy - I_yy_four_corner_str)
+req_I_yy = req_I_yy - I_yy_four_corner_str
 
 # Average height
-y_top_avg = np.average(Upper_sheet[1])      # * chord
-y_bottom_avg = np.average(Lower_sheet[1])   # * chord
+y_top_avg = np.average(Upper_sheet[1])       # * chord
+y_bottom_avg = np.average(Lower_sheet[1])    # * chord
+print('y_bot=', y_bottom_avg)
 
-dist_top_avg = y_top_avg - box_centre
-#dist_bottom_avg =
+dist_top_avg = (y_top_avg - box_centre) * chord() #- Z_web/1000/2
+dist_bottom_avg = (y_bottom_avg - box_centre) * chord() #- Z_web/1000/2
+
+I_yy_top_str = I_yy_str_Z *10**-12 + dist_top_avg**2 * A_str_Z *10**-6
+I_yy_bottom_str = I_yy_str_Z *10**-12 + dist_bottom_avg**2 * A_str_Z *10**-6
+
+n_str_pos = []
+for i in range(len(req_I_yy)):
+    if req_I_yy[i] > 0:
+        n_str_req = mt.ceil(req_I_yy[i]/(I_yy_top_str[i]+I_yy_bottom_str[i]))
+    else:
+        n_str_req = 0
+    n_str_pos.append(n_str_req)
+print('The required number of stringers')
+print(n_str_pos)
+
+str_spacing = 0.55/(max(n_str_pos) + 1) * chord()[23]
+str_placing = np.arange(0.15*chord()[23], 0.7*chord()[23], str_spacing)
+y_top = np.array([y_top_avg]*(max(n_str_pos)+1))*chord()[23]
+y_bot = np.array([y_bottom_avg]*(max(n_str_pos)+1))*chord()[23]
+
+#print(chord()[23])
+print(str_spacing)
+
+plt.plot(n_str_pos)
+plt.grid()
+plt.show()
+
+plt.plot(np.asarray(Upper_sheet[0] + Lower_sheet[0] + [Upper_sheet[0][0]])*chord()[23],
+         np.asarray(Upper_sheet[1] + Lower_sheet[1] + [Upper_sheet[1][0]])*chord()[23])
+plt.scatter(np.asarray([Upper_sheet[0][0], Upper_sheet[0][-1], Lower_sheet[0][0], Lower_sheet[0][-1]])*chord()[23],
+            np.asarray([Upper_sheet[1][0], Upper_sheet[1][-1], Lower_sheet[1][0], Lower_sheet[1][-1]])*chord()[23],
+            marker='o', color='red')
+plt.scatter(str_placing[1:], y_top[1:], marker='x')
+plt.scatter(str_placing[1:], y_bot[1:], marker='x')
+plt.plot()
+plt.xlim(0.15*chord()[23],0.7*chord()[23])
+plt.ylim(-0.5,0.5)
+plt.grid()
+plt.show()

@@ -174,7 +174,7 @@ plt.show()'''
 box_centre = np.average(Upper_sheet[1] + Lower_sheet[1])
 y_dist = max(Airfoil_shape[1])-box_centre
 #print('maximum y distance =', y_dist, 'of chord')
-
+'''
 # Stringers (L-shape)
 L_base = 100 # mm
 L_web = 100 # mm
@@ -201,3 +201,4 @@ I_yy_four_corner_str = 4*I_yy_str_L \
                                  (Lower_sheet[1][0]-box_centre)**2 + (Lower_sheet[1][-1]-box_centre)**2)
 
 #print(I_yy_four_corner_str)
+'''
