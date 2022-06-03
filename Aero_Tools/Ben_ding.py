@@ -145,7 +145,6 @@ section_width = chord()*(0.7-0.15) - 2*L_base*10**-3
 t_upper = 0.003  # mm
 buck_coeff = 4
 crit_sheet_buck = buck_coeff * mt.pi**2 * E_al7050*10**9/(12*(1-poisson_al7050**2)) *(t_upper/section_width)**2
-print(crit_sheet_buck)
 sheet_stress = mz[1:]*dist_top_avg/(wing_box(0.15,0.7)[0]*chord()**3+I_yy_four_corner_str)
 w_e_lst = []
 n_str_buck_lst = []
@@ -155,23 +154,25 @@ for i in range(len(crit_sheet_buck)):
     crit_sheet_buck_el = crit_sheet_buck[i]
     print(crit_sheet_buck_el)
     if sheet_stress_el > crit_sheet_buck_el:
+        n_str_buck = 0
         while sheet_stress_el>crit_sheet_buck_el:
             #print(sheet_stress_el)
             #print(crit_sheet_buck_el)
-            w_e = np.sqrt(buck_coeff * mt.pi ** 2 * E_al7050 * 10 ** 9
-                          / (12 * (1 - poisson_al7050 ** 2)) * t_upper ** 2 /sheet_stress_el)
+            n_str_buck = n_str_buck + 1
+            #w_e = np.sqrt(buck_coeff * mt.pi ** 2 * E_al7050 * 10 ** 9
+            #              / (12 * (1 - poisson_al7050 ** 2)) * t_upper ** 2 /sheet_stress_el)
             #print(w_e)
-            n_str_buck = mt.ceil(section_width[i] / w_e - 1)
-            print(n_str_buck)
+            #n_str_buck = mt.ceil(section_width[i] / w_e - 1)
+
             w_e = section_width[i] / (n_str_buck + 1) - n_str_buck*Z_base*10**-3
             #print(w_e)
             sheet_stress_el = mz[i+1]*dist_top_avg[i]\
-                              /(wing_box(0.15,0.7)[0]*chord()[i]**3 + I_yy_four_corner_str[i])
+                              /(wing_box(0.15,0.7)[0]*chord()[i]**3 + I_yy_four_corner_str[i] + I_yy_top_str[i]*n_str_buck)
             #print(sheet_stress_el)
             crit_sheet_buck_el = buck_coeff * mt.pi**2 * E_al7050*10**9/(12*(1-poisson_al7050**2)) *(t_upper/w_e)**2
             #print(crit_sheet_buck_el)
             print(i)
-
+        print(n_str_buck)
     else:
         w_e = section_width[i]
         n_str_buck = 0
