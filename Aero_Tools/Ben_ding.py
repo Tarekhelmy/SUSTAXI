@@ -1,5 +1,5 @@
 from Aero_Tools.Wing_box_adsee import y_dist, wing_box
-from Wing_Calculator import lift, comp_halfdata, trailingedgeangle, leadingedgeangle, c_r, engine, chord
+from Wing_Calculator import lift, comp_halfdata, trailingedgeangle, leadingedgeangle, c_r, engine, chord, rho
 import numpy as np
 import math as mt
 import matplotlib.pyplot as plt
@@ -202,3 +202,4 @@ plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_fin_bottom_lst)
 plt.legend(['Top', 'Bottom'])
 plt.grid()
 plt.show()
+
