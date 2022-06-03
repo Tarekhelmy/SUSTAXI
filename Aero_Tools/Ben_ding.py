@@ -123,7 +123,8 @@ print(chord()[k])
 print('str_spacing', str_spacing)
 
 plt.figure('Stringers along span')
-plt.plot(n_str_pos)
+plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_pos)
+plt.xlim(-9.5, 0)
 plt.grid()
 plt.figure('maximum stringers in tightest cross section')
 plt.plot(np.asarray(Upper_sheet[0] + Lower_sheet[0] + [Upper_sheet[0][0]])*chord()[k],
@@ -137,4 +138,55 @@ plt.plot()
 plt.xlim(0.15*chord()[k],0.7*chord()[k])
 plt.ylim(-0.5,0.5)
 plt.grid()
+
+
+# Buck Ling
+section_width = chord()*(0.7-0.15) - 2*L_base*10**-3
+t_upper = 0.003  # mm
+buck_coeff = 4
+crit_sheet_buck = buck_coeff * mt.pi**2 * E_al7050*10**9/(12*(1-poisson_al7050**2)) *(t_upper/section_width)**2
+print(crit_sheet_buck)
+sheet_stress = mz[1:]*dist_top_avg/(wing_box(0.15,0.7)[0]*chord()**3+I_yy_four_corner_str)
+w_e_lst = []
+n_str_buck_lst = []
+for i in range(len(crit_sheet_buck)):
+    sheet_stress_el = sheet_stress[i]
+    print(sheet_stress_el)
+    crit_sheet_buck_el = crit_sheet_buck[i]
+    print(crit_sheet_buck_el)
+    if sheet_stress_el > crit_sheet_buck_el:
+        while sheet_stress_el>crit_sheet_buck_el:
+            #print(sheet_stress_el)
+            #print(crit_sheet_buck_el)
+            w_e = np.sqrt(buck_coeff * mt.pi ** 2 * E_al7050 * 10 ** 9
+                          / (12 * (1 - poisson_al7050 ** 2)) * t_upper ** 2 /sheet_stress_el)
+            #print(w_e)
+            n_str_buck = mt.ceil(section_width[i] / w_e - 1)
+            print(n_str_buck)
+            w_e = section_width[i] / (n_str_buck + 1) - n_str_buck*Z_base*10**-3
+            #print(w_e)
+            sheet_stress_el = mz[i+1]*dist_top_avg[i]\
+                              /(wing_box(0.15,0.7)[0]*chord()[i]**3 + I_yy_four_corner_str[i])
+            #print(sheet_stress_el)
+            crit_sheet_buck_el = buck_coeff * mt.pi**2 * E_al7050*10**9/(12*(1-poisson_al7050**2)) *(t_upper/w_e)**2
+            #print(crit_sheet_buck_el)
+            print(i)
+
+    else:
+        w_e = section_width[i]
+        n_str_buck = 0
+
+    n_str_buck_lst.append(n_str_buck)
+    w_e_lst.append(w_e)
+
+w_e_lst = np.asarray(w_e_lst)
+n_str_buck = np.asarray(n_str_buck)
+sheet_stress_wbuckstr = buck_coeff * mt.pi**2 * E_al7050*10**9/(12*(1-poisson_al7050**2)) *(t_upper/w_e_lst)**2
+plt.figure('critical buckling w/o stringers')
+plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, crit_sheet_buck)
+plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, sheet_stress)
+plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, sheet_stress_wbuckstr, ls='--')
+plt.grid()
+plt.figure('Number of stringers due to buckling')
+plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_buck_lst)
 plt.show()
