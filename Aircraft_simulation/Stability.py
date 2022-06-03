@@ -38,6 +38,7 @@ class Stability(CenterOfGravity):
         self.CLcurve = (2 * np.pi * AR * 1.2) / (2 + np.sqrt(
             4 + (AR * 1.2 * np.sqrt(1 - self.Mach ** 2) / 0.95) ** 2 * (1 + 1 / (1 - self.Mach ** 2))))
         return self.CLcurve
+
     def exception(self,funcname):
         try:
             funcname()

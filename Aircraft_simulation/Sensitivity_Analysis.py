@@ -21,10 +21,12 @@ class Verification(Stability):
         self.iterativelemac = self.starting_lemac
         self.percentage_change = 1
 
+
     def iterationthings(self):
         self.mainprocedures()
         self.script()
         self.procedures()
+
 
     def tryloop(self,attr):
         try:

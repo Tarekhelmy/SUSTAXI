@@ -95,7 +95,7 @@ class Aircraft(WingAndPowerSizing):
         self.rho_pmad = 10000 * (self.watts_to_horsepower / self.kg_to_pounds)
         self.rho_comp = 2000 * (self.watts_to_horsepower / self.kg_to_pounds)
         self.rho_ee = 2800 * (self.watts_to_horsepower / self.kg_to_pounds)
-        self.rho_fc = 3300 * (self.watts_to_horsepower / self.kg_to_pounds)
+        self.rho_fc = 2000 * (self.watts_to_horsepower / self.kg_to_pounds)
 
         self.pmad_power = None
         self.engine_power = None
@@ -321,9 +321,9 @@ class Aircraft(WingAndPowerSizing):
 
         self.n_ee = 0.9
         self.n_pmad = 0.9
-        self.n_fc = 0.45
+        self.n_fc = 0.5
         self.n_comp = 0.7
-        self.n_fuel_tank = 0.5
+        self.n_fuel_tank = 0.63
 
         self.m_comp = 0
         self.m_cooling = 0
@@ -334,7 +334,7 @@ class Aircraft(WingAndPowerSizing):
         self.rho_pmad = 10000 * (self.watts_to_horsepower / self.kg_to_pounds)
         self.rho_comp = 2000 * (self.watts_to_horsepower / self.kg_to_pounds)
         self.rho_ee  = 2800 * (self.watts_to_horsepower / self.kg_to_pounds)
-        self.rho_fc = 3250 * (self.watts_to_horsepower / self.kg_to_pounds)
+        self.rho_fc = 2000 * (self.watts_to_horsepower / self.kg_to_pounds)
 
         self.pmad_power = None
         self.engine_power = None
