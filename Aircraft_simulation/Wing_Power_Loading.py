@@ -153,8 +153,6 @@ class WingAndPowerSizing    :
     def find_DP(self):
         self.W_S = self.clean_stall()
         self.W_P = self.climbrate(self.W_S)
-        # self.S = self.MTOW / self.W_S
-        # self.P = self.MTOW / self.W_P
         return self.W_S, self.W_P
 
     def print_ac_params(self):

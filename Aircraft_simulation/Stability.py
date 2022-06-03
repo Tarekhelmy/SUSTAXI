@@ -2,7 +2,7 @@ from cg_calculator import CenterOfGravity
 # from V_n_diagram import VNDiagram
 import numpy as np
 import matplotlib.pyplot as plt
-
+from Backup import AircraftBackup
 
 class Stability(CenterOfGravity):
     def __init__(self):
@@ -16,10 +16,15 @@ class Stability(CenterOfGravity):
         self.min_difference = 0
         self.CLhmax_land = -0.35*5**(1/3)
         self.Cm_cg =self.CLhmax_land
+        self.new = self.surface_controlh
+        self.previous = self.surface_controlh
+        self.progression= []
         self.recursion = 0
         self.deps_dalpha = 0
         self.convergenceiter = 0
         self.difference = []
+        self.iterations = 0
+        self.vertical_pos = 0
 
     def control(self,Sh_s):
         xcg_mac = self.x_ac / self.mac - (self.Cm_ac / self.CLmax_land) + (self.CLhmax_land / self.CLmax_land) * (Sh_s) * (self.lh / self.mac) * self.Vh_V ** 2
@@ -30,10 +35,9 @@ class Stability(CenterOfGravity):
         return ((xcg_mac*self.mac)-self.lemac)/self.mac
 
     def CL(self,AR,Vh_V = 1):
-        self.AR = AR
         self.Mach = self.Mach * Vh_V
-        self.CLcurve = (2 * np.pi * self.AR * 1.2) / (2 + np.sqrt(
-            4 + (self.AR * 1.2 * np.sqrt(1 - self.Mach ** 2) / 0.95) ** 2 * (1 + 1 / (1 - self.Mach ** 2))))
+        self.CLcurve = (2 * np.pi * AR * 1.2) / (2 + np.sqrt(
+            4 + (AR * 1.2 * np.sqrt(1 - self.Mach ** 2) / 0.95) ** 2 * (1 + 1 / (1 - self.Mach ** 2))))
         return self.CLcurve
     def exception(self,funcname):
         try:
@@ -54,14 +58,14 @@ class Stability(CenterOfGravity):
         self.CLw_alpha = self.CL(self.AR)
         self.CLh_alpha = self.CL(5,self.Vh_V)
         self.min_difference = maximum - minimum
-        Sh_S = np.linspace(0,2,40000)
+        Sh_S = np.linspace(0,2,400)
         Stability =self.stability(Sh_S)
         Controlability =self.control(Sh_S)
         try :
             Constraint = max(min(Sh_S[Controlability > minimum]), min(Sh_S[Stability > maximum]))
             self.difference_constraint = (self.stability(Constraint)-self.control(Constraint))
             self.difference.append(self.difference_constraint - self.min_difference)
-            if abs(self.difference[-1]) > 0.01 and self.recursion < 1000:
+            if abs(self.difference[-1]) > 0.05 and self.recursion < 1000:
                 self.lemac -= 0.1
                 self.recursion += 1
                 self.scissor()
@@ -88,20 +92,22 @@ class Stability(CenterOfGravity):
             plt.savefig("scissor plot")
 
     def convergence(self):
+        self.reset()
+        self.surface_controlh = self.new
+        self.mainprocedures()
         self.script()
+        self.previous = self.surface_controlh
         self.lh = self.length_fus[-1] - self.locations['oew']
         self.scissor()
-        new = self.surface_controlh
-        self.classiter()
-        self.convergenceiter+=1
-        previous = self.surface_controlh
-        # self.script()
-        if abs(previous - new) >= 0.1:
+        self.progression.append(self.mtow())
+        self.new = self.surface_controlh
+        if abs(self.previous - self.new) >= 0.01:
+            self.iterations +=1
             self.lemac = 25 # ft
             self.convergence()
         else:
-            self.mainsizing()
             self.scissor()
+
 
 
 
@@ -119,12 +125,13 @@ class Stability(CenterOfGravity):
         point2y = 0.5*self.diameter_fus
         x = np.linspace(0,self.length_fus[-1],100)
         y1 = np.tan(15*np.pi / 180)*(x-point1x)+point1y
-        y2 = np.tan(-75*np.pi / 180)*(x-point2x)+point2y
+        y2 = np.tan(-70*np.pi / 180)*(x-point2x)+point2y
         diff = abs(y1-y2)
         pointy= y1[diff == min(diff)][0]
         pointx = x[diff == min(diff)][0]
         l_mlg = pointx - x_oew
         l_nlg = f_mlg*l_mlg/f_nlg
+        self.vertical_pos = pointy
         self.x_nlg_cg = x_oew - l_nlg
         self.x_mlg = x_oew + l_mlg
         return None
@@ -133,8 +140,11 @@ class Stability(CenterOfGravity):
         self.convergence()
         self.landinggearsizing()
         self.classiter2()
-        self.printing1()
+        self.printing()
         self.scissor(plot=True)
+
+    def convergenceupdate(self):
+        self.script()
 
     def printing1(self):
         print('\nOther important parameters:\n---------------')
@@ -144,9 +154,9 @@ class Stability(CenterOfGravity):
         print('OEW cg = ',np.round(self.locations['oew']/self.meters_to_feet, 2), " [m]")
         print('Nose landing gear positioning =', np.round(self.x_nlg_cg/self.meters_to_feet, 2), " [m]")
         print('Main landing gear positioning =', np.round(self.x_mlg/self.meters_to_feet, 2), " [m]")
+        print('Main Landing gear vertical positioning',self.vertical_pos/self.meters_to_feet, "[m]" )
 
 if __name__ == "__main__":
     stability = Stability()
     stability.procedures()
-
-
+    stability.printing1()

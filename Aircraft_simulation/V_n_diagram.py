@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from Stability import Stability
 
 
-
 class VNDiagram(Stability):
     def __init__(self):
         super().__init__()
@@ -15,7 +14,6 @@ class VNDiagram(Stability):
         self.alleviationfactor = 0
 
     def initialising(self):
-        
         self.convergence()
         self.landinggearsizing()
         self.classiter2()
@@ -36,7 +34,7 @@ class VNDiagram(Stability):
         # DATCOM method
 
         self.mu = (2 * self.W_S * 0.2248 * 3.2808 ** 2) / (
-                    self.density * 0.0624 * 32.2 * self.mac * self.CLcurve)
+                self.density * 0.0624 * 32.2 * self.mac * self.CLcurve)
         self.alleviationfactor = 0.88 * self.mu / (5.3 + self.mu)
 
     def V_n_diag(self, plot=True):
@@ -48,13 +46,13 @@ class VNDiagram(Stability):
         VC = self.cruise_speed
 
         VD = 1.25 * VC
-        #Taken from CS-23
+        # Taken from CS-23
 
         VS = np.sqrt((-self.negloadfactor * self.W_S) / (0.5 * self.density * self.CLmax_land))
-        #This occurs at the negative load factor
+        # This occurs at the negative load factor
 
         negativeloading = [-0.5 * self.density * V ** 2 * self.CLmax_land / self.W_S for V in np.linspace(0, VS, 500)]
-        #Negative curve is the same as the one before but with its sign changed
+        # Negative curve is the same as the one before but with its sign changed
 
         Vstall = np.sqrt((1 * self.W_S) / (0.5 * self.density * self.CLmax_land))
         # print(f"Stall speed is {Vstall} m/s")
@@ -73,7 +71,7 @@ class VNDiagram(Stability):
         n_neg_D = 1 - delta_n_D
 
         VB = Vstall * np.sqrt(n_peak_C) * 1.1 if Vstall * np.sqrt(n_peak_C) < VA else VA * 1.1
-        #From CS-23
+        # From CS-23
 
         delta_n_B = self.density * VB * self.CLcurve * uB / (2 * self.W_S)
         n_peak_B = 1 + delta_n_B
@@ -81,47 +79,44 @@ class VNDiagram(Stability):
 
         self.gustloadfactor = max(n_peak_B, n_peak_C, n_peak_D)
         self.neggustloadfactor = min(n_neg_B, n_neg_C, n_neg_D)
-        
-        if plot:
 
+        if plot:
             plt.figure(1)
             plt.grid()
             plt.title("Flight Envelope")
 
             ######## MANUEVER DIAGRAM #########
 
-
-            #Positive side 
+            # Positive side
             plt.plot(np.linspace(0, VA, 500), loading, linestyle="-", color="black", label="Maneuver Diagram")
             plt.plot([VA, VD], [self.loadfactor, self.loadfactor], linestyle="-", color="black")
             plt.vlines(VD, 0, self.loadfactor, linestyle="-", color="black")
 
-            #Negative side
+            # Negative side
             plt.plot(np.linspace(0, VS, 500), negativeloading, linestyle="-", color="black")
             plt.plot([VS, VC], [self.negloadfactor, self.negloadfactor], linestyle="-", color="black")
             plt.plot([VC, VD], [self.negloadfactor, 0], linestyle="-", color="black")
 
-            #Stall speed line
+            # Stall speed line
             plt.hlines(1, 0, VD, linestyle="--", color="black")
 
             ######## GUST LOADING DIAGRAM ########
 
-
-            #Upper side dashed
+            # Upper side dashed
             plt.plot([0, VB], [1, n_peak_B], linestyle="-", color="blue", label="Gust Loading Diagram")
             plt.plot([0, VC], [1, n_peak_C], linestyle="--", color="blue")
             plt.plot([0, VD], [1, n_peak_D], linestyle="--", color="blue")
-            
-            #Upper side full
+
+            # Upper side full
             plt.plot([VB, VC], [n_peak_B, n_peak_C], linestyle="-", color="blue")
             plt.plot([VC, VD], [n_peak_C, n_peak_D], linestyle="-", color="blue")
 
-            #Lower side dashed
+            # Lower side dashed
             plt.plot([0, VB], [1, n_neg_B], linestyle="-", color="blue")
             plt.plot([0, VC], [1, n_neg_C], linestyle="--", color="blue")
             plt.plot([0, VD], [1, n_neg_D], linestyle="--", color="blue")
 
-            #Lower side full
+            # Lower side full
             plt.plot([VB, VC], [n_neg_B, n_neg_C], linestyle="-", color="blue")
             plt.plot([VC, VD], [n_neg_C, n_neg_D], linestyle="-", color="blue")
 
@@ -133,7 +128,6 @@ class VNDiagram(Stability):
             # plt.legend(loc="lower left", fontsize="small")
             plt.savefig("flight envelope")
             plt.close(1)
-
 
     def get_critical_loadfactor(self):
         # print(f"The most critical load factor is: {max(self.loadfactor, self.gustloadfactor)}")
@@ -157,10 +151,7 @@ class VNDiagram(Stability):
         print(f"The ultimate load factor of the design is: {np.round(crit_factor * 1.5, 2)} [-]")
 
 
-
-
 if __name__ == "__main__":
     diagram = VNDiagram()
     diagram.V_n_diag(plot=True)
     diagram.final_print()
-            
