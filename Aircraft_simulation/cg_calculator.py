@@ -38,6 +38,7 @@ class CenterOfGravity(Aircraft):
         self.weights = self.weight[0]
         self.fus_cg_locations = self.weight[1]
         self.wing_cg_locations = self.weight[2]
+        self.mac = self.weight[3]
         self.massfraction()
         self.lemac_oew_pl_fuel()
 
