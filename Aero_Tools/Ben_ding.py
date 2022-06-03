@@ -139,10 +139,10 @@ plt.xlim(0.15*chord()[k],0.7*chord()[k])
 plt.ylim(-0.5,0.5)
 plt.grid()
 
-
 # Buck Ling
-section_width = chord()*(0.7-0.15) - 2*L_base*10**-3
 t_upper = 0.003  # mm
+
+section_width = chord()*(0.7-0.15) - 2*L_base*10**-3
 buck_coeff = 4
 crit_sheet_buck = buck_coeff * mt.pi**2 * E_al7050*10**9/(12*(1-poisson_al7050**2)) *(t_upper/section_width)**2
 sheet_stress = mz[1:]*dist_top_avg/(wing_box(0.15,0.7)[0]*chord()**3+I_yy_four_corner_str)
@@ -150,9 +150,7 @@ w_e_lst = []
 n_str_buck_lst = []
 for i in range(len(crit_sheet_buck)):
     sheet_stress_el = sheet_stress[i]
-    print(sheet_stress_el)
     crit_sheet_buck_el = crit_sheet_buck[i]
-    print(crit_sheet_buck_el)
     if sheet_stress_el > crit_sheet_buck_el:
         n_str_buck = 0
         while sheet_stress_el>crit_sheet_buck_el:
@@ -171,8 +169,6 @@ for i in range(len(crit_sheet_buck)):
             #print(sheet_stress_el)
             crit_sheet_buck_el = buck_coeff * mt.pi**2 * E_al7050*10**9/(12*(1-poisson_al7050**2)) *(t_upper/w_e)**2
             #print(crit_sheet_buck_el)
-            print(i)
-        print(n_str_buck)
     else:
         w_e = section_width[i]
         n_str_buck = 0
@@ -190,4 +186,19 @@ plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, sheet_stress_wbuckstr, 
 plt.grid()
 plt.figure('Number of stringers due to buckling')
 plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_buck_lst)
+plt.grid()
+
+print(n_str_buck_lst)
+print(n_str_pos)
+n_str_fin_top_lst = []
+n_str_fin_bottom_lst = n_str_pos
+for j in range(len(n_str_buck_lst)):
+    n_str_fin_top = max(n_str_pos[j], n_str_buck_lst[j])
+    n_str_fin_top_lst.append(n_str_fin_top)
+print(n_str_fin_top_lst)
+plt.figure('Final Stringers')
+plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_fin_top_lst)
+plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_fin_bottom_lst)
+plt.legend(['Top', 'Bottom'])
+plt.grid()
 plt.show()
