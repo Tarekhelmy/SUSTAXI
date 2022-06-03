@@ -22,7 +22,7 @@ The cg_calculator.py file uses the converged weight that was found previously in
 The Stability.py file is concerned with the stability and controlability aspects of the SUSTAXI. It creates the scissor plot.
 
 ### V_n_diagram.py ###
-The V_n_diagram.py file creates the flight envelope of the SUSTAXI.
+The V_n_diagram.py file creates the flight envelope of the SUSTAXI. It is also the file that has to be run, in order to find all the parameters of the aircraft, and generate all the relevant plots.
 
 ### Aero_Tools ###
 
