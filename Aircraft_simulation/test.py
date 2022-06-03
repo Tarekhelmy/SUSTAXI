@@ -104,6 +104,7 @@ def test_cg():
 
 
 
+
 # VNV on S&C module
 # ==| Inspect plot and final solution with printed cg extremes
 # ====|

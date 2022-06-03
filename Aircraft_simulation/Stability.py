@@ -141,8 +141,6 @@ class Stability(CenterOfGravity):
         self.classiter2()
         self.scissor()
 
-    def convergenceupdate(self):
-        self.script()
 
     def printing1(self):
         print('\nOther important parameters:\n---------------')
