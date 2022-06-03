@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import math as mt
-import sympy as sy
 import matplotlib.pyplot as plt
 """"
 class wing_calculator(Aircraft):
@@ -45,14 +44,14 @@ print("c_t=",c_t())
 print("c_r=",c_r())
 
 
-v = 40.4 #m/s
+v = 46 #m/s
 v_c = 150
 rho=1.225
 
 #data = pd.read_table("winglift_v=46_a=15vlm.txt", sep='\s+')
 
 def data_converter():
-    data = pd.read_table("winglift_v=40_a=15vlm.txt", sep='\s+')
+    data = pd.read_table("winglift_v=46_a=15vlm.txt", sep='\s+')
     data = data.to_numpy()
     data = np.delete(data,obj=2,axis=1)
 
@@ -92,7 +91,6 @@ else:
 offset=0.5
 def trailingedgeangle():
     return mt.atan((c_r()-c_t()-offset)/(spanb()/2))
-
 
 def leadingedgeangle():
     return mt.atan(offset/(spanb()/2))
@@ -176,36 +174,11 @@ leftlift = lift()
 comp_lift = np.hstack((leftlift,rightlift))
 print("total lift =", round(sum(comp_lift),2))
 print("MTOW=", 9.81*w_mtow)
-
-#print("CLmax =", sum(comp_lift)/(0.5*rho*v*v*surfacewing))
-
-
-"highlift devices"
-req_CL = 9.81*w_mtow/(0.5*rho*v*v*surfacewing)
-
-cur_CL = sum(comp_lift)/(0.5*rho*v*v*surfacewing)
-Delta_CL = (req_CL - cur_CL)
-print(Delta_CL*1.0)
-dcl = 0.9
-Swf_S = Delta_CL/(0.9*dcl*np.cos(trailingedgeangle()))
-
-print("s", Swf_S)
+print("CLmax =", sum(comp_lift)/(0.5*rho*v*v*surfacewing))
+q=0.5*rho*v*v
+W_S= (w_mtow*9.81)/surfacewing
 #print("required wing lift coefficient=",(1.1*(1/q)*W_S))
 
 #plt.plot(comp_data[1:-1],comp_lift)
 #plt.show()
 
-b1 = 1.7
-b2 = 6.7
-
-y = sy.Symbol("y")
-chord_h = c_r() - (c_r() - c_t())/(spanb()/2) * y
-area = sy.integrate(chord_h, (y, b1, b2))
-
-print(area)
-print(Swf_S*surfacewing/2)
-
-D_a0 = -10* Swf_S * np.cos(trailingedgeangle())
-
-
-print(D_a0)
