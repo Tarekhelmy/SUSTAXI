@@ -70,4 +70,4 @@ def mass_wingbox(t_up, t_low, t_le, t_te, rho):
 
     return M_spar(re_spar_area,t_te) + M_spar(fr_spar_area,t_le) + M_sheet(dist_low,t_low) + M_sheet(dist_up,t_up)
 
-print(mass_wingbox(0.002,0.002,0.005,0.005,2700))
+print(mass_wingbox(0.003,0.003,0.008,0.008,2700))
