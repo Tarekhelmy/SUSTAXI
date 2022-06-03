@@ -2,17 +2,16 @@ from Wing_Calculator import chord
 import sympy as sy
 import numpy as np
 #----------------------------------------------------INPUTS aileron design
-b   = 18    #m2
-c_r = 2.564 #m
-c_t = 1.0   #m
+b   = 18.6    #m
+c_r = 2.703   #m
+c_t = 1.0     #m
 
-b1 = 6.7 #m
-b2 = 8   #m
+b1 = 7.0     #m
+b2 = 8.1     #m
 
 c_l_alpha = 5.37
-tau       = 0.2
+tau       = 0.4
 S_ref     = 35.2
-b         = 18
 c_d_0     = 0.0063
 da        = np.pi/9
 V         = 60 #m/s
