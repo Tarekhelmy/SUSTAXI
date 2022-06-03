@@ -79,6 +79,30 @@ def test_snowball():
 # VNV on CG module
 # ==| Set a bunch of masses to zero and manually verify the cg it finds
 # ====| only do the cabin and verify the cg is in fact the cabin cg
+def test_cg():
+
+    #Just setting up cg properly
+    cg = CenterOfGravity()
+    cg.updatecg()
+    cg.weight = cg.cg_lists()
+    cg.weights = cg.weight[0]
+    cg.fus_cg_locations = cg.weight[1]
+    cg.wing_cg_locations = cg.weight[2]
+    cg.mac = cg.weight[3]
+    #Setting masses to 0 except fuselage, mtow (so massfractions still make sense)
+    for entry in cg.weights:
+        if entry != "mtow" and entry != "fuselage" and entry != "wing":
+            cg.weights[entry] = 0
+    
+    cg.massfraction()
+
+    #Run function to be tested
+    cg.lemac_oew_pl_fuel()
+
+    #In the end, the operational empty weight cg should just be the fuselage cg
+    assert (cg.locations['oew'] == cg.fus_cg_locations['fuselage'])
+
+
 
 # VNV on S&C module
 # ==| Inspect plot and final solution with printed cg extremes
