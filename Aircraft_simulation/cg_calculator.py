@@ -118,7 +118,7 @@ class CenterOfGravity(Aircraft):
             plt.xlabel("Percentage of MAC [%]")
             plt.ylabel("Mass fraction [-]")
             plt.legend(loc="best", fontsize="small")
-
+            # plt.show()
             plt.savefig("cg")
             plt.close(1)
 
