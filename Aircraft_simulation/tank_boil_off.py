@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 #-------------------------------------------SETTING
-a = 0.805   #m
+a = 0.805   #mm
 b = 0.48   #m
 l_t = 3.18  #m (tank length)
 
