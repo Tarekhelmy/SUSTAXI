@@ -25,19 +25,19 @@ class wing_calculator(Aircraft):
         return self.surface_wing, self.w_mtow, self.AR, self.b
 """
 
-AR=10
-surfacewing= 31.4
-w_mtow = 7228
+AR= 10.05
+surfacewing= 34.44
+w_mtow = 6883
 tapratio = 0.37
 
 def spanb():
-    return round(np.sqrt(surfacewing*AR),2)
+    return round(np.sqrt(surfacewing*AR),3)
 
 def c_t():
     return round((2*surfacewing/spanb())/(1+(1/tapratio)),2)
 
 def c_r():
-    return round(c_t()/tapratio,2)
+    return round(c_t()/tapratio,3)
 
 print("b/2=",spanb()/2)
 print("c_t=",c_t())
@@ -71,18 +71,19 @@ def full_data():
 
     return ful_data
 
-a=len(full_data())/2
 
-if (a %2) == 0:
-    print(full_data()[a,0], "check if x=0")
+ar=len(full_data())/2
+
+if (ar %2) == 0:
+    print(full_data()[ar,0], "check if x=0")
     comp_halfdata = full_data()
 
 else:
     print("middle is added")
-    data=full_data()[:int(a),:int(a)]
-    half_data = full_data()[:int(a)+1,:int(a)+1]
-    cl_half_data = half_data[:int(a)+1,1]
-    data_middle = [0,(cl_half_data[int(a)]+cl_half_data[int(a)-1])/2]
+    data=full_data()[:int(ar),:int(ar)]
+    half_data = full_data()[:int(ar)+1,:int(ar)+1]
+    cl_half_data = half_data[:int(ar)+1,1]
+    data_middle = [0,(cl_half_data[int(ar)]+cl_half_data[int(ar)-1])/2]
     comp_halfdata = np.vstack([data,data_middle])
     #print(comp_halfdata)
 
@@ -94,7 +95,9 @@ def trailingedgeangle():
 def leadingedgeangle():
     return mt.atan(offset/(spanb()/2))
 
-
+def chord():
+    z_coords = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2
+    return c_r() - z_coords*mt.tan(trailingedgeangle()) - z_coords*mt.tan(leadingedgeangle())
 
 
 "calculating area"
@@ -135,12 +138,31 @@ def lift():
     list_ones = [1] * (len(cl_data)-1)
     list_ones.append(2)
     cl_data = cl_data * list_ones
+    lift = cl_data*wing_area()*v*v*0.5*rho
 
-    return cl_data*wing_area()*v*v*0.5*rho
+    return lift
 
 
+"add engine"
+def engine():
+    Z_loc_eng = 2.85
+    M_engine = 500 #kg
+    list_zeros = [0] * (len(lift()))
+
+    def find_nearest(array, value):
+        array = np.asarray(array)
+        idx = (np.abs(array - value)).argmin()
+        return array[idx], idx
 
 
+    Z_place_eng, n = find_nearest(abs(comp_halfdata[:,0]),Z_loc_eng)
+    list_zeros[n] = -M_engine*9.81
+
+    return list_zeros
+
+#plt.plot(((comp_halfdata[1:,0]) + (comp_halfdata[:-1,0]))/2,lift()+engine())
+#plt.show()
+#print(sum(lift()+engine()))
 "add right half"
 
 righthalf_data=abs(comp_halfdata[::-1])
@@ -155,7 +177,7 @@ print("MTOW=", 9.81*w_mtow)
 print("CLmax =", sum(comp_lift)/(0.5*rho*v*v*surfacewing))
 q=0.5*rho*v*v
 W_S= (w_mtow*9.81)/surfacewing
-print("required wing lift coefficient=",(1.1*(1/q)*W_S))
+#print("required wing lift coefficient=",(1.1*(1/q)*W_S))
 
 #plt.plot(comp_data[1:-1],comp_lift)
 #plt.show()

@@ -31,6 +31,7 @@ class Aircraft(WingAndPowerSizing):
         self.x_payload_cg = 0
         self.x_crew_cg = 0
 
+
         ######## Structure Masses ########
         self.m_wing = []
         self.m_h = 0
@@ -82,7 +83,7 @@ class Aircraft(WingAndPowerSizing):
 
         self.n_ee = 0.9
         self.n_pmad = 0.9
-        self.n_fc = 0.55
+        self.n_fc = 0.6
         self.n_comp = 0.7
         self.n_fuel_tank = 0.5
 
@@ -95,7 +96,7 @@ class Aircraft(WingAndPowerSizing):
         self.rho_pmad = 10000 * (self.watts_to_horsepower / self.kg_to_pounds)
         self.rho_comp = 2000 * (self.watts_to_horsepower / self.kg_to_pounds)
         self.rho_ee = 2800 * (self.watts_to_horsepower / self.kg_to_pounds)
-        self.rho_fc = 3000 * (self.watts_to_horsepower / self.kg_to_pounds)
+        self.rho_fc = 3300 * (self.watts_to_horsepower / self.kg_to_pounds)
 
         self.pmad_power = None
         self.engine_power = None
@@ -138,7 +139,7 @@ class Aircraft(WingAndPowerSizing):
         self.cockpitlength = 2.52 *self.meters_to_feet
         self.payloadlength = 5.1*self.meters_to_feet
         self.insulation_length = 2.1*self.meters_to_feet
-        self.length_fus = [(self.cockpitlength+self.payloadlength+self.length_tailcone+0.6*self.meters_to_feet) ]
+        self.length_fus = [(self.cockpitlength+self.payloadlength+self.length_tailcone) ]
 
         # self.mac = self.root_chord * 2 / 3 * (1 + self.taper_ratio + self.taper_ratio ** 2) / (1 + self.taper_ratio)
 
@@ -250,6 +251,174 @@ class Aircraft(WingAndPowerSizing):
         #     self.n_fc = self.FC.nu(p_pmax)
         #     self.pm_it += 1
         #     self.powertrain_mass()
+    def reset(self):
+        self.pm_it = 0
+        self.kg_to_pounds = 2.20462
+        self.meters_to_feet = 3.28084
+        self.watts_to_horsepower = 0.00134102
+
+        # Wing group
+        self.x_wing_cg = 0
+        self.x_engine_cg = 0
+        self.x_battery = 0
+
+        # Fuselage group
+        self.x_fuselage_cg = 0
+        self.x_fuel_cg = 0
+        self.x_empennage_cg = 0
+        self.x_landingGear_cg = 0
+        self.x_nlg_cg = 0
+        self.x_mlg = 0
+        self.x_payload_cg = 0
+        self.x_crew_cg = 0
+
+        ######## Structure Masses ########
+        self.m_wing = []
+        self.m_h = 0
+        self.m_v = 0
+        self.m_fuselage = []
+        self.w_design = 0
+        self.w_crew = 200 * self.kg_to_pounds
+        self.f_res = 0.2
+        self.w_empty = 0
+        self.w_installedEngine = 0
+        self.w_flightcontrols = 0
+        self.w_hydraulics = 0
+        self.w_electrical = 0
+        self.w_icing = 0
+        self.w_powertrain = 0
+        self.w_fuelsystem = 0
+        self.w_furnishing = 0
+        self.w_avionics = 1000
+        self.w_battery = 50 * self.kg_to_pounds  # from https://www.aircraft-battery.com/search-by-your-aircraft/battery_detail/293
+        self.w_mtow = 0
+        self.w_oew = 3500 * self.kg_to_pounds
+        self.w_fueltank = 200 * self.kg_to_pounds
+
+        ########## Payload Masses ###########
+        self.w_fuel = 0
+        self.w_payload = 800 * self.kg_to_pounds
+
+        ######### Performance ###########
+        self.L_D_cruise = self.CL_CD_cruise
+        self.L_D_loiter = self.CL_CD_cruise
+        self.c_p = 90 * 10 ** -3 * 10 ** -6
+        self.R = 1500 * 1000
+        self.V = 475 * 1000 / 3600
+        self.E = self.R / self.V
+        self.efficiency = 0.85
+        self.CL_alpha = 0
+        self.CLh_alpha = 0
+        self.CLw_alpha = 0
+        self.Mach = self.V / np.sqrt(1.4 * 287 * self.ISA(self.cruise_altitude)[1])
+        self.w_s = self.find_DP()[0] / (9.81 / self.kg_to_pounds * self.meters_to_feet ** 2)
+        self.w_p = self.find_DP()[1] * self.kg_to_pounds / (9.81 * self.watts_to_horsepower)
+
+        #### Powertrain parameters ####
+        self.delta_t_func = None
+        self.delta_T = None
+        self.T_air = None
+        self.waste_heat_power = None
+
+        self.n_ee = 0.9
+        self.n_pmad = 0.9
+        self.n_fc = 0.6
+        self.n_comp = 0.7
+        self.n_fuel_tank = 0.5
+
+        self.m_comp = 0
+        self.m_cooling = 0
+        self.m_fuel_cell = 0
+        self.m_pmad = 0
+        self.m_electric_engine = 0
+
+        self.rho_pmad = 10000 * (self.watts_to_horsepower / self.kg_to_pounds)
+        self.rho_comp = 2000 * (self.watts_to_horsepower / self.kg_to_pounds)
+        self.rho_ee = 2800 * (self.watts_to_horsepower / self.kg_to_pounds)
+        self.rho_fc = 4000 * (self.watts_to_horsepower / self.kg_to_pounds)
+
+        self.pmad_power = None
+        self.engine_power = None
+        self.comp_power = None
+        self.fc_power = None
+        self.fc_des_power = self.fc_power
+
+        self.delta_T = 25
+        self.T_air = 250
+
+        self.c_p_air = 1003
+        self.lamda_o2 = 1.75
+        self.T_t1 = self.ISA(self.cruise_altitude)[1] * (1 + self.Mach ** 2 * (1.4 - 1) / 2)
+        self.PR = 101325 * 1.05 / self.ISA(self.cruise_altitude)[0]
+        self.T_t2 = self.T_t1 * (1 + (1 / self.n_comp) * ((self.PR) ** ((0.4 / 1.4)) - 1))
+
+        ########## Geometrical parameters #############
+        self.height_fus = 1.73 * self.meters_to_feet
+        self.width_fus = 1.9 * self.meters_to_feet
+        self.diameter_fus = 1.9 * self.meters_to_feet
+        self.lh = 5.9 * self.meters_to_feet
+        self.lv = 5.4 * self.meters_to_feet
+        self.t_c = 0.1
+        self.fuel_length = 0
+        self.length_tailcone = 3.70 * self.meters_to_feet
+
+        self.fractions = 0.992 * 0.996 * 0.996 * 0.990 * 0.992 * 0.992
+        self.fuel_factor = 0
+        self.AR = 10
+        self.sweep_angle = 4 * np.pi / 180
+        self.sweep_angle_horizontal = 20 * np.pi / 180
+        self.sweep_angle_vertical = 20 * np.pi / 180
+        self.q = 0.5 * 1.225 * (self.V) ** 2 * (self.kg_to_pounds / (self.meters_to_feet ** 2))
+        self.taper_ratio = 0.4
+        self.lamda = self.taper_ratio
+        self.root_chord = 2.5 * self.meters_to_feet
+        self.taper_ratioh = 1
+        self.taper_ratiov = 0.8
+        self.mac = 1.85 * self.meters_to_feet  # Assumed
+        self.cockpitlength = 2.52 * self.meters_to_feet
+        self.payloadlength = 5.1 * self.meters_to_feet
+        self.insulation_length = 2.1 * self.meters_to_feet
+        self.length_fus = [(self.cockpitlength + self.payloadlength + self.length_tailcone +0.22*self.meters_to_feet)]
+
+        # self.mac = self.root_chord * 2 / 3 * (1 + self.taper_ratio + self.taper_ratio ** 2) / (1 + self.taper_ratio)
+
+        # tail volumes from https://onlinelibrary.wiley.com/doi/pdf/10.1002/9781118568101.app1
+
+        ####### Class 1 Statistical Data ############
+        self.MTOWstat = np.multiply(
+            [14330, 16424, 46500, 22900, 25700, 12500, 15245, 11300, 12500, 8200, 9850, 14500, 36000, 8500, 45000,
+             34720, 5732, 7054, 28660, 44000, 41000, 21165, 26000, 9000], 1)
+        self.OEWstat = np.multiply(
+            [7716, 9072, 26560, 14175, 16075, 7750, 8500, 6494, 7538, 4915, 5682, 8387, 23693, 4613, 25525, 20580, 3245,
+             4299, 16094, 27000, 24635, 11945, 15510, 5018], 1)
+        self.subsystem_weightage = dict()
+        self.subsystem_weightage = {'fuselage': 10, 'wing': 8, 'tail': 1.3, 'undercarriage': 4.5, 'nacelle': 3,
+                                    'engines': 9}
+        self.a = linregress(self.MTOWstat, self.OEWstat).slope
+        self.b = linregress(self.MTOWstat, self.OEWstat).intercept
+        self.iter = 0
+        self.ult_factor = 1.5
+        self.length_mlg = 0.6
+        self.length_nlg = 0.5
+        self.n_passengers = 6
+        self.shaft_power = 0
+        self.fuel_volume = 0
+        self.change = 0
+        self.limit_load = 2.5
+        self.limit_factor = 1.5
+        self.specific_power_engine = 2000 * self.watts_to_horsepower / self.kg_to_pounds
+        self.surface_wing = self.w_mtow / self.w_s
+        self.b_w = np.sqrt(self.AR * self.surface_wing)
+        self.electric_net = 0
+        self.vertical_volume = 0.03 * (self.surface_wing * self.b_w + 10 * self.height_fus ** 2 * self.length_fus[-1])
+        self.horizontal_volume = 0.2 * (
+                    self.surface_wing * self.mac + 2 * self.width_fus ** 2 * self.length_fus[-1]) * (self.AR + 2) / (
+                                             self.AR - 2)
+        self.surface_controlv = self.vertical_volume / self.lv
+        self.surface_controlh = self.horizontal_volume / self.lh
+        self.surface_controlh = 51.09013541454193
+        self.component_matrix = []
+        self.fuel_diameter = 1.56 * self.meters_to_feet
 
     def class2(self):
 
@@ -275,6 +444,7 @@ class Aircraft(WingAndPowerSizing):
                    (self.AR/(np.cos(self.sweep_angle_vertical)**2))**(0.357)*(self.taper_ratiov)**0.039  #checked
         # Installed Engine mass
         self.pm_it = 0
+
         self.powertrain_mass()
 
 
@@ -297,6 +467,8 @@ class Aircraft(WingAndPowerSizing):
         self.w_avionics = 2.177*800**0.933  # fine
         self.w_icing = 0.265 * self.w_design ** 0.52 * self.n_passengers**0.68 * self.w_avionics ** 0.07 * self.Mach * 0.08
         self.w_furnishing = 0.0582 * self.w_design - 65
+        # print(self.w_furnishing/self.kg_to_pounds)
+        # self.w_furnishing = 0
 
         ###### updating OEW ########
         self.w_fueltank = ((1 - self.n_fuel_tank) / self.n_fuel_tank) * self.w_fuel
@@ -339,13 +511,13 @@ class Aircraft(WingAndPowerSizing):
         self.length_fus.append(self.length_fus[0] + self.fuel_length)
         self.x_fuselage_cg = self.length_fus[-1] / 2
         self.x_fuel_cg = self.cockpitlength +self.payloadlength+ 0.5 *self.fuel_length
-        self.change = (self.length_fus[-1] / self.length_fus[0]) * self.subsystem_weightage['fuselage']/100 + (1-self.subsystem_weightage['fuselage']/100)
-        self.m_fuselage.append(self.change * self.m_fuselage[-1])
-        self.m_wing.append(self.m_wing[-1] * self.change)
-        self.surface_wing = self.w_mtow / self.w_s
-        self.w_fueltank = ((1 - self.n_fuel_tank) / self.n_fuel_tank) * self.w_fuel
-        self.w_oew = self.oew()
-        self.w_mtow = self.mtow()
+        # self.change = (self.length_fus[-1] / self.length_fus[0]) * self.subsystem_weightage['fuselage']/100 + (1-self.subsystem_weightage['fuselage']/100)
+        # self.m_fuselage.append(self.change * self.m_fuselage[-1])
+        # self.m_wing.append(self.m_wing[-1] * self.change)
+        # self.surface_wing = self.w_mtow / self.w_s
+        # self.w_fueltank = ((1 - self.n_fuel_tank) / self.n_fuel_tank) * self.w_fuel
+        # self.w_oew = self.oew()
+        # self.w_mtow = self.mtow()
         pass
 
     def classiter(self):
@@ -408,6 +580,8 @@ class Aircraft(WingAndPowerSizing):
         self.print_mass(self.m_electric_engine, 'Electric engine mass')
         self.print_mass(self.w_fuel, 'Fuel mass')
         self.print_mass(self.w_fueltank, 'Tank mass')
+        self.print_length(self.fuel_length, 'Fuel tank length')
+
         self.print_length(self.fuel_volume/(self.meters_to_feet**2), 'Volume m^3')
         print(self.fuel_volume*71/(self.meters_to_feet**3))
 
@@ -450,6 +624,7 @@ class Aircraft(WingAndPowerSizing):
 
 
         pass
+
     def classiter2(self):
         self.class1()
         OEW1 = self.w_oew
@@ -459,17 +634,15 @@ class Aircraft(WingAndPowerSizing):
         mass_vec = np.array([self.m_fuselage[-1], self.m_h, self.m_v, self.m_wing[-1], self.w_furnishing, self.w_icing,
             self.w_electrical, self.w_avionics, self.w_fuelsystem, self.w_flightcontrols, self.w_installedEngine, self.w_hydraulics])
         self.component_matrix.append(mass_vec)
-
         if np.abs(OEW2 - OEW1)/OEW2 >= 0.01:
-            self.classiter()
+            self.classiter2()
+            # self.mainsizing()
 
-
-    def procedures(self):
-        self.classiter()
+    def mainprocedures(self):
         self.classiter2()
         self.cgcalc()
-        self.printing()
 
 if __name__ == "__main__":
     aircraft = Aircraft()
-    aircraft.procedures()
+    aircraft.mainprocedures()
+    aircraft.printing()

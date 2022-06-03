@@ -38,6 +38,7 @@ class CenterOfGravity(Aircraft):
         self.weights = self.weight[0]
         self.fus_cg_locations = self.weight[1]
         self.wing_cg_locations = self.weight[2]
+        self.mac = self.weight[3]
         self.massfraction()
         self.lemac_oew_pl_fuel()
 
@@ -97,15 +98,22 @@ class CenterOfGravity(Aircraft):
             plt.grid()
             plt.title("Class 1 Loading Diagram")
 
-            plt.plot(self.macpercent(cg_OEW), self.massfractions["oew"], marker="o", color="red",
+            #Adding the cg points
+            plt.plot(self.macpercent(cg_OEW), self.massfractions["oew"], marker="o", color="red", markersize=10,
                      label="OEW cg location")
             plt.plot(self.macpercent(cg_OEWpl), self.massfractions["oew"] + self.massfractions["payload"], marker="o",
-                     color="blue", label="OEW + payload cg location")
+                     markersize=10, color="blue", label="OEW + payload cg location")
             plt.plot(self.macpercent(cg_OEWfpl),
                      self.massfractions["oew"] + self.massfractions["payload"] + self.massfractions["fuel"],
-                     color="green", marker="o", label="OEW + payload + fuel cg location")
+                     markersize=10, color="green", marker="o", label="OEW + payload + fuel cg location")
             plt.plot(self.macpercent(cg_OEWf), self.massfractions["oew"] + self.massfractions["fuel"], marker="o",
-                     color="yellow", label="OEW + fuel cg location")
+                     markersize=10, color="orange", label="OEW + fuel cg location")
+
+            #Adding lines between the points
+            plt.plot([self.macpercent(cg_OEW), self.macpercent(cg_OEWpl)], [self.massfractions["oew"], self.massfractions["oew"] + self.massfractions["payload"]], linestyle="-", color="black")
+            plt.plot([self.macpercent(cg_OEWpl), self.macpercent(cg_OEWfpl)], [self.massfractions["oew"] + self.massfractions["payload"], self.massfractions["oew"] + self.massfractions["payload"] + self.massfractions["fuel"]], linestyle="-", color="black")
+            plt.plot([self.macpercent(cg_OEWfpl), self.macpercent(cg_OEWf)], [self.massfractions["oew"] + self.massfractions["payload"] + self.massfractions["fuel"], self.massfractions["oew"] + self.massfractions["fuel"]], linestyle="-", color="black")
+            plt.plot([self.macpercent(cg_OEWf), self.macpercent(cg_OEW)], [self.massfractions["oew"] + self.massfractions["fuel"], self.massfractions["oew"]], linestyle="-", color="black")
 
             plt.xlabel("Percentage of MAC [%]")
             plt.ylabel("Mass fraction [-]")

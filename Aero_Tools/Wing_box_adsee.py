@@ -109,13 +109,13 @@ def wing_box(x_le, x_te):
     Lower_sheet = [[x_le] + Airfoil_lower[0][idx_le_low:idx_te_low] + [x_te],
                    [y_le_low] + Airfoil_lower[1][idx_le_low:idx_te_low] + [y_te_low]]
 
-    plt.plot(Airfoil_shape[0], Airfoil_shape[1], ls='--')
+    """plt.plot(Airfoil_shape[0], Airfoil_shape[1], ls='--')
     plt.plot(Upper_sheet[0] + Lower_sheet[0] + [Upper_sheet[0][0]], Upper_sheet[1] + Lower_sheet[1] + [Upper_sheet[1][0]])
 
     plt.xlim(0,1)
     plt.ylim(-0.5,0.5)
     plt.grid()
-    plt.show()
+    plt.show()"""
 
 
     # ======== I_yy of Wingbox without stringers --> Times c^3 ==========
@@ -123,7 +123,7 @@ def wing_box(x_le, x_te):
     #print('y_centroid=', y_centroid)
     #plt.scatter(0.5, y_centroid)
     I_yy_sheet_upper_lst = []
-    t_upper = 0.002  # m
+    t_upper = 0.003  # m
     for i in range(len(Upper_sheet[0])):
         x_1 = Upper_sheet[0][i-1]
         x_2 = Upper_sheet[0][i]
@@ -135,7 +135,7 @@ def wing_box(x_le, x_te):
     I_yy_sheet_upper = sum(I_yy_sheet_upper_lst)
 
     I_yy_sheet_lower_lst = []
-    t_lower = 0.002  # m
+    t_lower = 0.003  # m
     for i in range(len(Lower_sheet[0])):
         x_1 = Lower_sheet[0][i-1]
         x_2 = Lower_sheet[0][i]
@@ -146,17 +146,17 @@ def wing_box(x_le, x_te):
         I_yy_sheet_lower_lst.append(I_yy_sheet_element)
     I_yy_sheet_lower = sum(I_yy_sheet_lower_lst)
 
-    t_le = 0.005    # m
-    t_te = 0.005    # m
+    t_le = 0.008    # m
+    t_te = 0.008    # m
     I_yy_LE = (y_le_up-y_le_low)**3 * t_le/12 + (y_le_up-y_le_low) * t_le * ((y_le_up-y_le_low)/2-y_centroid)**2
     I_yy_TE = (y_te_up-y_te_low)**3 * t_te/12 + (y_te_up-y_te_low) * t_te * ((y_te_up-y_te_low)/2-y_centroid)**2
-    print(I_yy_TE+I_yy_LE+I_yy_sheet_upper+I_yy_sheet_lower)
+    #print(I_yy_TE+I_yy_LE+I_yy_sheet_upper+I_yy_sheet_lower)
     I_yy_box = I_yy_TE+I_yy_LE+I_yy_sheet_upper+I_yy_sheet_lower
 
     return I_yy_box, Upper_sheet, Lower_sheet
     #return x_le, x_te, y_le_up, y_te_up, y_le_low, y_te_low, Ixx_t, points, x_cent, y_cent, Upper_sheet, Lower_sheet
 #x_le, x_te, y_le_up, y_te_up, y_le_low, y_te_low, Ixx_t, points, x_cent, y_cent = wing_box(0.15, 0.7)
-wing_box(0.15, 0.7)
+#wing_box(0.15, 0.7)
 #wing_box(0.1, 0.65)
 #wing_box(0.2, 0.75)
 
@@ -173,5 +173,32 @@ plt.show()'''
 
 box_centre = np.average(Upper_sheet[1] + Lower_sheet[1])
 y_dist = max(Airfoil_shape[1])-box_centre
-print('maximum y distance =', y_dist, 'of chord')
+#print('maximum y distance =', y_dist, 'of chord')
+'''
+# Stringers (L-shape)
+L_base = 100 # mm
+L_web = 100 # mm
+t_str_L = 3 # mm
+A_str_L = L_base*t_str_L + L_web*t_str_L
+cent_y_str_L = (L_base * t_str_L * t_str_L/2 + L_web * t_str_L * L_web/2)/(L_base * t_str_L + L_web * t_str_L)
+I_yy_str_L = t_str_L*L_web**3/12 + (L_web/2 - cent_y_str_L)**2 * L_web*t_str_L \
+           + (cent_y_str_L - t_str_L/2)**2 * L_base*t_str_L
 
+
+# Z-shape
+Z_base = 50     # mm
+Z_web = 100     # mm
+Z_top = 50      # mm
+t_str_Z = 3       # mm
+A_str_Z = Z_base*t_str_Z + Z_web*t_str_Z + Z_top*t_str_Z
+cent_y_str_Z = Z_web/2
+I_yy_str_Z = t_str_Z*Z_web**3/12 \
+            + (cent_y_str_Z - t_str_Z/2)**2 * (Z_base + Z_top) *t_str_Z
+
+# Add Stringers
+I_yy_four_corner_str = 4*I_yy_str_L \
+                      + A_str_L*((Upper_sheet[1][0]-box_centre)**2 + (Upper_sheet[1][-1]-box_centre)**2 +
+                                 (Lower_sheet[1][0]-box_centre)**2 + (Lower_sheet[1][-1]-box_centre)**2)
+
+#print(I_yy_four_corner_str)
+'''
