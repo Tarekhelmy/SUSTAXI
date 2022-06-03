@@ -182,4 +182,3 @@ W_S= (w_mtow*9.81)/surfacewing
 #plt.plot(comp_data[1:-1],comp_lift)
 #plt.show()
 
-

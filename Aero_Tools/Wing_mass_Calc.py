@@ -4,10 +4,11 @@ import math as mt
 import numpy as np
 
 """
-t_upper = 0.002
-t_lower = 0.002
+t_up = 0.002
+t_low = 0.002
 t_le = 0.005    
 t_te = 0.005
+rho = 2700
 """
 
 def mass_wingbox(t_up, t_low, t_le, t_te, rho):
@@ -54,12 +55,15 @@ def mass_wingbox(t_up, t_low, t_le, t_te, rho):
     Fr_spar = Up_y[0]-Low_y[0]
     Re_spar = Up_y[-1]-Low_y[-1]
 
+
     tip_fr_spar = chord_wmc()[0]*Fr_spar
     root_fr_spar = chord_wmc()[-1]*Fr_spar
+    print(tip_fr_spar,root_fr_spar)
     fr_spar_area = 0.5*(tip_fr_spar+root_fr_spar)*spanb()/2
 
     tip_re_spar = chord_wmc()[0]*Re_spar
     root_re_spar = chord_wmc()[-1]*Re_spar
+    print(tip_re_spar,root_re_spar)
     re_spar_area = 0.5*(tip_re_spar+root_re_spar)*spanb()/2
 
     def M_spar(area,t):
