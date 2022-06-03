@@ -152,6 +152,11 @@ class Aircraft(WingAndPowerSizing):
         self.subsystem_weightage = {'fuselage': 10 ,'wing':8 , 'tail':1.3 ,'undercarriage':4.5 , 'nacelle':3 , 'engines': 9}
         self.a = linregress(self.MTOWstat, self.OEWstat).slope
         self.b = linregress(self.MTOWstat, self.OEWstat).intercept
+        #plt.scatter(self.MTOWstat, self.OEWstat)
+        #plt.plot(np.sort(self.MTOWstat), self.a*np.sort(self.MTOWstat) + self.b)
+        #plt.show()
+        #print('a_code1 = ', self.a)
+        #print('b_code1 = ', self.b)
         self.iter = 0
         self.ult_factor = 1.5
         self.length_mlg = 0.6
@@ -214,7 +219,7 @@ class Aircraft(WingAndPowerSizing):
         #    self.fc_des_power = self.fc_power
         self.cool_power = (-1 * part1 * self.fc_power * 0.371 + 1.33 * self.watts_to_horsepower) * self.delta_t_func
         self.waste_heat_power = (1 / self.n_fc - 1) * self.fc_power
-        self.comp_power = -1*part2 *self.fc_power
+        self.comp_power = -1*part2 * self.fc_power
 
         # Calculate powertrain component masses
         self.m_fuel_cell = self.fc_power / self.rho_fc
@@ -278,7 +283,15 @@ class Aircraft(WingAndPowerSizing):
         self.m_nlg = 0.125 * (self.ult_factor * self.w_mtow) ** 0.566 * (self.length_nlg / 12) ** 0.845
 
         # Miscellaneous subsystems
-        self.w_flightcontrols = 0.053 * self.length_fus[-1]**(1.536) * self.b_w ** (0.371) * (self.limit_factor*self.limit_load*self.w_design*10e-4)**0.8
+        self.w_flightcontrols = 0.053 * self.length_fus[-1] ** (1.536) * self.b_w ** (0.371) * (self.limit_factor*self.limit_load * self.w_design * 10 ** -4) ** 0.8
+        #print('\n--------------------\n')
+        #print(self.length_fus[-1])
+        #print(self.b_w)
+        #print(self.limit_factor)
+        #print(self.limit_load)
+        #print(self.w_design)
+        #print(self.w_flightcontrols)
+        #print('\n--------------------\n')
         self.w_hydraulics = 0.001 * self.w_design
         self.w_electrical = 12.57 * (self.w_fuelsystem+self.w_avionics) ** 0.51
         self.w_avionics = 2.177*800**0.933  # fine
