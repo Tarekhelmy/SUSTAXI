@@ -10,7 +10,6 @@ class Aircraft(WingAndPowerSizing):
         super().__init__()
 
         ##### Conversion factors ########
-
         self.pm_it = 0
         self.kg_to_pounds = 2.20462
         self.meters_to_feet = 3.28084
@@ -322,7 +321,7 @@ class Aircraft(WingAndPowerSizing):
 
         self.n_ee = 0.9
         self.n_pmad = 0.9
-        self.n_fc = 0.6
+        self.n_fc = 0.45
         self.n_comp = 0.7
         self.n_fuel_tank = 0.5
 
@@ -334,8 +333,8 @@ class Aircraft(WingAndPowerSizing):
 
         self.rho_pmad = 10000 * (self.watts_to_horsepower / self.kg_to_pounds)
         self.rho_comp = 2000 * (self.watts_to_horsepower / self.kg_to_pounds)
-        self.rho_ee = 2800 * (self.watts_to_horsepower / self.kg_to_pounds)
-        self.rho_fc = 4000 * (self.watts_to_horsepower / self.kg_to_pounds)
+        self.rho_ee  = 2800 * (self.watts_to_horsepower / self.kg_to_pounds)
+        self.rho_fc = 3250 * (self.watts_to_horsepower / self.kg_to_pounds)
 
         self.pmad_power = None
         self.engine_power = None
@@ -454,14 +453,6 @@ class Aircraft(WingAndPowerSizing):
 
         # Miscellaneous subsystems
         self.w_flightcontrols = 0.053 * self.length_fus[-1] ** (1.536) * self.b_w ** (0.371) * (self.limit_factor*self.limit_load * self.w_design * 10 ** -4) ** 0.8
-        #print('\n--------------------\n')
-        #print(self.length_fus[-1])
-        #print(self.b_w)
-        #print(self.limit_factor)
-        #print(self.limit_load)
-        #print(self.w_design)
-        #print(self.w_flightcontrols)
-        #print('\n--------------------\n')
         self.w_hydraulics = 0.001 * self.w_design
         self.w_electrical = 12.57 * (self.w_fuelsystem+self.w_avionics) ** 0.51
         self.w_avionics = 2.177*800**0.933  # fine

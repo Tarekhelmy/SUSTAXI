@@ -2,7 +2,6 @@ from cg_calculator import CenterOfGravity
 # from V_n_diagram import VNDiagram
 import numpy as np
 import matplotlib.pyplot as plt
-from Backup import AircraftBackup
 
 class Stability(CenterOfGravity):
     def __init__(self):
@@ -125,7 +124,7 @@ class Stability(CenterOfGravity):
         point2y = 0.5*self.diameter_fus
         x = np.linspace(0,self.length_fus[-1],100)
         y1 = np.tan(15*np.pi / 180)*(x-point1x)+point1y
-        y2 = np.tan(-70*np.pi / 180)*(x-point2x)+point2y
+        y2 = np.tan(-72*np.pi / 180)*(x-point2x)+point2y
         diff = abs(y1-y2)
         pointy= y1[diff == min(diff)][0]
         pointx = x[diff == min(diff)][0]
@@ -140,8 +139,7 @@ class Stability(CenterOfGravity):
         self.convergence()
         self.landinggearsizing()
         self.classiter2()
-        self.printing()
-        self.scissor(plot=True)
+        self.scissor()
 
     def convergenceupdate(self):
         self.script()
@@ -151,12 +149,15 @@ class Stability(CenterOfGravity):
         print('Fuselage Length =',np.round(self.length_fus[-1]/self.meters_to_feet, 2), " [m]")
         print("All the following values have the tip of the nose as reference:")
         print('Wing Lemac Position =',np.round(self.lemac/self.meters_to_feet, 2), " [m]")
-        print('OEW cg = ',np.round(self.locations['oew']/self.meters_to_feet, 2), " [m]")
+        print('OEW MAX cg = ',np.round(self.maximum/self.meters_to_feet, 2), " [m]")
         print('Nose landing gear positioning =', np.round(self.x_nlg_cg/self.meters_to_feet, 2), " [m]")
         print('Main landing gear positioning =', np.round(self.x_mlg/self.meters_to_feet, 2), " [m]")
         print('Main Landing gear vertical positioning',self.vertical_pos/self.meters_to_feet, "[m]" )
+        print('Tail Area ', self.surface_controlh/self.meters_to_feet**2 , ['m^2'])
+        print('Tail position ', (self.lh+self.locations['oew'])/self.meters_to_feet , ['m'])
+
 
 if __name__ == "__main__":
     stability = Stability()
     stability.procedures()
-    stability.printing1()
+    stability.printing()
