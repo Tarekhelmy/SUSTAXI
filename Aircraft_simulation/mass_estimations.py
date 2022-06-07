@@ -379,7 +379,7 @@ class Aircraft(WingAndPowerSizing):
         self.cockpitlength = 2.52 * self.meters_to_feet
         self.payloadlength = 5.1 * self.meters_to_feet
         self.insulation_length = 2.1 * self.meters_to_feet
-        self.length_fus = [(self.cockpitlength + self.payloadlength + self.length_tailcone +0.22*self.meters_to_feet)]
+        self.length_fus = [(self.cockpitlength + self.payloadlength + self.length_tailcone + 0.22 * self.meters_to_feet)]
 
         # self.mac = self.root_chord * 2 / 3 * (1 + self.taper_ratio + self.taper_ratio ** 2) / (1 + self.taper_ratio)
 
