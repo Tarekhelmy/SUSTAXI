@@ -91,10 +91,10 @@ def test_cg():
     cg.mac = cg.weight[3]
     #Setting masses to 0 except fuselage, mtow (so massfractions still make sense)
     for entry in cg.weights:
-        if entry != "mtow" and entry != "fuselage" and entry != "wing":
+        if entry != "fuselage":
             cg.weights[entry] = 0
     
-    cg.massfraction()
+    # cg.massfraction()
 
     #Run function to be tested
     cg.lemac_oew_pl_fuel()
