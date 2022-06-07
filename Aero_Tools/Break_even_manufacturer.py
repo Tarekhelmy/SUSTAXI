@@ -37,7 +37,7 @@ hours       = np.array([H_E*R, H_T*R, H_M*R_M, H_Q*R])
 hour_labels = ["Engineering hours", "Tooling hours", "Manufacturing hours", "QH"]
 #plt.pie(hours, labels=hour_labels)
 
-#----------------------------------------------FUNCTIONS
+#----------------------------------------------FUNCTIONS2
 Quantity = np.arange(1,Q,1)
 H_E = 5.18 * W_e**0.777 * V**0.894 * Quantity**0.163
 H_T = 7.22 * W_e**0.777 * V**0.696 * Quantity**0.263
