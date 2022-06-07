@@ -46,6 +46,7 @@ class VNDiagram(Stability):
         VC = self.cruise_speed
 
         VD = 1.25 * VC
+        self.VD = VD
         # Taken from CS-23
 
         VS = np.sqrt((-self.negloadfactor * self.W_S) / (0.5 * self.density * self.CLmax_land))
@@ -155,4 +156,5 @@ class VNDiagram(Stability):
 if __name__ == "__main__":
     diagram = VNDiagram()
     diagram.V_n_diag(plot=True)
+    print(f"Dive speed is: {diagram.VD}")
     diagram.final_print()
