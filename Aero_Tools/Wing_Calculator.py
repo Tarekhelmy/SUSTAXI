@@ -45,7 +45,7 @@ print("c_t=",c_t())
 print("c_r=",c_r())
 
 
-v = 46 #m/s
+v = 46.0 #m/s
 v_c = 150
 rho=1.225
 
@@ -149,7 +149,7 @@ def lift():
 "add engine"
 def engine():
     Z_loc_eng = 2.85
-    M_engine = 600 #kg
+    M_engine = 650 #kg
     list_zeros = [0] * (len(lift()))
 
     def find_nearest(array, value):
@@ -183,11 +183,12 @@ print("MTOW=", 9.81*w_mtow)
 
 "highlift devices"
 req_CL = 9.81*w_mtow/(0.5*rho*v*v*surfacewing)
-
+#print(req_CL)
 cur_CL = sum(comp_lift)/(0.5*rho*v*v*surfacewing)
-Delta_CL = (req_CL - cur_CL)
+#print(cur_CL)
+Delta_CL = (req_CL - cur_CL) +0.05
 #print(Delta_CL*1.0)
-dcl = 0.9
+dcl = 1.3
 Swf_S = Delta_CL/(0.9*dcl*np.cos(trailingedgeangle()))
 
 #print("s", Swf_S)
@@ -196,14 +197,14 @@ Swf_S = Delta_CL/(0.9*dcl*np.cos(trailingedgeangle()))
 #plt.plot(comp_data[1:-1],comp_lift)
 #plt.show()
 
-b1 = 1.7
-b2 = 6.7
+b1 = 2.5
+b2 = 6.1
 
 y = sy.Symbol("y")
 chord_h = c_r() - (c_r() - c_t())/(spanb()/2) * y
-area = sy.integrate(chord_h, (y, b1, b2))
+area_fl = sy.integrate(chord_h, (y, b1, b2))
 
-#print(area)
+#print(area_fl)
 #print(Swf_S*surfacewing/2)
 
 D_a0 = -10* Swf_S * np.cos(trailingedgeangle())
