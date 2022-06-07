@@ -78,14 +78,14 @@ plt.figure('Number of stringers due to buckling')
 plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_buck_lst_low)
 plt.grid()
 
-print(n_str_buck_lst_low)
-print(n_str_pos)
+#print(n_str_buck_lst_low)
+#print(n_str_pos)
 
 n_str_fin_bottom_lst = []
 for j in range(len(n_str_buck_lst)):
     n_str_fin_bottom = max(n_str_pos[j], n_str_buck_lst_low[j])
     n_str_fin_bottom_lst.append(n_str_fin_bottom)
-print(n_str_fin_bottom_lst)
+#print(n_str_fin_bottom_lst)
 plt.figure('Final Stringers')
 plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_fin_top_lst)
 plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_fin_bottom_lst)

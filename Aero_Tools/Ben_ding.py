@@ -84,13 +84,13 @@ I_yy_four_corner_str = 4*I_yy_str_L * 10**-12 \
                        + A_str_L*10**-6*((Upper_sheet[1][0]-box_centre)**2 + (Upper_sheet[1][-1]-box_centre)**2 +
                                   (Lower_sheet[1][0]-box_centre)**2 + (Lower_sheet[1][-1]-box_centre)**2) * (chord())**2
 
-print(req_I_yy - I_yy_four_corner_str)
+#print(req_I_yy - I_yy_four_corner_str)
 req_I_yy = req_I_yy - I_yy_four_corner_str
 
 # Average height
 y_top_avg = np.average(Upper_sheet[1])       # * chord
 y_bottom_avg = np.average(Lower_sheet[1])    # * chord
-print('y_bot=', y_bottom_avg)
+#print('y_bot=', y_bottom_avg)
 
 dist_top_avg = abs((y_top_avg - box_centre) * chord()) - Z_web/1000/2
 dist_bottom_avg = abs((y_bottom_avg - box_centre) * chord()) - Z_web/1000/2
@@ -105,8 +105,8 @@ for i in range(len(req_I_yy)):
     else:
         n_str_req = 0
     n_str_pos.append(n_str_req)
-print('The required number of stringers')
-print(n_str_pos)
+#print('The required number of stringers')
+#print(n_str_pos)
 
 k = 18  # chord position index
 
@@ -115,8 +115,8 @@ str_placing = np.arange(0.15*chord()[k], 0.7*chord()[k], str_spacing)
 y_top = np.array([y_top_avg]*(max(n_str_pos)+1))*chord()[k]
 y_bot = np.array([y_bottom_avg]*(max(n_str_pos)+1))*chord()[k]
 
-print(chord()[k])
-print('str_spacing', str_spacing)
+#print(chord()[k])
+#print('str_spacing', str_spacing)
 
 plt.figure('Stringers along span')
 plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_pos)
@@ -184,14 +184,14 @@ plt.figure('Number of stringers due to buckling')
 plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_buck_lst)
 plt.grid()
 
-print(n_str_buck_lst)
-print(n_str_pos)
+#print(n_str_buck_lst)
+#print(n_str_pos)
 n_str_fin_top_lst = []
 n_str_fin_bottom_lst = n_str_pos
 for j in range(len(n_str_buck_lst)):
     n_str_fin_top = max(n_str_pos[j], n_str_buck_lst[j])
     n_str_fin_top_lst.append(n_str_fin_top)
-print(n_str_fin_top_lst)
+#print(n_str_fin_top_lst)
 plt.figure('Final Stringers')
 plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_fin_top_lst)
 plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_fin_bottom_lst)
