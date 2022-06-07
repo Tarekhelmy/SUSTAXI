@@ -161,8 +161,7 @@ def wing_box(x_le, x_te):
 #wing_box(0.2, 0.75)
 
 I_yy_box, Upper_sheet, Lower_sheet = wing_box(0.15, 0.7)
-print(Upper_sheet, 'Upper sheet')
-print(Lower_sheet, 'Lower sheet')
+
 '''print(Ixx_t)
 plt.plot(Airfoil_shape[0], Airfoil_shape[1])
 plt.scatter(x_mid(), y_mid(), marker='+')
@@ -204,3 +203,11 @@ I_yy_four_corner_str = 4*I_yy_str_L \
 
 #print(I_yy_four_corner_str)
 '''
+
+print(Upper_sheet)
+print(Lower_sheet)
+height_le = Upper_sheet[1][-1] - Lower_sheet[1][0]
+height_te = Upper_sheet[1][0] - Lower_sheet[1][-1]
+print(height_le*0.9)
+print(height_te*0.9)
+

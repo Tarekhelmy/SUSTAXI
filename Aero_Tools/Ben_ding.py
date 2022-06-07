@@ -6,16 +6,17 @@ import matplotlib.pyplot as plt
 
 
 
-n_safety=1.5
+n_safety = 1.5
 n_load = 4.6
+n_neg_load = 1.22*1.5
 
 # ======= Materials =======
-# Aluminium 7075
-E_al7050 = 71.7 # GPa
-UTS_al7050 = 572 # MPa
-YTS_al7050 = 469 # MPa
-poisson_al7050 = 0.33
-G_al7050 = 26.9 # GPa
+# Aluminium 7075-T6
+E_al7075 = 71.7 # GPa
+UTS_al7075 = 572 # MPa
+YTS_al7075 = 469 # MPa
+poisson_al7075 = 0.33
+G_al7075 = 26.9 # GPa
 
 # Aluminium 7050
 E_al7050 = 75 # GPa --> The sources say 70 - 80 GPa ...
@@ -23,6 +24,7 @@ UTS_al7050 = 515 # MPa
 YTS_al7050 = 455 # MPa
 poisson_al7050 = 0.33
 G_al7050 = 26.9 # GPa
+tau_al7050 = 303 # MPa
 
 def Mz():
     Mz = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2 * ((lift()+engine())*n_load)
@@ -65,7 +67,7 @@ box_centre = np.average(Upper_sheet[1] + Lower_sheet[1])
 
 # Stringers (L-shape)
 L_base = 30 # mm
-L_web = 30 # mm
+L_web = 25 # mm
 t_str_L = 5 # mm
 A_str_L = L_base*t_str_L + L_web*t_str_L
 cent_y_str_L = (L_base * t_str_L * t_str_L/2 + L_web * t_str_L * L_web/2)/(L_base * t_str_L + L_web * t_str_L)
@@ -75,7 +77,7 @@ I_yy_str_L = t_str_L*L_web**3/12 + (L_web/2 - cent_y_str_L)**2 * L_web*t_str_L \
 
 # Z-shape
 Z_base = 20     # mm
-Z_web = 50     # mm
+Z_web = 25     # mm
 Z_top = 20      # mm
 t_str_Z = 5       # mm
 A_str_Z = Z_base*t_str_Z + Z_web*t_str_Z + Z_top*t_str_Z
@@ -202,4 +204,5 @@ plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_fin_bottom_lst)
 plt.legend(['Top', 'Bottom'])
 plt.grid()
 plt.show()
+
 
