@@ -1,8 +1,5 @@
-import numpy as np
-import matplotlib.pyplot as plt
 from scipy.stats import linregress
 from Wing_Power_Loading import WingAndPowerSizing
-from fuel_cell_optimization import FuelCellSizing
 from barchart import *
 
 
