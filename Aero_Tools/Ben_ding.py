@@ -25,6 +25,7 @@ YTS_al7050 = 455 # MPa
 poisson_al7050 = 0.33
 G_al7050 = 26.9 # GPa
 tau_al7050 = 303 # MPa
+rho_al7050 = 2700
 
 def Mz():
     Mz = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2 * ((lift()+engine())*n_load)
@@ -51,13 +52,6 @@ scaled = wing_box(0.15, 0.7)[0] * ((chord())**3)
 "req_I_yy is the remaining I_yy that has to be satisfied with stringers"
 req_I_yy = i_yy - scaled
 
-"buckling"
-
-def buckling():
-    C = 4
-    b = 0.55
-    t = 4 #mm
-    return (C*np.pi*np.pi*E_al7050/(12*(1-poisson_al7050)))*((t/b)**2)
 
 
 

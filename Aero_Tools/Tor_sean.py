@@ -1,5 +1,6 @@
 from Wing_Calculator import chord, rho, v, surfacewing, lift, engine
-from Ben_ding import y_top_avg, y_bottom_avg, i_yy, n_str_fin_top_lst, n_str_fin_bottom_lst, A_str_L, A_str_Z, n_load
+from Ben_ding import y_top_avg, y_bottom_avg, i_yy, A_str_L, A_str_Z, n_load
+from Downwards_bending import n_str_fin_top_lst, n_str_fin_bottom_lst
 import numpy as np
 
 def Tor_sean(t_min):

@@ -45,14 +45,14 @@ print("c_t=",c_t())
 print("c_r=",c_r())
 
 
-v = 40.4 #m/s
+v = 46 #m/s
 v_c = 150
 rho=1.225
 
 #data = pd.read_table("winglift_v=46_a=15vlm.txt", sep='\s+')
 
 def data_converter():
-    data = pd.read_table("winglift_v=40_a=15vlm.txt", sep='\s+')
+    data = pd.read_table("winglift_v=46_a=15vlm.txt", sep='\s+')
     data = data.to_numpy()
     data = np.delete(data,obj=2,axis=1)
 
