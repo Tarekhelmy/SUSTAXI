@@ -26,10 +26,10 @@ class wing_calculator(Aircraft):
         return self.surface_wing, self.w_mtow, self.AR, self.b
 """
 
-AR= 10.05
-surfacewing= 34.44
-w_mtow = 6883
-tapratio = 0.37
+AR= 9.94
+surfacewing= 27.1
+w_mtow = 5403.62
+tapratio = 0.374
 
 def spanb():
     return round(np.sqrt(surfacewing*AR),3)
@@ -148,7 +148,7 @@ def lift():
 "add engine"
 def engine():
     Z_loc_eng = 2.85
-    M_engine = 500 #kg
+    M_engine = 600 #kg
     list_zeros = [0] * (len(lift()))
 
     def find_nearest(array, value):
@@ -185,11 +185,11 @@ req_CL = 9.81*w_mtow/(0.5*rho*v*v*surfacewing)
 
 cur_CL = sum(comp_lift)/(0.5*rho*v*v*surfacewing)
 Delta_CL = (req_CL - cur_CL)
-print(Delta_CL*1.0)
+#print(Delta_CL*1.0)
 dcl = 0.9
 Swf_S = Delta_CL/(0.9*dcl*np.cos(trailingedgeangle()))
 
-print("s", Swf_S)
+#print("s", Swf_S)
 #print("required wing lift coefficient=",(1.1*(1/q)*W_S))
 
 #plt.plot(comp_data[1:-1],comp_lift)
@@ -202,10 +202,10 @@ y = sy.Symbol("y")
 chord_h = c_r() - (c_r() - c_t())/(spanb()/2) * y
 area = sy.integrate(chord_h, (y, b1, b2))
 
-print(area)
-print(Swf_S*surfacewing/2)
+#print(area)
+#print(Swf_S*surfacewing/2)
 
 D_a0 = -10* Swf_S * np.cos(trailingedgeangle())
 
 
-print(D_a0)
+#print(D_a0)

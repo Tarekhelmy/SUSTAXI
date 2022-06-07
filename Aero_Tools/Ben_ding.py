@@ -25,14 +25,14 @@ poisson_al7050 = 0.33
 G_al7050 = 26.9 # GPa
 
 def Mz():
-    Mz = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2 * (((lift()+engine())*n_load))
+    Mz = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2 * ((lift()+engine())*n_load)
     Mn = ()
     for i in range(0,len(Mz)+1,1):
         Mn += (sum(Mz[:i]),)
     return Mn
 
-#plt.plot(comp_halfdata[:,0],Mz())
-#plt.show()
+plt.plot(comp_halfdata[:,0],Mz())
+plt.show()
 
 
 
