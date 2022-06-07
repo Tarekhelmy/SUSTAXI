@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from scipy.stats import linregress
 from Wing_Power_Loading import WingAndPowerSizing
 from fuel_cell_optimization import FuelCellSizing
+from barchart import *
+
 
 class Aircraft(WingAndPowerSizing):
 
@@ -377,7 +379,7 @@ class Aircraft(WingAndPowerSizing):
         self.cockpitlength = 2.52 * self.meters_to_feet
         self.payloadlength = 5.1 * self.meters_to_feet
         self.insulation_length = 2.1 * self.meters_to_feet
-        self.length_fus = [(self.cockpitlength + self.payloadlength + self.length_tailcone +0.22*self.meters_to_feet)]
+        self.length_fus = [(self.cockpitlength + self.payloadlength + self.length_tailcone + 0.22 * self.meters_to_feet)]
 
         # self.mac = self.root_chord * 2 / 3 * (1 + self.taper_ratio + self.taper_ratio ** 2) / (1 + self.taper_ratio)
 
@@ -594,6 +596,8 @@ class Aircraft(WingAndPowerSizing):
             plt.legend()
             plt.show()
 
+
+
     def cgcalc(self):
         self.tip_chord = self.root_chord*self.taper_ratio
         # self.x_wing_cg = ((1.25)*(self.root_chord*self.b_w/2)-(2)*((self.root_chord-self.taper_ratio*self.root_chord)*self.b_w/2*0.5))/(((self.root_chord-self.taper_ratio*self.root_chord)*self.b_w*0.5)+(self.root_chord*self.b_w/2))
@@ -637,3 +641,6 @@ if __name__ == "__main__":
     aircraft = Aircraft()
     aircraft.mainprocedures()
     aircraft.printing()
+    make_barchart(aircraft)
+
+# https://www.geeksforgeeks.org/create-a-stacked-bar-plot-in-matplotlib/

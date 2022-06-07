@@ -1,5 +1,7 @@
 from Wing_Calculator import trailingedgeangle, leadingedgeangle, spanb, c_r, comp_halfdata
 from Wing_box_adsee import wing_box
+from Ben_ding import A_str_L, A_str_Z, rho_al7050, n_str_fin_top_lst
+from Downwards_bending import n_str_fin_bottom_lst
 import math as mt
 import numpy as np
 
@@ -8,7 +10,7 @@ t_up = 0.002
 t_low = 0.002
 t_le = 0.005    
 t_te = 0.005
-rho = 2700
+rho = rho_al7050
 """
 
 def mass_wingbox(t_up, t_low, t_le, t_te, rho):
@@ -50,7 +52,7 @@ def mass_wingbox(t_up, t_low, t_le, t_te, rho):
         mass = np.sum(area_top)*rho*t
         return mass
 
-    print(M_sheet(dist_low,t_low),M_sheet(dist_up,t_up))
+    #print(M_sheet(dist_low,t_low),M_sheet(dist_up,t_up))
 
     Fr_spar = Up_y[0]-Low_y[0]
     Re_spar = Up_y[-1]-Low_y[-1]
@@ -58,20 +60,31 @@ def mass_wingbox(t_up, t_low, t_le, t_te, rho):
 
     tip_fr_spar = chord_wmc()[0]*Fr_spar
     root_fr_spar = chord_wmc()[-1]*Fr_spar
-    print(tip_fr_spar,root_fr_spar)
+    #print(tip_fr_spar,root_fr_spar)
     fr_spar_area = 0.5*(tip_fr_spar+root_fr_spar)*spanb()/2
 
     tip_re_spar = chord_wmc()[0]*Re_spar
     root_re_spar = chord_wmc()[-1]*Re_spar
-    print(tip_re_spar,root_re_spar)
+    #print(tip_re_spar,root_re_spar)
     re_spar_area = 0.5*(tip_re_spar+root_re_spar)*spanb()/2
 
     def M_spar(area,t):
         mass = area*rho*t
         return mass
 
+    M_sheets = M_spar(re_spar_area,t_te) + M_spar(fr_spar_area,t_le) + M_sheet(dist_low,t_low) + M_sheet(dist_up,t_up)
+
+    #print(mass_wingbox(0.003,0.003,0.008,0.008,2700))
+
+    "adding stringer mass"
+    m_z = A_str_Z/10**6*rho*np.add(n_str_fin_top_lst,n_str_fin_bottom_lst)
+    z_dist = abs(comp_halfdata[:-1,0]) - abs(comp_halfdata[1:,0])
+    m_z_tot = sum(m_z * z_dist)
+    m_l = (A_str_L/10**6*rho)*4*spanb()/2
+
+    M_stringers = m_l + m_z_tot
+
+    return M_sheets, M_stringers, (M_stringers + M_sheets)*2
 
 
-    return M_spar(re_spar_area,t_te) + M_spar(fr_spar_area,t_le) + M_sheet(dist_low,t_low) + M_sheet(dist_up,t_up)
-
-print(mass_wingbox(0.003,0.003,0.008,0.008,2700))
+print("Half of the wing:", mass_wingbox(0.003,0.003,0.008,0.008,2700))

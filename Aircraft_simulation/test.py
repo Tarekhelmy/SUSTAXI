@@ -28,6 +28,7 @@ def test_fuel():
     AC.class1()
     correct_answer = 0.2 * 1.1 * 10000 * 40 / 120
 
+
     assert abs(AC.w_fuel - correct_answer) < 1e-6
 
 # ==| class II
@@ -51,8 +52,17 @@ def test_powertrain():
     AC.w_mtow = 0
     AC.powertrain_mass()
 
-    assert (AC.m_electric_engine - 0) < 1e-6
-    assert (AC.m_fuel_cell - AC.m_cooling) < 1e-6
+    c11 = 0.3389827
+    c3 = (1 / AC.n_fc) - 1
+    c2 = 2.856 * 10 ** -7 * AC.lamda_o2 * AC.c_p_air * (AC.T_t2 - AC.T_t1) / (AC.n_ee * AC.n_fc)
+    c12 = 1.215221
+
+    correct_ans = c12 / (1 - (c11 * c3 + c2))
+    correct_ans *= AC.watts_to_horsepower
+
+    assert abs(AC.m_electric_engine - 0) < 1e-6
+    assert abs(AC.fc_power - correct_ans) < 1e-6
+
 
 # ==| iterations
 # ====| increase a constant weight and check the snowball effect
@@ -74,7 +84,7 @@ def test_snowball():
     AChbat.cgcalc()
 
     # Verify that the weight gain did the snowball thing
-    assert (AChbat.MTOW - ACdef.MTOW) > diff
+    assert AChbat.MTOW - ACdef.MTOW > diff
 
 # VNV on CG module
 # ==| Set a bunch of masses to zero and manually verify the cg it finds
@@ -91,16 +101,17 @@ def test_cg():
     cg.mac = cg.weight[3]
     #Setting masses to 0 except fuselage, mtow (so massfractions still make sense)
     for entry in cg.weights:
-        if entry != "mtow" and entry != "fuselage" and entry != "wing":
+        if entry != "fuselage":
             cg.weights[entry] = 0
     
-    cg.massfraction()
+    # cg.massfraction()
 
     #Run function to be tested
     cg.lemac_oew_pl_fuel()
 
     #In the end, the operational empty weight cg should just be the fuselage cg
     assert (cg.locations['oew'] == cg.fus_cg_locations['fuselage'])
+
 
 
 

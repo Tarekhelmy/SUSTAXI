@@ -1,21 +1,22 @@
 from Aero_Tools.Wing_box_adsee import y_dist, wing_box
-from Wing_Calculator import lift, comp_halfdata, trailingedgeangle, leadingedgeangle, c_r, engine, chord
+from Wing_Calculator import lift, comp_halfdata, trailingedgeangle, leadingedgeangle, c_r, engine, chord, rho
 import numpy as np
 import math as mt
 import matplotlib.pyplot as plt
 
 
 
-n_safety=1.5
+n_safety = 1.5
 n_load = 4.6
+n_neg_load = 1.22*1.5
 
 # ======= Materials =======
-# Aluminium 7075
-E_al7050 = 71.7 # GPa
-UTS_al7050 = 572 # MPa
-YTS_al7050 = 469 # MPa
-poisson_al7050 = 0.33
-G_al7050 = 26.9 # GPa
+# Aluminium 7075-T6
+E_al7075 = 71.7 # GPa
+UTS_al7075 = 572 # MPa
+YTS_al7075 = 469 # MPa
+poisson_al7075 = 0.33
+G_al7075 = 26.9 # GPa
 
 # Aluminium 7050
 E_al7050 = 75 # GPa --> The sources say 70 - 80 GPa ...
@@ -23,16 +24,18 @@ UTS_al7050 = 515 # MPa
 YTS_al7050 = 455 # MPa
 poisson_al7050 = 0.33
 G_al7050 = 26.9 # GPa
+tau_al7050 = 303 # MPa
+rho_al7050 = 2700
 
 def Mz():
-    Mz = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2 * (((lift()+engine())*n_load))
+    Mz = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2 * ((lift()+engine())*n_load)
     Mn = ()
     for i in range(0,len(Mz)+1,1):
         Mn += (sum(Mz[:i]),)
     return Mn
 
-#plt.plot(comp_halfdata[:,0],Mz())
-#plt.show()
+plt.plot(comp_halfdata[:,0],Mz())
+plt.show()
 
 
 
@@ -49,13 +52,6 @@ scaled = wing_box(0.15, 0.7)[0] * ((chord())**3)
 "req_I_yy is the remaining I_yy that has to be satisfied with stringers"
 req_I_yy = i_yy - scaled
 
-"buckling"
-
-def buckling():
-    C = 4
-    b = 0.55
-    t = 4 #mm
-    return (C*np.pi*np.pi*E_al7050/(12*(1-poisson_al7050)))*((t/b)**2)
 
 
 
@@ -65,7 +61,7 @@ box_centre = np.average(Upper_sheet[1] + Lower_sheet[1])
 
 # Stringers (L-shape)
 L_base = 30 # mm
-L_web = 30 # mm
+L_web = 25 # mm
 t_str_L = 5 # mm
 A_str_L = L_base*t_str_L + L_web*t_str_L
 cent_y_str_L = (L_base * t_str_L * t_str_L/2 + L_web * t_str_L * L_web/2)/(L_base * t_str_L + L_web * t_str_L)
@@ -75,7 +71,7 @@ I_yy_str_L = t_str_L*L_web**3/12 + (L_web/2 - cent_y_str_L)**2 * L_web*t_str_L \
 
 # Z-shape
 Z_base = 20     # mm
-Z_web = 50     # mm
+Z_web = 25     # mm
 Z_top = 20      # mm
 t_str_Z = 5       # mm
 A_str_Z = Z_base*t_str_Z + Z_web*t_str_Z + Z_top*t_str_Z
@@ -88,13 +84,13 @@ I_yy_four_corner_str = 4*I_yy_str_L * 10**-12 \
                        + A_str_L*10**-6*((Upper_sheet[1][0]-box_centre)**2 + (Upper_sheet[1][-1]-box_centre)**2 +
                                   (Lower_sheet[1][0]-box_centre)**2 + (Lower_sheet[1][-1]-box_centre)**2) * (chord())**2
 
-print(req_I_yy - I_yy_four_corner_str)
+#print(req_I_yy - I_yy_four_corner_str)
 req_I_yy = req_I_yy - I_yy_four_corner_str
 
 # Average height
 y_top_avg = np.average(Upper_sheet[1])       # * chord
 y_bottom_avg = np.average(Lower_sheet[1])    # * chord
-print('y_bot=', y_bottom_avg)
+#print('y_bot=', y_bottom_avg)
 
 dist_top_avg = abs((y_top_avg - box_centre) * chord()) - Z_web/1000/2
 dist_bottom_avg = abs((y_bottom_avg - box_centre) * chord()) - Z_web/1000/2
@@ -109,8 +105,8 @@ for i in range(len(req_I_yy)):
     else:
         n_str_req = 0
     n_str_pos.append(n_str_req)
-print('The required number of stringers')
-print(n_str_pos)
+#print('The required number of stringers')
+#print(n_str_pos)
 
 k = 18  # chord position index
 
@@ -119,8 +115,8 @@ str_placing = np.arange(0.15*chord()[k], 0.7*chord()[k], str_spacing)
 y_top = np.array([y_top_avg]*(max(n_str_pos)+1))*chord()[k]
 y_bot = np.array([y_bottom_avg]*(max(n_str_pos)+1))*chord()[k]
 
-print(chord()[k])
-print('str_spacing', str_spacing)
+#print(chord()[k])
+#print('str_spacing', str_spacing)
 
 plt.figure('Stringers along span')
 plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_pos)
@@ -188,17 +184,19 @@ plt.figure('Number of stringers due to buckling')
 plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_buck_lst)
 plt.grid()
 
-print(n_str_buck_lst)
-print(n_str_pos)
+#print(n_str_buck_lst)
+#print(n_str_pos)
 n_str_fin_top_lst = []
 n_str_fin_bottom_lst = n_str_pos
 for j in range(len(n_str_buck_lst)):
     n_str_fin_top = max(n_str_pos[j], n_str_buck_lst[j])
     n_str_fin_top_lst.append(n_str_fin_top)
-print(n_str_fin_top_lst)
+#print(n_str_fin_top_lst)
 plt.figure('Final Stringers')
 plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_fin_top_lst)
 plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_fin_bottom_lst)
 plt.legend(['Top', 'Bottom'])
 plt.grid()
 plt.show()
+
+
