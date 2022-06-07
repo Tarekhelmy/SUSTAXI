@@ -9,3 +9,4 @@ def make_barchart(aircraft_instance):
     # fuselage
     # payload
     #
+    pass
