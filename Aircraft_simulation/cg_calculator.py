@@ -18,7 +18,7 @@ class CenterOfGravity(Aircraft):
         self.wing_cg_locations = self.weight[2]
         self.massfractions = dict()
         self.locations = dict()
-        self.lemac =  25 # ft
+        self.lemac =  self.cockpitlength +0.5*(self.payloadlength + self.fuel_length) # ft
         self.mac = self.weight[3]
         # self.positions = self.cgandplot(False)
 
