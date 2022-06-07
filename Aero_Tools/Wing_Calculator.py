@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import math as mt
+import sympy as sy
 import matplotlib.pyplot as plt
 """"
 class wing_calculator(Aircraft):
@@ -25,10 +26,10 @@ class wing_calculator(Aircraft):
         return self.surface_wing, self.w_mtow, self.AR, self.b
 """
 
-AR= 10.05
-surfacewing= 34.44
-w_mtow = 6883
-tapratio = 0.37
+AR= 9.94
+surfacewing= 27.1
+w_mtow = 5403.62
+tapratio = 0.374
 
 def spanb():
     return round(np.sqrt(surfacewing*AR),3)
@@ -92,12 +93,15 @@ offset=0.5
 def trailingedgeangle():
     return mt.atan((c_r()-c_t()-offset)/(spanb()/2))
 
+
 def leadingedgeangle():
     return mt.atan(offset/(spanb()/2))
+
 
 def chord():
     z_coords = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2
     return c_r() - z_coords*mt.tan(trailingedgeangle()) - z_coords*mt.tan(leadingedgeangle())
+
 
 
 "calculating area"
@@ -144,10 +148,11 @@ def lift():
     return lift
 
 
+
 "add engine"
 def engine():
     Z_loc_eng = 2.85
-    M_engine = 500 #kg
+    M_engine = 650 #kg
     list_zeros = [0] * (len(lift()))
 
     def find_nearest(array, value):
@@ -175,12 +180,10 @@ leftlift = lift()
 comp_lift = np.hstack((leftlift,rightlift))
 print("total lift =", round(sum(comp_lift),2))
 print("MTOW=", 9.81*w_mtow)
-print("CLmax =", sum(comp_lift)/(0.5*rho*v*v*surfacewing))
-q=0.5*rho*v*v
-W_S= (w_mtow*9.81)/surfacewing
-#print("required wing lift coefficient=",(1.1*(1/q)*W_S))
 
-#plt.plot(comp_data[1:-1],comp_lift)
-#plt.show()
+#print("CLmax =", sum(comp_lift)/(0.5*rho*v*v*surfacewing))
+
+
+
 
 

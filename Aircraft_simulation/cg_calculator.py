@@ -68,11 +68,11 @@ class CenterOfGravity(Aircraft):
             product_wcg += self.weights[name] * self.wing_cg_locations[name]
 
         x_fcg = product_fcg / mass_fcg
-        x_wcg = self.mac * product_wcg / mass_wcg + self.lemac
+        x_wcg = self.mac * product_wcg / mass_wcg + self.lemac if mass_wcg != 0 else self.lemac
 
         self.oew_cg_mac = (((mass_fcg * x_fcg + mass_wcg * x_wcg) / ((mass_fcg + mass_wcg))) - self.lemac) / self.mac
         # x_lemac = x_fcg + self.mac * ( (x_wcg / self.mac) * (mass_wcg / mass_fcg) - self.oew_cg_mac * (1 + mass_wcg / mass_fcg))
-        x_oew = self.lemac + self.oew_cg_mac * self.mac
+        x_oew = self.lemac + self.oew_cg_mac * self.mac if mass_wcg != 0 else x_fcg
         # self.x_oew = x_oew
         self.locations["lemac"] = self.lemac
         self.locations["oew"] = x_oew
