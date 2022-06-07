@@ -159,10 +159,12 @@ class WingAndPowerSizing    :
         self.W_S,self.W_P = self.find_DP()
         print("Wing Loading = %.2f" % self.W_S, " N/m^2")
         print("Power Loading = %.3f" % self.W_P, " N/w")
+        print('Climb power', self.climbrate(self.W_S),self.climbgradient(self.W_S))
         # print("Wing Area = %.2f" % self.S, " m^2")
         # print("Total Power = %.2f" % (self.P / 1000), " kW")
 
 if __name__ == '__main__':
     Aircraft = WingAndPowerSizing()
     Aircraft.plot_power(landing=True, cruise=True)
+
     Aircraft.print_ac_params()

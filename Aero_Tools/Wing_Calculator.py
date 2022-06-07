@@ -129,8 +129,10 @@ def Sfront():
 #print(Sfront())
 
 def wing_area():
+
     x_data = abs(comp_halfdata[:,0])
     x_data = x_data[:-1] - x_data[1:]
+
     return(x_data*c_r())-Sfront()-Sback()
 
 
@@ -143,7 +145,6 @@ def lift():
     list_ones.append(2)
     cl_data = cl_data * list_ones
     lift = cl_data*wing_area()*v*v*0.5*rho
-
     return lift
 
 
