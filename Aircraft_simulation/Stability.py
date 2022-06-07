@@ -59,7 +59,6 @@ class Stability(CenterOfGravity):
         self.minimum = min(self.positions)*self.meters_to_feet
         maximum = (self.maximum-self.lemac) /self.mac
         minimum = (self.minimum-self.lemac) / self.mac
-        # self.Cm_ac = self.Cm_cg + self.CLmax_land*((self.maximum) - self.x_ac)/self.mac
         self.Cm_ac_w = -self.Cm0*self.AR*np.cos(self.sweep_angle)**2/(self.AR+2*np.cos(self.sweep_angle))
         self.CLw_alpha = self.CL(self.AR)
         self.CL_ah_alpha = self.CLw_alpha*(1+2.15*self.diameter_fus/self.b_w)*self.surface_wing/(self.root_chord*self.diameter_fus+self.surface_wing)+np.pi*self.diameter_fus**2/(2*self.surface_wing)
@@ -68,7 +67,6 @@ class Stability(CenterOfGravity):
         self.Cm_l_4 = self.mu2*(-self.mu1*1.3*1.15-(self.CLmax_land+1.3*(1-0.42))*1.15*0.15*1/8)+0.7*self.AR*self.mu3*1.3*np.tan(self.sweep_angle)/(1+2/self.AR) - self.CLmax_land*(0.25-self.x_ac)
         self.Cm_ac_flaps = self.Cm_l_4 - self.CLmax_land*(0.25-(self.x_ac))
         self.Cm_ac = self.Cm_ac_w +self.Cm_ac_f +self.Cm_ac_flaps
-        # print(self.Cm_ac_flaps)
         self.CLh_alpha = self.CL(5,self.Vh_V)
         self.min_difference = maximum - minimum
         Sh_S = np.linspace(0,2,400)
@@ -172,7 +170,5 @@ class Stability(CenterOfGravity):
 if __name__ == "__main__":
     stability = Stability()
     stability.procedures()
-    # stability.plot_mass_progression()
-    # stability.orderconvergence()
     stability.printing()
     stability.printing1()

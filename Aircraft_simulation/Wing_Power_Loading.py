@@ -66,7 +66,7 @@ class WingAndPowerSizing    :
         self.cruise_altitude = 5000 # m
         self.MTOW = 0
         self.AR = 10
-        self.cruise_speed = 200 / 3.6
+        self.cruise_speed = 475 / 3.6
         self.rho = 1.225
         self.pressure = 101325
         self.temperature = 288.15
