@@ -49,6 +49,7 @@ class VNDiagram(Stability):
         # Taken from CS-23
 
         VS = np.sqrt((-self.negloadfactor * self.W_S) / (0.5 * self.density * self.CLmax_land))
+        print(f"Negative load factor airspeed is: {VS}")
         # This occurs at the negative load factor
 
         negativeloading = [-0.5 * self.density * V ** 2 * self.CLmax_land / self.W_S for V in np.linspace(0, VS, 500)]
