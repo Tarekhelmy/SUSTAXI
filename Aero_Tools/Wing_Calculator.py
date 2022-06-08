@@ -26,10 +26,10 @@ class wing_calculator(Aircraft):
         return self.surface_wing, self.w_mtow, self.AR, self.b
 """
 
-AR= 10.03
-surfacewing= 28.14
-w_mtow = 5403.62
-tapratio = 0.37
+AR= 9.94
+surfacewing= 28.06
+w_mtow = 5622.87
+tapratio = 0.373
 
 def spanb():
     return round(np.sqrt(surfacewing*AR),3)
@@ -52,7 +52,7 @@ rho=1.225
 #data = pd.read_table("winglift_v=46_a=15vlm.txt", sep='\s+')
 
 def data_converter():
-    data = pd.read_table("winglift_v=46_a=15vlm.txt", sep='\s+')
+    data = pd.read_table("winglift_v=40_a=15vlm.txt", sep='\s+')
     data = data.to_numpy()
     data = np.delete(data,obj=2,axis=1)
 
