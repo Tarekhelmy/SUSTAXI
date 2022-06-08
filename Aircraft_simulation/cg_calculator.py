@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
-from mass_estimations import Aircraft
-
+try:
+    from mass_estimations import Aircraft
+except ModuleNotFoundError:
+    from Aircraft_simulation.mass_estimations import Aircraft
 
 # aircraft = Aircraft()
 # weights, fus_cg_locations, wing_cg_locations, mac = aircraft.cg_lists()

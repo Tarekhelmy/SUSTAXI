@@ -46,7 +46,8 @@ ISA_pressure = 101325
 ISA_temperature = 288.15
 gravity = 9.81
 
-class WingAndPowerSizing    :
+class WingAndPowerSizing:
+
     def __init__(self):
         self.clean_stall_speed = 46.2 # [m/s]
         self.ff_stall_speed = 40.4 #[m/s]

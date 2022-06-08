@@ -1,4 +1,7 @@
-from cg_calculator import CenterOfGravity
+try:
+    from cg_calculator import CenterOfGravity
+except ModuleNotFoundError:
+    from Aircraft_simulation.cg_calculator import CenterOfGravity
 # from V_n_diagram import VNDiagram
 import numpy as np
 import matplotlib.pyplot as plt

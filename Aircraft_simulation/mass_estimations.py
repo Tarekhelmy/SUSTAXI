@@ -1,6 +1,12 @@
 from scipy.stats import linregress
-from Wing_Power_Loading import WingAndPowerSizing
-from barchart import *
+try:
+    from Wing_Power_Loading import WingAndPowerSizing
+    from barchart import *
+
+except ModuleNotFoundError:
+    from Aircraft_simulation.Wing_Power_Loading import WingAndPowerSizing
+    from Aircraft_simulation.barchart import *
+
 
 
 class Aircraft(WingAndPowerSizing):
