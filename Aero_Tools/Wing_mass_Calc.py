@@ -87,4 +87,4 @@ def mass_wingbox(t_up, t_low, t_le, t_te, rho):
     return M_sheets, M_stringers, (M_stringers + M_sheets)*2
 
 
-print("Half of the wing:", mass_wingbox(0.003,0.003,0.008,0.008,2700))
+print("Half of the wing:", mass_wingbox(0.003,0.003,0.005,0.005,2700))

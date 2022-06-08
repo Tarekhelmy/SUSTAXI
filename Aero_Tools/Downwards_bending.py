@@ -92,3 +92,7 @@ plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_fin_bottom_lst)
 plt.legend(['Top', 'Bottom'])
 plt.grid()
 plt.show()
+print("Top", n_str_fin_top_lst)
+print("Bottom", n_str_fin_bottom_lst)
+
+print((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2)

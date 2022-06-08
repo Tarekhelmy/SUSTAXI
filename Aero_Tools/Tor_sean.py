@@ -1,7 +1,9 @@
-from Wing_Calculator import chord, rho, v, surfacewing, lift, engine
+from Wing_Calculator import chord, rho, v, surfacewing, lift, engine, wing_area
 from Ben_ding import y_top_avg, y_bottom_avg, i_yy, A_str_L, A_str_Z, n_load, n_str_fin_top_lst
 from Downwards_bending import n_str_fin_bottom_lst
 import numpy as np
+
+
 
 def Tor_sean(t_min):
     A = (y_top_avg - y_bottom_avg)* (.7-.15)
@@ -10,8 +12,9 @@ def Tor_sean(t_min):
 
     "Tor sean"
     C_m = 0.561
-    T = C_m * 0.5 * rho * v * v * surfacewing * chord()
-    q_T = T * n_load / (2* Area)
+    T = C_m * 0.5 * rho * v * v * wing_area() * chord()
+    cumulative = np.cumsum(T)
+    q_T = cumulative * n_load / (2* Area)
     tau_max_T = q_T / t_min
 
 
@@ -31,6 +34,6 @@ def Tor_sean(t_min):
 
     tau_max = q_tot /t_min
 
-    return tau_max / 10**9
+    return tau_max / 10**6
 
 print(Tor_sean(0.003))
