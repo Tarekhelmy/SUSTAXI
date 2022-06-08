@@ -86,7 +86,7 @@ class Stability(CenterOfGravity):
         except ValueError:
             self.lemac -= 0.1
             self.scissor()
-        self.surface_controlh = Constraint *1.15 *self.surface_wing
+        self.surface_controlh = Constraint * 1.15 *self.surface_wing
 
         if plot==True:
             ig, ax = plt.subplots()
@@ -173,5 +173,6 @@ class Stability(CenterOfGravity):
 if __name__ == "__main__":
     stability = Stability()
     stability.procedures()
+    stability.plot_mass_breakdown()
     stability.printing()
     stability.printing1()

@@ -27,7 +27,7 @@ class BarChart:
         self.data_matrix = pd.DataFrame(bars, index=names, columns=handles)
         self.title = title
 
-    def plot_bar(self):
+    def plot(self):
         self.data_matrix.plot(kind='bar', stacked=True, title=self.title, use_index=True, rot=0)
         plt.show()
 
