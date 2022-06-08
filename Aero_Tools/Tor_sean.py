@@ -11,7 +11,7 @@ def Tor_sean(t_min):
 
 
     "Tor sean"
-    C_m = 0.561
+    C_m = 0.56865
     T = C_m * 0.5 * rho * v * v * wing_area() * chord()
     cumulative = np.cumsum(T)
     q_T = cumulative * n_load / (2* Area)
