@@ -646,10 +646,10 @@ class Aircraft(WingAndPowerSizing):
         return weights, fuselage_cg, wing_cg, mac
 
     def plot_mass_breakdown(self):
-        ac_component_names = ['Powertrain', 'Payload', 'Structures', 'Fuel', 'Fueltank', 'Miscellaneous Systems']
+        ac_component_names = ['Powertrain', 'Payload', 'Structures', 'Fuel', 'Fueltank', 'Misc. Systems']
         ac_component_masses = [[self.w_installedEngine, self.w_payload,
                                 self.m_wing[-1] + self.m_fuselage[-1] + self.m_h + self.m_v,
-                                self.w_fuel, self.w_fueltank]]
+                                self.w_fuel, self.w_fueltank],[0,0,0,0,0,0]]
         ac_component_masses[0].append(self.w_mtow - sum(ac_component_masses[0]))
 
         for idx, component in enumerate(ac_component_masses[0]):
@@ -657,13 +657,13 @@ class Aircraft(WingAndPowerSizing):
             ac_component_names[idx] += (" " + str(perc) + "%MTOM")
 
         ac_component_masses = np.array(ac_component_masses) / self.kg_to_pounds
-        ac_name = ['SUSTAXI']
+        ac_name = ['SUSTAXI', ""]
         plot_name = "Mass Breakdown of the Sustaxi MTOM = "
         plot_name += str(round(self.w_mtow / self.kg_to_pounds, 2)) + " kg"
         mass_bar = BarChart(ac_component_masses, ac_component_names, ac_name, plot_name)
         mass_bar.plot()
 
-        print("fuel system %.2f" % (self.w_fuelsystem / self.kg_to_pounds), "kg")
+        #print("fuel system %.2f" % (self.w_fuelsystem / self.kg_to_pounds), "kg")
 
     def classiter2(self):
         self.class1()

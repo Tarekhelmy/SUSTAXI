@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import pandas as pd
 import math
 
@@ -23,12 +24,18 @@ class BarChart:
         shiiit
 
         """
-
+        self.names = names
         self.data_matrix = pd.DataFrame(bars, index=names, columns=handles)
         self.title = title
 
     def plot(self):
-        self.data_matrix.plot(kind='bar', stacked=True, title=self.title, use_index=True, rot=0)
+        sz = 30
+        self.data_matrix.plot(kind='bar', stacked=True, use_index=True, rot=0, width=0.5)
+        plt.legend(loc=7, framealpha=0, prop={'size': sz})
+        plt.tick_params(labelsize=sz)
+        plt.suptitle(self.title, fontsize=sz)
+        plt.ylabel("[kg]", fontsize=sz)
+
         plt.show()
 
 
