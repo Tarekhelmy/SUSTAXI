@@ -9,8 +9,8 @@ class BarChart:
 
     def __init__(self,
                  bars: np.ndarray,
-                 handles: list[str],
-                 names: list[str],
+                 handles: list(),
+                 names: list(),
                  title: str):
 
         """
