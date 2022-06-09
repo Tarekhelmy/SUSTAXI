@@ -29,23 +29,24 @@ rho_al7050 = 2700
 
 def Mz():
     Mz = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2 * ((lift()+engine())*n_load)
-    Mn = ()
-    for i in range(0,len(Mz)+1,1):
-        Mn += (sum(Mz[:i]),)
+    #Mn = ()
+    #for i in range(0,len(Mz)+1,1):
+     #   Mn += (sum(Mz[:i]),)
+
+    Mn = np.cumsum(Mz)
     return Mn
 
-plt.plot(comp_halfdata[:,0],Mz())
+za_coords = -(abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2
+
+plt.plot(za_coords,Mz())
 plt.show()
-
-
-
 
 
 "Bending required I_yy at each point along span"
 yy = chord()*y_dist
 mz = np.array(Mz())
 sigma = YTS_al7050/n_safety*10**6
-i_yy = (mz[1:]*yy)/sigma
+i_yy = (mz[:]*yy)/sigma
 "scaled calculates I_yy of the sheet at every x position"
 scaled = wing_box(0.15, 0.7)[0] * ((chord())**3)
 
@@ -60,9 +61,9 @@ I_yy_box, Upper_sheet, Lower_sheet = wing_box(0.15, 0.7)
 box_centre = np.average(Upper_sheet[1] + Lower_sheet[1])
 
 # Stringers (L-shape)
-L_base = 30 # mm
+L_base = 25 # mm
 L_web = 25 # mm
-t_str_L = 5 # mm
+t_str_L = 3 # mm
 A_str_L = L_base*t_str_L + L_web*t_str_L
 cent_y_str_L = (L_base * t_str_L * t_str_L/2 + L_web * t_str_L * L_web/2)/(L_base * t_str_L + L_web * t_str_L)
 I_yy_str_L = t_str_L*L_web**3/12 + (L_web/2 - cent_y_str_L)**2 * L_web*t_str_L \
@@ -70,10 +71,10 @@ I_yy_str_L = t_str_L*L_web**3/12 + (L_web/2 - cent_y_str_L)**2 * L_web*t_str_L \
 
 
 # Z-shape
-Z_base = 20     # mm
-Z_web = 25     # mm
-Z_top = 20      # mm
-t_str_Z = 5       # mm
+Z_base = 15     # mm
+Z_web = 20     # mm
+Z_top = 15      # mm
+t_str_Z = 3       # mm
 A_str_Z = Z_base*t_str_Z + Z_web*t_str_Z + Z_top*t_str_Z
 cent_y_str_Z = Z_web/2
 I_yy_str_Z = t_str_Z*Z_web**3/12 \
@@ -115,8 +116,8 @@ str_placing = np.arange(0.15*chord()[k], 0.7*chord()[k], str_spacing)
 y_top = np.array([y_top_avg]*(max(n_str_pos)+1))*chord()[k]
 y_bot = np.array([y_bottom_avg]*(max(n_str_pos)+1))*chord()[k]
 
-#print(chord()[k])
-#print('str_spacing', str_spacing)
+print(chord()[k])
+print('str_spacing', str_spacing)
 
 plt.figure('Stringers along span')
 plt.plot((comp_halfdata[1:,0] + comp_halfdata[:-1,0])/2, n_str_pos)
@@ -141,7 +142,7 @@ t_upper = 0.003  # mm
 section_width = chord()*(0.7-0.15) - 2*L_base*10**-3
 buck_coeff = 4
 crit_sheet_buck = buck_coeff * mt.pi**2 * E_al7050*10**9/(12*(1-poisson_al7050**2)) *(t_upper/section_width)**2
-sheet_stress = mz[1:]*dist_top_avg/(wing_box(0.15,0.7)[0]*chord()**3+I_yy_four_corner_str)
+sheet_stress = mz[:]*dist_top_avg/(wing_box(0.15,0.7)[0]*chord()**3+I_yy_four_corner_str)
 w_e_lst = []
 n_str_buck_lst = []
 for i in range(len(crit_sheet_buck)):
@@ -160,7 +161,7 @@ for i in range(len(crit_sheet_buck)):
 
             w_e = section_width[i] / (n_str_buck + 1) - n_str_buck*Z_base*10**-3
             #print(w_e)
-            sheet_stress_el = mz[i+1]*dist_top_avg[i]\
+            sheet_stress_el = mz[i]*dist_top_avg[i]\
                               /(wing_box(0.15,0.7)[0]*chord()[i]**3 + I_yy_four_corner_str[i] + I_yy_top_str[i]*n_str_buck)
             #print(sheet_stress_el)
             crit_sheet_buck_el = buck_coeff * mt.pi**2 * E_al7050*10**9/(12*(1-poisson_al7050**2)) *(t_upper/w_e)**2
