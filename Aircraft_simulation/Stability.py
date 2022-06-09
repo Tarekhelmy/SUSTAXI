@@ -5,6 +5,7 @@ except ModuleNotFoundError:
 # from V_n_diagram import VNDiagram
 import numpy as np
 import matplotlib.pyplot as plt
+import csv
 
 class Stability(CenterOfGravity):
     def __init__(self):
@@ -24,8 +25,7 @@ class Stability(CenterOfGravity):
         self.Cm0 = -0.0792
         self.new = self.surface_controlh
         self.previous = self.surface_controlh
-
-
+        self.plot_surface = []
         self.progression= []
         self.recursion = 0
         self.deps_dalpha = 0
@@ -113,22 +113,20 @@ class Stability(CenterOfGravity):
         self.previous = self.surface_controlh
         self.lh = self.length_fus[-1] - self.locations['oew']
         self.scissor()
-        self.progression.append(self.mtow())
+        self.progression.append(self.oew()/self.kg_to_pounds)
         self.new = self.surface_controlh
-        if abs(self.previous - self.new) >= 0.01:
+        self.plot_surface.append(self.surface_controlh)
+        if abs(self.previous - self.new) >= 0.001:
             self.iterations +=1
             self.lemac = self.cockpitlength + 0.5 * (self.payloadlength + self.fuel_length)  # ft
             self.convergence()
         else:
             self.scissor()
 
-
-
-
     def landinggearsizing(self):
         x_oew = self.locations['oew']
-        f_nlg = 0.08   # Percentage of Weight on nose landing gear
-        f_mlg = 0.92   # Percentage of Weight on main landing gear
+        f_nlg = 0.09   # Percentage of Weight on nose landing gear
+        f_mlg = 0.91   # Percentage of Weight on main landing gear
         l_nlg = x_oew - self.cockpitlength
         l_mlg = f_nlg*l_nlg/f_mlg
         self.x_nlg_cg = x_oew - l_nlg
@@ -139,7 +137,7 @@ class Stability(CenterOfGravity):
         point2y = 0.5*self.diameter_fus
         x = np.linspace(0,self.length_fus[-1],1000)
         y1 = np.tan(15*np.pi / 180)*(x-point1x)+point1y
-        y2 = np.tan(-73*np.pi / 180)*(x-point2x)+point2y
+        y2 = np.tan(-75*np.pi / 180)*(x-point2x)+point2y
         diff = abs(y1-y2)
         pointy= y1[diff == min(diff)][0]
         pointx = x[diff == min(diff)][0]
@@ -149,6 +147,20 @@ class Stability(CenterOfGravity):
         self.x_nlg_cg = x_oew - l_nlg
         self.x_mlg = x_oew + l_mlg
         return None
+
+    def plotsurface(self):
+        plt.plot(self.plot_surface)
+        plt.ylabel(r'$S_{H}$')
+        plt.xlabel('Iteration')
+        plt.title(r'Convergence of $S_{H}$ per iteration')
+        plt.show()
+
+    def plotmass(self):
+        plt.plot(self.progression)
+        plt.ylabel(r'$OEW$')
+        plt.xlabel('Iteration')
+        plt.title(r'Convergence of $OEW$ per iteration')
+        plt.show()
 
     def procedures(self):
         self.convergence()
@@ -168,11 +180,65 @@ class Stability(CenterOfGravity):
         print('Main Landing gear vertical positioning',self.vertical_pos/self.meters_to_feet, "[m]" )
         print('Tail Area ', self.surface_controlh/self.meters_to_feet**2 , ['m^2'])
         print('Tail position ', (self.lh+self.locations['oew'])/self.meters_to_feet , ['m'])
+        print('wing mass',self.m_wing[-1]/self.kg_to_pounds)
 
 
+    def Results(self):
+        with open('results.csv','w') as file:
+            writer = csv.writer(file)
+            writer.writerow(['Weights'])
+            writer.writerow(['$W_{wing}$',self.m_wing[-1]/self.kg_to_pounds,'kg'])
+            writer.writerow(['$W_{fus}$',self.m_fuselage[-1]/self.kg_to_pounds,'kg'])
+            writer.writerow(['$W_{Vertical}$',self.m_v/self.kg_to_pounds,'kg'])
+            writer.writerow(['$W_{Horizontal}$',self.m_h/self.kg_to_pounds,'kg'])
+            writer.writerow(['$W_{Avionics}$',self.w_avionics/self.kg_to_pounds,'kg'])
+            writer.writerow(['$W_{Furnishing}$',self.w_furnishing/self.kg_to_pounds,'kg'])
+            writer.writerow(['$W_{Icing}$',self.w_icing/self.kg_to_pounds,'kg'])
+            writer.writerow(['$W_{Electrical}$',self.w_electrical/self.kg_to_pounds,'kg'])
+            writer.writerow(['$W_{FuelSystem}$',self.w_fuelsystem/self.kg_to_pounds,'kg'])
+            writer.writerow(['$W_{FlightControls}$',self.w_flightcontrols/self.kg_to_pounds,'kg'])
+            writer.writerow(['$W_{InstalledEngine}$',self.w_installedEngine/self.kg_to_pounds,'kg'])
+            writer.writerow(['$W_{Hydraulics}$',self.w_hydraulics/self.kg_to_pounds,'kg'])
+            writer.writerow(['$W_{FuelTank}$',self.w_fueltank/self.kg_to_pounds,'kg'])
+            writer.writerow(['$W_{Fuel}$',self.w_fuel/self.kg_to_pounds,'kg'])
+            writer.writerow(['$W_{Battery}$',self.w_battery/self.kg_to_pounds,'kg'])
+            writer.writerow(['CG Group Positions'])
+            writer.writerow(['$x_{Fus}$',self.x_fcg/self.meters_to_feet,'m'])
+            writer.writerow(['$x_{Wing}$',self.x_wcg/self.meters_to_feet,'m'])
+            writer.writerow(['$x_{mlg}$',self.length_mlg/self.meters_to_feet,'m'])
+            writer.writerow(['$x_{nlg}$',self.length_nlg/self.meters_to_feet,'m'])
+            writer.writerow(['$\\frac{x_{OEW}}{mac}$',self.oew_cg_mac/self.meters_to_feet,'m'])
+            writer.writerow(['Aircraft Dimensions'])
+            writer.writerow(['$l_{Fus}$',self.length_fus[-1]/self.meters_to_feet,'m'])
+            writer.writerow(['$l_{FuelTank}$',self.fuel_length/self.meters_to_feet,'m'])
+            writer.writerow(['$lemac$',self.lemac/self.meters_to_feet,'m'])
+            writer.writerow(['Weight Groups'])
+            writer.writerow(['W_{OEW}',self.w_oew/self.kg_to_pounds,'kg'])
+            writer.writerow(['W_{MTOW}',self.w_mtow/self.kg_to_pounds,'kg'])
+            writer.writerow(['Power Requirement'])
+            writer.writerow(['P_{shaft}',self.shaft_power/self.watts_to_horsepower/1000,'KW'])
+            writer.writerow(['P_{Cooling}',self.cool_power/self.watts_to_horsepower/1000,'KW'])
+            writer.writerow(['P_{FC}',self.fc_power/self.watts_to_horsepower/1000,'KW'])
+            writer.writerow(['P_{Waste}',self.waste_heat_power/self.watts_to_horsepower/1000,'KW'])
+            writer.writerow(['P_{Compressor}',self.comp_power/self.watts_to_horsepower/1000,'KW'])
+            writer.writerow(['P_{ElectricNet}',self.electric_net/self.watts_to_horsepower/1000,'KW'])
+            writer.writerow(['Power Mass distribution'])
+            writer.writerow(['$W_{FuelCell}$',self.m_fuel_cell/self.kg_to_pounds,'kg'])
+            writer.writerow(['$W_{Cooling}$',self.m_cooling/self.kg_to_pounds,'kg'])
+            writer.writerow(['$W_{Compressor}$',self.m_comp/self.kg_to_pounds,'kg'])
+            writer.writerow(['$W_{PMAD}$',self.m_pmad/self.kg_to_pounds,'kg'])
+            writer.writerow(['$W_{ElectricEngine}$',self.m_electric_engine/self.kg_to_pounds,'kg'])
+
+
+
+
+
+        pass
 if __name__ == "__main__":
     stability = Stability()
     stability.procedures()
-    stability.plot_mass_breakdown()
-    stability.printing()
-    stability.printing1()
+    stability.Results()
+
+    # stability.plotmass()
+    # stability.printing()
+    # stability.printing1()
