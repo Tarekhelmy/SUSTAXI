@@ -51,20 +51,23 @@ class WingAndPowerSizing:
     def __init__(self):
         self.clean_stall_speed = 46.2 # [m/s]
         self.ff_stall_speed = 40.4 #[m/s]
-
         self.CLmax_clean = 1.5
+
         self.CLmax_TO = 2.0
         self.CLmax_land = 2.1
         self.Oswald_clean = 0.78
+
         self.Oswald_TO = 0.83
         self.Oswald_land = 0.88
         self.CD0_clean = 0.02 # between prop and jet (ADSEE-I, lec 3 slide 15)
+
         self.CD0_TO = 0.0380
         self.CD0_land = 0.0730
         self.landing_fraction = 0.95
+
         self.ground_distance = 1500 #[m]
         self.n_p = 0.85
-        self.cruise_altitude = 5000 # m
+        self.cruise_altitude = 5000 # [m]
         self.MTOW = 0
         self.AR = 10
         self.cruise_speed = 475 / 3.6
