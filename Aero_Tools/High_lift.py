@@ -5,7 +5,7 @@ import numpy as np
 "highlift devices"
 req_CL = 9.81*w_mtow/(0.5*rho*40.4*40.4*surfacewing)
 print(req_CL)
-cur_CL = sum(comp_lift)/(0.5*rho*46*46*surfacewing)
+cur_CL = sum(comp_lift)/(0.5*rho*40.4*40.4*surfacewing)
 print(cur_CL)
 Delta_CL = (req_CL - cur_CL) + 0.05
 print(Delta_CL*1.0)
@@ -15,7 +15,7 @@ Swf_S = Delta_CL/(0.9*dcl*np.cos(trailingedgeangle()))
 #print("s", Swf_S)
 #print("required wing lift coefficient=",(1.1*(1/q)*W_S))
 
-b1 = 2.29
+b1 = 2.3
 b2 = 6.1
 
 y = sy.Symbol("y")
