@@ -36,4 +36,4 @@ def Tor_sean(t_min):
 
     return tau_max / 10**6
 
-print(Tor_sean(0.003))
+print(max(Tor_sean(0.003)))

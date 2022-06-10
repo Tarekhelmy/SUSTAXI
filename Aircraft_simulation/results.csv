@@ -1,0 +1,42 @@
+Weights
+$W_{wing}$,434.5910407621439,kg
+$W_{fus}$,617.5799771263603,kg
+$W_{Vertical}$,54.196448308236576,kg
+$W_{Horizontal}$,52.202034325007354,kg
+$W_{Avionics}$,504.78639809140685,kg
+$W_{Furnishing}$,219.3026356821272,kg
+$W_{Icing}$,2.5501301736551403,kg
+$W_{Electrical}$,223.0841037238016,kg
+$W_{FuelSystem}$,97.07692346271702,kg
+$W_{FlightControls}$,110.10800598228417,kg
+$W_{InstalledEngine}$,1932.252525114571,kg
+$W_{Hydraulics}$,4.2746765428770415,kg
+$W_{FuelTank}$,192.72170543851283,kg
+$W_{Fuel}$,328.14776871962994,kg
+$W_{Battery}$,50.0,kg
+CG Group Positions
+$x_{Fus}$,8.119847726697417,m
+$x_{Wing}$,6.72330287801495,m
+$x_{mlg}$,0.18287999414784017,m
+$x_{nlg}$,0.15239999512320015,m
+$\frac{x_{OEW}}{mac}$,0.10107773068048556,m
+Aircraft Dimensions
+$l_{Fus}$,14.526763992488323,m
+$l_{FuelTank}$,2.986763992488321,m
+$lemac$,6.3713332997907655,m
+Weight Groups
+W_{OEW},4494.726604733702,kg
+W_{MTOW},5622.874373453331,kg
+Power Requirement
+P_{shaft},1021.5759526260741,KW
+P_{Cooling},629.7760932344235,KW
+P_{FC},2033.3126989183934,KW
+P_{Waste},2033.3126989183934,KW
+P_{Compressor},208.96926326700034,KW
+P_{ElectricNet},1135.084391806749,KW
+Power Mass distribution
+$W_{FuelCell}$,677.7708996394646,kg
+$W_{Cooling}$,219.23635364254702,kg
+$W_{Compressor}$,104.48463163350017,kg
+$W_{PMAD}$,203.33126989183936,kg
+$W_{ElectricEngine}$,405.3872827881247,kg

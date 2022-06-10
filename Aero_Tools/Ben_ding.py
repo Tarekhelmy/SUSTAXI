@@ -36,6 +36,7 @@ def Mz():
     Mn = np.cumsum(Mz)
     return Mn
 
+
 za_coords = -(abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2
 
 plt.plot(za_coords,Mz())
