@@ -24,6 +24,14 @@ The business model of the manufacturer
 - maintenance
 - airport fees
 
+RESEARCH
+31% CAPEX increase
+47% maintenance increase (assuming hydrogen combustion)
+7% less flight cycles due to longer refueling times (not applicable here?)
+Airport and ATC cost --> no change
+
+
+
 """
 
 
@@ -36,24 +44,24 @@ class OperatorBusiness(Stability):
 
         # Miscellaneous constants
         self.mission_range = 1000*1000                               # m
-        self.flights_per_day = 3                                     # RESEARCH THIS
-        self.average_flighttime = 2                                  # hrs RESEARCH THIS
-        self.fleet_size = 10
-        self.unit_price = 4.25 * 1e6                                 # USD
+        self.flights_per_day = 3                                     # RESEARCH THIS (Estimated)
+        self.average_flighttime = 2                                  # hrs RESEARCH THIS (Estimated, based on range)
+        self.fleet_size = 330                                        # 25% of the 4*983 flights per day with 3 flights per day
+        self.unit_price = 6.5 * 1e6                                  # USD
 
         # Revenue constants
         self.flighthour_rate = 2350                                  # USD
 
         # Cost constants
-        self.average_payload = 3                                     # pax, RESEARCH THIS
+        self.average_payload = 3                                     # pax, RESEARCH THIS --> half loading https://www.globeair.com/b/private-jet-travellers-statistics
         self.hydrogen_cost = 7                                       # USD/kg RESEARCH THIS
         self.trip_fuel_cost = None                                   # USD RESEARCH THIS
-        self.hourly_staff_cost = 200                                 # USD/hr/pilot RESEARCH THIS
+        self.monthly_staff_cost = 5000                               # USD/month/pilot RESEARCH THIS
         self.interest_rate = 0.00407412378                           # (%/100)/month RESEARCH THIS
         self.monthly_devaluation = self.unit_price / (20*12)         # USD/month RESEARCH THIS
         self.overhead = 1e5                                          # USD/month RESEARCH THIS (includes: office, marketing, ground staff & storage)
-        self.airport_fees = 300                                      # USD per flight RESEARCH THIS
-        self.maintenance = 300                                       # USD per flighthour RESEARCH THIS
+        self.airport_fees = 300                                      # USD per flight RESEARCH THIS || INCLUDE AIR TRAFFIC CONTROL
+        self.maintenance = 300                                       # USD per flighthour RESEARCH THIS || MAKE SURE TO ADD HYDROGEN INCREASE
 
         self.balance = -1 * self.fleet_size * self.unit_price * 1.1  # 1.1 = factor for miscellaneous initial investment
 
@@ -67,12 +75,13 @@ class OperatorBusiness(Stability):
         self.trip_fuel_cost = self.find_fuel() * self.hydrogen_cost
         trip_cost = 0
         trip_cost += self.trip_fuel_cost
-        trip_cost += (2 * self.hourly_staff_cost + self.maintenance) * self.average_flighttime
+        trip_cost += self.maintenance * self.average_flighttime
         trip_cost += self.airport_fees
 
         monthly_cost = 0
         monthly_cost += trip_cost * self.flights_per_day * self.fleet_size * (365/12)
         monthly_cost += self.overhead + self.monthly_devaluation * self.fleet_size
+        monthly_cost += self.monthly_staff_cost * 2 * self.fleet_size
 
         # Calculate the balance over time for the operator
         monthly_profit = monthly_revenue - monthly_cost

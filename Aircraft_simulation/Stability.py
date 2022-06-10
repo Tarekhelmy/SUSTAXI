@@ -25,7 +25,6 @@ class Stability(CenterOfGravity):
         self.new = self.surface_controlh
         self.previous = self.surface_controlh
 
-
         self.progression= []
         self.recursion = 0
         self.deps_dalpha = 0
@@ -73,8 +72,8 @@ class Stability(CenterOfGravity):
         self.CLh_alpha = self.CL(5,self.Vh_V)
         self.min_difference = maximum - minimum
         Sh_S = np.linspace(0,2,400)
-        Stability =self.stability(Sh_S)
-        Controlability =self.control(Sh_S)
+        Stability = self.stability(Sh_S)
+        Controlability = self.control(Sh_S)
         try :
             Constraint = max(min(Sh_S[Controlability > minimum]), min(Sh_S[Stability > maximum]))
             self.difference_constraint = (self.stability(Constraint)-self.control(Constraint))

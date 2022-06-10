@@ -46,4 +46,4 @@ if __name__ == "__main__":
     aircraft_name = ['aircraft1', 'aircraft2']
 
     MassBuildup = BarChart(component_weights, component_names, aircraft_name, 'test title')
-    MassBuildup.plot_bar()
+    MassBuildup.plot()

@@ -568,6 +568,7 @@ class Aircraft(WingAndPowerSizing):
         self.print_mass(self.w_oew, 'OEW')
         print('Wing Area = %.2f' % (self.surface_wing / (3.28 ** 2)), 'm^2')
         self.print_length(self.b_w, 'Wingspan')
+        self.print_mass(self.w_furnishing, 'furnishing mass')
 
         print('\nPower Values:\n---------------')
         self.print_power(self.shaft_power, 'Shaft power')
