@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.stats import linregress
-from barchart import BarChart
 
 try:
     from Wing_Power_Loading import WingAndPowerSizing

@@ -167,7 +167,7 @@ class Stability(CenterOfGravity):
         self.convergence()
         self.landinggearsizing()
         self.classiter2()
-        self.scissor(plot=True)
+        self.scissor()
 
 
     def printing1(self):
@@ -182,6 +182,7 @@ class Stability(CenterOfGravity):
         print('Tail Area ', self.surface_controlh/self.meters_to_feet**2 , ['m^2'])
         print('Tail position ', (self.lh+self.locations['oew'])/self.meters_to_feet , ['m'])
         print('wing mass',self.m_wing[-1]/self.kg_to_pounds)
+        print('Max Drag is ', self.clean_stall_speed**2*(self.CD0_clean+self.CLmax_clean**2/(self.Oswald_clean*np.pi*self.AR))*0.5*self.rho*self.surface_wing/(self.meters_to_feet**2) , '[N]' )
 
 
     def Results(self):
@@ -229,12 +230,8 @@ class Stability(CenterOfGravity):
             writer.writerow(['$W_{Compressor}$',self.m_comp/self.kg_to_pounds,'kg'])
             writer.writerow(['$W_{PMAD}$',self.m_pmad/self.kg_to_pounds,'kg'])
             writer.writerow(['$W_{ElectricEngine}$',self.m_electric_engine/self.kg_to_pounds,'kg'])
-
-
-
-
-
         pass
+
 if __name__ == "__main__":
     stability = Stability()
     stability.procedures()
@@ -242,4 +239,4 @@ if __name__ == "__main__":
 
     # stability.plotmass()
     # stability.printing()
-    # stability.printing1()
+    stability.printing1()
