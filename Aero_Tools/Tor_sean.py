@@ -14,7 +14,9 @@ def Tor_sean(t_min):
     C_m = 0.56865
     T = C_m * 0.5 * rho * v * v * wing_area() * chord()
     cumulative = np.cumsum(T)
-    q_T = cumulative * n_load / (2* Area)
+    T_engine = 650*9.81*3
+    cumulative_T = cumulative + T_engine
+    q_T = cumulative_T * n_load / (2* Area)
     tau_max_T = q_T / t_min
 
 

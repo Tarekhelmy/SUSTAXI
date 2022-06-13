@@ -190,7 +190,7 @@ comp_lift = np.hstack((leftlift,rightlift))
 print("total lift =", round(sum(comp_lift),2))
 print("MTOW=", 9.81*w_mtow)
 
-#print("CLmax =", sum(comp_lift)/(0.5*rho*v*v*surfacewing))
+CLmax =sum(comp_lift)/(0.5*rho*v*v*surfacewing)
 
 
 
