@@ -47,12 +47,12 @@ print("c_r=",c_r())
 
 v = 46 #m/s
 v_c = 150
-rho=1.225
+rho= 1.225
 
 #data = pd.read_table("winglift_v=46_a=15vlm.txt", sep='\s+')
 
 def data_converter():
-    data = pd.read_table("winglift_v=40_a=15vlm.txt", sep='\s+')
+    data = pd.read_table("winglift_v=46_a=15vlm.txt", sep='\s+')
     data = data.to_numpy()
     data = np.delete(data,obj=2,axis=1)
 
@@ -96,7 +96,7 @@ def trailingedgeangle():
 
 def leadingedgeangle():
     return mt.atan(offset/(spanb()/2))
-
+print(np.degrees(leadingedgeangle()))
 
 def chord():
     z_coords = (abs(comp_halfdata[1:,0])+ abs(comp_halfdata[:-1,0]))/2
@@ -148,6 +148,15 @@ def lift():
     return lift
 
 
+"""
+plt.plot(abs((comp_halfdata[:-1,0] + comp_halfdata[1:,0])/2), lift())
+plt.ylabel('Lift [N]')
+plt.xlabel('Spanwise location [m]')
+plt.xlim(0,9)
+plt.ylim(0,1000)
+plt.grid()
+plt.show()
+"""
 
 "add engine"
 def engine():
@@ -181,7 +190,7 @@ comp_lift = np.hstack((leftlift,rightlift))
 print("total lift =", round(sum(comp_lift),2))
 print("MTOW=", 9.81*w_mtow)
 
-#print("CLmax =", sum(comp_lift)/(0.5*rho*v*v*surfacewing))
+CLmax =sum(comp_lift)/(0.5*rho*v*v*surfacewing)
 
 
 

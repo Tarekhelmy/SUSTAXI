@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.stats import linregress
-from barchart import BarChart
 
 try:
     from Wing_Power_Loading import WingAndPowerSizing
@@ -16,7 +15,7 @@ class Aircraft(WingAndPowerSizing):
     def __init__(self):
         super().__init__()
 
-        ##### Conversion factors ########
+        # Conversion factors
         self.pm_it = 0
         self.kg_to_pounds = 2.20462
         self.meters_to_feet = 3.28084
@@ -80,6 +79,7 @@ class Aircraft(WingAndPowerSizing):
         self.w_p = self.find_DP()[1] * self.kg_to_pounds / (9.81 * self.watts_to_horsepower)
 
         #### Powertrain parameters ####
+
         self.delta_t_func = None
         self.delta_T = None
         self.T_air = None
@@ -87,9 +87,9 @@ class Aircraft(WingAndPowerSizing):
 
         self.n_ee = 0.9
         self.n_pmad = 0.9
-        self.n_fc = 0.6
+        self.n_fc = 0.5
         self.n_comp = 0.7
-        self.n_fuel_tank = 0.5
+        self.n_fuel_tank = 0.63
 
         self.m_comp = 0
         self.m_cooling = 0
@@ -99,7 +99,7 @@ class Aircraft(WingAndPowerSizing):
 
         self.rho_pmad = 10000 * (self.watts_to_horsepower / self.kg_to_pounds)
         self.rho_comp = 2000 * (self.watts_to_horsepower / self.kg_to_pounds)
-        self.rho_ee = 2800 * (self.watts_to_horsepower / self.kg_to_pounds)
+        self.rho_ee  = 2800 * (self.watts_to_horsepower / self.kg_to_pounds)
         self.rho_fc = 3000 * (self.watts_to_horsepower / self.kg_to_pounds)
 
         self.pmad_power = None
@@ -112,7 +112,7 @@ class Aircraft(WingAndPowerSizing):
         self.T_air = 250
 
         self.c_p_air = 1003
-        self.lamda_o2 = 1.75
+        self.lamda_o2 = 2
         self.T_t1 = self.ISA(self.cruise_altitude)[1] * (1 + self.Mach ** 2 * (1.4 - 1) / 2)
         self.PR = 101325 * 1.05 / self.ISA(self.cruise_altitude)[0]
         self.T_t2 = self.T_t1 * (1 + (1 / self.n_comp) * ((self.PR) ** ((0.4 / 1.4)) - 1))
@@ -120,7 +120,7 @@ class Aircraft(WingAndPowerSizing):
         ########## Geometrical parameters #############
         self.height_fus = 1.73 * self.meters_to_feet
         self.width_fus = 1.9 * self.meters_to_feet
-        self.diameter_fus = 2 * self.meters_to_feet
+        self.diameter_fus = 1.9 * self.meters_to_feet
         self.lh = 5.9 * self.meters_to_feet
         self.lv = 5.4 * self.meters_to_feet
         self.t_c = 0.1
@@ -130,7 +130,7 @@ class Aircraft(WingAndPowerSizing):
         self.fractions = 0.992 * 0.996 * 0.996 * 0.990 * 0.992 * 0.992
         self.fuel_factor = 0
         self.AR = 10
-        self.sweep_angle = 4 * np.pi / 180
+        self.sweep_angle = 3.5 * np.pi / 180
         self.sweep_angle_horizontal = 20 * np.pi / 180
         self.sweep_angle_vertical = 20 * np.pi / 180
         self.q = 0.5 * 1.225 * (self.V) ** 2 * (self.kg_to_pounds / (self.meters_to_feet ** 2))
@@ -143,7 +143,7 @@ class Aircraft(WingAndPowerSizing):
         self.cockpitlength = 2.52 * self.meters_to_feet
         self.payloadlength = 5.1 * self.meters_to_feet
         self.insulation_length = 2.1 * self.meters_to_feet
-        self.length_fus = [(self.cockpitlength + self.payloadlength + self.length_tailcone)]
+        self.length_fus = [(self.cockpitlength + self.payloadlength + self.length_tailcone + 0.22 * self.meters_to_feet)]
 
         # self.mac = self.root_chord * 2 / 3 * (1 + self.taper_ratio + self.taper_ratio ** 2) / (1 + self.taper_ratio)
 
@@ -161,11 +161,11 @@ class Aircraft(WingAndPowerSizing):
                                     'engines': 9}
         self.a = linregress(self.MTOWstat, self.OEWstat).slope
         self.b = linregress(self.MTOWstat, self.OEWstat).intercept
-        # plt.scatter(self.MTOWstat, self.OEWstat)
-        # plt.plot(np.sort(self.MTOWstat), self.a*np.sort(self.MTOWstat) + self.b)
-        # plt.show()
-        # print('a_code1 = ', self.a)
-        # print('b_code1 = ', self.b)
+        #plt.scatter(self.MTOWstat, self.OEWstat)
+        #plt.plot(np.sort(self.MTOWstat), self.a*np.sort(self.MTOWstat) + self.b)
+        #plt.show()
+        #print('a_code1 = ', self.a)
+        #print('b_code1 = ', self.b)
         self.iter = 0
         self.ult_factor = 1.5
         self.length_mlg = 0.6
@@ -186,12 +186,11 @@ class Aircraft(WingAndPowerSizing):
                                              self.AR - 2)
         self.surface_controlv = self.vertical_volume / self.lv
         self.surface_controlh = self.horizontal_volume / self.lh
-        print(self.surface_controlh)
         self.surface_controlh = 51.09013541454193
         self.component_matrix = []
         self.fuel_diameter = 1.56 * self.meters_to_feet
-        # self.FC = FuelCellSizing(10)
-        # self.FC.fit_plots()
+        #self.FC = FuelCellSizing(10)
+        #self.FC.fit_plots()
 
     def class1(self):
         cruise_fraction = np.exp(self.R * (9.81 * self.c_p) / (self.efficiency * self.L_D_cruise))
@@ -545,8 +544,7 @@ class Aircraft(WingAndPowerSizing):
                              self.w_electrical, self.w_avionics, self.w_fuelsystem, self.w_flightcontrols,
                              self.w_installedEngine, self.w_hydraulics])
         self.component_matrix.append(mass_vec)
-
-        if np.abs(OEW2 - OEW1) / OEW2 >= 0.01:
+        if np.abs(OEW2 - OEW1)/OEW2 >= 0.01:
             self.classiter()
 
     def printing(self):
@@ -568,6 +566,7 @@ class Aircraft(WingAndPowerSizing):
         self.print_mass(self.w_oew, 'OEW')
         print('Wing Area = %.2f' % (self.surface_wing / (3.28 ** 2)), 'm^2')
         self.print_length(self.b_w, 'Wingspan')
+        self.print_mass(self.w_furnishing, 'furnishing mass')
 
         print('\nPower Values:\n---------------')
         self.print_power(self.shaft_power, 'Shaft power')
@@ -646,10 +645,10 @@ class Aircraft(WingAndPowerSizing):
         return weights, fuselage_cg, wing_cg, mac
 
     def plot_mass_breakdown(self):
-        ac_component_names = ['Powertrain', 'Payload', 'Structures', 'Fuel', 'Fueltank', 'Miscellaneous Systems']
+        ac_component_names = ['Powertrain', 'Payload', 'Structures', 'Fuel', 'Fueltank', 'Misc. Systems']
         ac_component_masses = [[self.w_installedEngine, self.w_payload,
                                 self.m_wing[-1] + self.m_fuselage[-1] + self.m_h + self.m_v,
-                                self.w_fuel, self.w_fueltank]]
+                                self.w_fuel, self.w_fueltank],[0,0,0,0,0,0]]
         ac_component_masses[0].append(self.w_mtow - sum(ac_component_masses[0]))
 
         for idx, component in enumerate(ac_component_masses[0]):
@@ -657,13 +656,13 @@ class Aircraft(WingAndPowerSizing):
             ac_component_names[idx] += (" " + str(perc) + "%MTOM")
 
         ac_component_masses = np.array(ac_component_masses) / self.kg_to_pounds
-        ac_name = ['SUSTAXI']
+        ac_name = ['SUSTAXI', ""]
         plot_name = "Mass Breakdown of the Sustaxi MTOM = "
         plot_name += str(round(self.w_mtow / self.kg_to_pounds, 2)) + " kg"
         mass_bar = BarChart(ac_component_masses, ac_component_names, ac_name, plot_name)
         mass_bar.plot()
 
-        print("fuel system %.2f" % (self.w_fuelsystem / self.kg_to_pounds), "kg")
+        #print("fuel system %.2f" % (self.w_fuelsystem / self.kg_to_pounds), "kg")
 
     def classiter2(self):
         self.class1()

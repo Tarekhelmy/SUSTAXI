@@ -1,7 +1,11 @@
+import matplotlib.pyplot as plt
+
 from Stability import *
 from mass_estimations import Aircraft
+from Stability import Stability
 import numpy as np
 AC = Aircraft()
+ST = Stability()
 #stability = Stability()
 #stability.procedures()
 
@@ -103,8 +107,9 @@ def test_cg():
     for entry in cg.weights:
         if entry != "fuselage":
             cg.weights[entry] = 0
-    
+
     # cg.massfraction()
+
 
     #Run function to be tested
     cg.lemac_oew_pl_fuel()
@@ -113,6 +118,38 @@ def test_cg():
     assert (cg.locations['oew'] == cg.fus_cg_locations['fuselage'])
 
 
+    # plt.plot(list)
+    # plt.show()
+
+def test_stability():
+    ST.x_ac = 0.1
+    ST.CLh_alpha = 0.9
+    ST.CL_ah_alpha = 1.1
+    ST.deps_dalpha = 0
+    Sh_s = 10
+    ST.lh = 10
+    ST.mac = 2
+    ST.Vh_V = 1
+    xcg_mac = ST.stability(Sh_s)
+    xcg_mac_assert = (0.1) + (0.9 / 1.1) * (1 - 0) * Sh_s * (
+                10 / 2) * (1) ** 2 - 0.05
+    assert xcg_mac == xcg_mac_assert
+
+
+def test_controlability():
+    ST.x_ac = 0.1
+    ST.Cm_ac = 0.9
+    ST.CL_ah_alpha = 1.1
+    ST.CLmax_land = 1.2
+    ST.CLhmax_land = 2.2
+    Sh_s = 10
+    ST.lh = 10
+    ST.mac = 2
+    ST.Vh_V = 1
+    xcg_mac = ST.control(Sh_s)
+    xcg_mac_assert = 0.1 - (0.9 / 1.2) + (2.2 / 1.2) * (Sh_s) * (
+                10 / 2) * 1 ** 2
+    assert xcg_mac == xcg_mac_assert
 
 
 # VNV on S&C module
