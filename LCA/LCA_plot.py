@@ -112,7 +112,7 @@ print('Prognostic 2050 with CC', Prognostic_2050_with_CC_GWP_p_kWh_agg, 'gCO2-eq
 
 print('Homebaked without Hydrocarbons', Homebaked_wo_HC_GWP_p_kWh_agg, 'gCO2-eq/kWh')
 
-# Producing 1 kg of Hydrogen
+# Producing 1 kg of Hydrogen with Electrolysis
 Electrolysis_kWh_p_kg = 5.0     # range 4.5 to 5.5
 Euro_2019_electrolysis = Euro_mix_GWP_p_kWh_agg * Electrolysis_kWh_p_kg
 Euro_2019_CC_electrolysis = Euro_mix_with_CC_GWP_p_kWh_agg * Electrolysis_kWh_p_kg
@@ -122,6 +122,12 @@ Prognostic_2050_electrolysis = Prognostic_2050_GWP_p_kWh_agg * Electrolysis_kWh_
 Prognostic_2050_CC_electrolysis = Prognostic_2050_with_CC_GWP_p_kWh_agg * Electrolysis_kWh_p_kg
 Homebaked_wo_HC_electrolysis = Homebaked_wo_HC_GWP_p_kWh_agg * Electrolysis_kWh_p_kg
 
+# Producing 1 kg of Hydrogen with NGSR
+NSGR_Canada = 11893
+
+# Producing 1 kg of Hydrogen with Coal Gasification
+CG_Canada = 11299
+
 Hydrogen_electrolysis = [Euro_2019_electrolysis, Euro_2019_CC_electrolysis, Prognostic_2030_electrolysis,
                          Prognostic_2030_CC_electrolysis, Prognostic_2050_electrolysis, Prognostic_2050_CC_electrolysis,
                          Homebaked_wo_HC_electrolysis]
@@ -129,20 +135,27 @@ X_axis = ['2019', '2019 with CC', '2030',
                          '2030 with CC', '2050', '2050 with CC',
                          'without HC']
 
+
+
 plt.figure()
-plt.bar(X_axis, Hydrogen_electrolysis)
+#plt.bar(X_axis, Hydrogen_electrolysis)
+plt.bar(['Electrolysis, EU 2019', 'NGSR', 'Coal Gas'], [Euro_2019_electrolysis, NSGR_Canada, CG_Canada], color=['blue', 'red', 'grey'])
+#plt.bar(, NSGR_Canada, color='red')
+#plt.bar(, CG_Canada, color='grey')
 plt.ylabel('gCO2-eq/kgH2')
-plt.grid()
+plt.xticks(rotation=45)
+plt.yticks(np.arange(0, 12001, 2000))
+plt.grid(axis='y')
 
 plt.figure()
 plt.plot([2019, 2030, 2050], [Euro_2019_electrolysis, Prognostic_2030_electrolysis, Prognostic_2050_electrolysis])
 plt.plot([2019, 2030, 2050], [Euro_2019_CC_electrolysis, Prognostic_2030_CC_electrolysis, Prognostic_2050_CC_electrolysis])
 plt.plot([2019, 2050], [Homebaked_wo_HC_electrolysis, Homebaked_wo_HC_electrolysis], ls='--')
-plt.legend(['European prognostic', 'With CC', 'Renewables based'])
-plt.grid()
+plt.legend(['European prognosis', 'With CC', 'Renewables based'])
 plt.xlim(2019, 2050)
 plt.ylim(0, 1500)
 plt.ylabel('gCO2-eq/kgH2')
+plt.grid()
 plt.show()
 
 
