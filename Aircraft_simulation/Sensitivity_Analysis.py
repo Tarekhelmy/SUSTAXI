@@ -22,20 +22,30 @@ class Verification(Stability):
         self.percentage_change = 1
 
 
-    def iterationthings(self):
+    def iterationthings(self,attr):
         self.mainprocedures()
         self.script()
-        self.procedures()
+        self.proceduresattr(attr)
 
 
     def tryloop(self,attr):
         try:
-            self.iterationthings()
+            self.iterationthings(attr)
         except:
             self.reset()
             self.iterativelemac += 1
             self.lemac = self.iterativelemac
             setattr(self, attr, value)
+            self.tryloop(attr)
+
+    def tryloopupdate(self,attr):
+        try:
+            self.iterationthings(attr)
+        except:
+            self.reset()
+            self.iterativelemac += 1
+            self.lemac = self.iterativelemac
+            setattr(self, attr, value*(1+self.sensitivity_parameter/100))
             self.tryloop(attr)
 
     def sensitivity(self):
@@ -51,13 +61,14 @@ class Verification(Stability):
                     attr!= "kgs_to_pounds"  and attr!= "watts_to_horsepower" :
                 self.sensitive_iteration += 1
                 self.reset()
+                value = getattr(self, attr)
                 self.tryloop(attr)
                 originaloew = self.oew()
                 value = getattr(self, attr)
                 self.reset()
                 self.iterativelemac = self.starting_lemac
                 setattr(self, attr, value*(1+self.sensitivity_parameter/100))
-                self.tryloop(attr)
+                self.tryloopupdate(attr)
                 newoew = self.oew()
                 if abs(originaloew-newoew)/originaloew>=self.percentage_change/100:
                     self.sensitive_attribute[f'{attr}'] = abs(originaloew-newoew)/(originaloew)

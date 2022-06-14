@@ -60,7 +60,7 @@ class OperatorBusiness(Stability):
         self.average_payload = 3                                     # pax, RESEARCH THIS --> half loading https://www.globeair.com/b/private-jet-travellers-statistics
         self.hydrogen_cost = 7                                       # USD/kg RESEARCH THIS
         self.trip_fuel_cost = None                                   # USD RESEARCH THIS
-        self.monthly_staff_cost = 5000                               # USD/month/pilot RESEARCH THIS
+        self.monthly_staff_cost = 9000                               # USD/month/pilot RESEARCH THIS
         self.interest_rate = 0.00407412378                           # (%/100)/month RESEARCH THIS
         self.monthly_devaluation = 0        # USD/month RESEARCH THIS
         self.overhead = 0.1081                                          # USD/month percentage RESEARCH THIS (includes: office, marketing, ground staff & storage)
@@ -115,6 +115,7 @@ class OperatorBusiness(Stability):
         ax.set_title("Operator profit over time")
         ax.set_xlabel("Month number")
         ax.set_ylabel("Profit [USD]")
+        plt.grid()
         plt.show()
 
 
@@ -137,9 +138,8 @@ class OperatorBusiness(Stability):
         pass
 
 if __name__ == "__main__":
-
     Company = OperatorBusiness()
-    Company.plot_profit(120)
+    Company.plot_profit(12*15)
 
 
 

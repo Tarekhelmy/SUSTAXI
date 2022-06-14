@@ -124,6 +124,24 @@ class Stability(CenterOfGravity):
         else:
             self.scissor()
 
+    def convergenceattr(self,attr):
+        # self.reset()
+        self.surface_controlh = self.new
+        self.mainprocedures()
+        self.script()
+        self.previous = self.surface_controlh
+        self.lh = self.length_fus[-1] - self.locations['oew']
+        self.scissor()
+        self.progression.append(self.oew()/self.kg_to_pounds)
+        self.new = self.surface_controlh
+        self.plot_surface.append(self.surface_controlh)
+        if abs(self.previous - self.new) >= 0.001:
+            self.iterations +=1
+            self.lemac = self.cockpitlength + 0.5 * (self.payloadlength + self.fuel_length)  # ft
+            self.convergence()
+        else:
+            self.scissor()
+
     def landinggearsizing(self):
         x_oew = self.locations['oew']
         f_nlg = 0.09   # Percentage of Weight on nose landing gear
@@ -169,6 +187,11 @@ class Stability(CenterOfGravity):
         self.classiter2()
         self.scissor()
 
+    def proceduresattr(self,attr):
+        self.convergenceattr(attr)
+        self.landinggearsizing()
+        self.classiter2()
+        self.scissor()
 
     def printing1(self):
         print('\nOther important parameters:\n---------------')
