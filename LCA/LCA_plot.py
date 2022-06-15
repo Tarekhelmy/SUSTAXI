@@ -101,6 +101,7 @@ Prognostic_2050_with_CC_GWP_p_kWh_agg = sum(Shares_Prognostic_2050*Prognostic_20
 
 Homebaked_wo_HC_GWP_p_kWh_agg = sum(Shares_wo_HC*Homebaked_wo_HC_GWP_p_kWh)
 
+'''
 print('Euro Mix 2019', Euro_mix_GWP_p_kWh_agg, 'gCO2-eq/kWh')
 print('Euro Mix 2019 with CC', Euro_mix_with_CC_GWP_p_kWh_agg, 'gCO2-eq/kWh')
 
@@ -111,9 +112,9 @@ print('Prognostic 2050', Prognostic_2050_GWP_p_kWh_agg, 'gCO2-eq/kWh')
 print('Prognostic 2050 with CC', Prognostic_2050_with_CC_GWP_p_kWh_agg, 'gCO2-eq/kWh')
 
 print('Homebaked without Hydrocarbons', Homebaked_wo_HC_GWP_p_kWh_agg, 'gCO2-eq/kWh')
-
+'''
 # Producing 1 kg of Hydrogen with Electrolysis
-Electrolysis_kWh_p_kg = 5.0     # range 4.5 to 5.5
+Electrolysis_kWh_p_kg = 5.0 / 0.0841    # range 4.5 to 5.5
 Euro_2019_electrolysis = Euro_mix_GWP_p_kWh_agg * Electrolysis_kWh_p_kg
 Euro_2019_CC_electrolysis = Euro_mix_with_CC_GWP_p_kWh_agg * Electrolysis_kWh_p_kg
 Prognostic_2030_electrolysis = Prognostic_2030_GWP_p_kWh_agg * Electrolysis_kWh_p_kg
@@ -121,6 +122,7 @@ Prognostic_2030_CC_electrolysis = Prognostic_2030_with_CC_GWP_p_kWh_agg * Electr
 Prognostic_2050_electrolysis = Prognostic_2050_GWP_p_kWh_agg * Electrolysis_kWh_p_kg
 Prognostic_2050_CC_electrolysis = Prognostic_2050_with_CC_GWP_p_kWh_agg * Electrolysis_kWh_p_kg
 Homebaked_wo_HC_electrolysis = Homebaked_wo_HC_GWP_p_kWh_agg * Electrolysis_kWh_p_kg
+Wind_energy_electrolysis = Wind_offshore_GWP_p_kWh * Electrolysis_kWh_p_kg
 
 # Producing 1 kg of Hydrogen with NGSR
 NSGR_Canada = 11893
@@ -135,16 +137,51 @@ X_axis = ['2019', '2019 with CC', '2030',
                          '2030 with CC', '2050', '2050 with CC',
                          'without HC']
 
+# Hydrogen Leaks
+H2_consumption_paxkm = 0.03578      # kg/(pax.km)
+leaked_frac = 0.015      # 1 percent
+H2_Carbon_eq = 11       # kg CO2/kgH2
+leaks_impact = H2_consumption_paxkm*leaked_frac*H2_Carbon_eq * 1000     # g CO2/(pax.km)
+#print(leaks_impact)
+
+# Hydrogen cooling
+Cooling_energy = 0.097 / 0.6        # efficiency added
+Cooling_impact = Cooling_energy*Euro_mix_GWP_p_kWh_agg*H2_consumption_paxkm     # g CO2/(pax.km)
+#print(Cooling_impact)
+
+# Sustaxi Impact
+gCO2_p_paxkm = np.array([Euro_2019_electrolysis, Prognostic_2030_electrolysis, Prognostic_2050_electrolysis])*H2_consumption_paxkm
+gCO2_p_paxkm_CC = np.array([Euro_2019_CC_electrolysis, Prognostic_2030_CC_electrolysis, Prognostic_2050_CC_electrolysis])*H2_consumption_paxkm
+gCO2_p_paxkm_wo_HC = Homebaked_wo_HC_electrolysis*H2_consumption_paxkm
+gCO2_p_paxkm_ngsr = NSGR_Canada*H2_consumption_paxkm
+gCO2_p_paxkm_cg = CG_Canada*H2_consumption_paxkm
+print('Normal', gCO2_p_paxkm)
+print('NGSR', gCO2_p_paxkm_ngsr)
+print('Coal Gas', gCO2_p_paxkm_cg)
+print(gCO2_p_paxkm_wo_HC)
+# Reference Aircraft - Fuel consumption
+King_air_200 = 1184/2606/4
+Phenom_100 = 1273/1850/4
+Mustang = 875/1330/4
+Pc_12 = 1227/2978/4
+
+# Reference Aircraft - CO2 emissions
+kerosene_impact_kgCO2_p_kg = (3.16 + 0.5)*1000
+King_air_200_gCO2_p_paxkm = King_air_200*kerosene_impact_kgCO2_p_kg
+Phenom_100_gCO2_p_paxkm = Phenom_100*kerosene_impact_kgCO2_p_kg
+Mustang_gCO2_p_paxkm = Mustang*kerosene_impact_kgCO2_p_kg
+Pc_12_gCO2_p_paxkm = Pc_12*kerosene_impact_kgCO2_p_kg
 
 
 plt.figure()
 #plt.bar(X_axis, Hydrogen_electrolysis)
-plt.bar(['Electrolysis, EU 2019', 'NGSR', 'Coal Gas'], [Euro_2019_electrolysis, NSGR_Canada, CG_Canada], color=['blue', 'red', 'grey'])
+plt.bar(['Electrolysis, EU 2019', 'Renewables', 'NGSR', 'Coal Gas'],
+        [Euro_2019_electrolysis, Homebaked_wo_HC_electrolysis, NSGR_Canada, CG_Canada], color=['blue', 'blue', 'red', 'grey'])
 #plt.bar(, NSGR_Canada, color='red')
 #plt.bar(, CG_Canada, color='grey')
 plt.ylabel('gCO2-eq/kgH2')
-plt.xticks(rotation=45)
-plt.yticks(np.arange(0, 12001, 2000))
+#plt.xticks(rotation=45)
+plt.yticks(np.arange(0, 18001, 2000))
 plt.grid(axis='y')
 
 plt.figure()
@@ -153,9 +190,25 @@ plt.plot([2019, 2030, 2050], [Euro_2019_CC_electrolysis, Prognostic_2030_CC_elec
 plt.plot([2019, 2050], [Homebaked_wo_HC_electrolysis, Homebaked_wo_HC_electrolysis], ls='--')
 plt.legend(['European prognosis', 'With CC', 'Renewables based'])
 plt.xlim(2019, 2050)
-plt.ylim(0, 1500)
+plt.ylim(0, 18000)
 plt.ylabel('gCO2-eq/kgH2')
 plt.grid()
+
+plt.figure()
+plt.plot([2019, 2030, 2050], gCO2_p_paxkm)
+plt.plot([2019, 2030, 2050], gCO2_p_paxkm_CC)
+plt.plot([2019, 2050], [gCO2_p_paxkm_wo_HC, gCO2_p_paxkm_wo_HC])
+plt.plot([2019, 2050], [King_air_200_gCO2_p_paxkm, King_air_200_gCO2_p_paxkm], color='red', ls='--')
+plt.plot([2019, 2050], [Mustang_gCO2_p_paxkm, Mustang_gCO2_p_paxkm], color='yellow', ls='--')
+plt.plot([2019, 2050], [Phenom_100_gCO2_p_paxkm, Phenom_100_gCO2_p_paxkm], color='grey', ls='--')
+plt.plot([2019, 2050], [Pc_12_gCO2_p_paxkm, Pc_12_gCO2_p_paxkm], color='green', ls='--')
+plt.legend(['Sustainable Air Taxi Prognosis', 'Prognosis with CC','Sustainable Air Taxi Renewables',
+            'King air 200', 'Citation Mustang', 'Phenom 100', 'Pc-12'], loc='lower right')
+plt.grid()
+plt.xlim(2019, 2050)
+plt.ylim(0, 700)
+plt.xlabel('Year')
+plt.ylabel('gCO2-eq/pax/km')
 plt.show()
 
 
